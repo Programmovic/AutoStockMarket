@@ -100,7 +100,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "Exhibition Car Maintenance",
     icon: IconExchange,
-    href: "/utilities/shadow",
+    href: "/SalesManagment/ExhibitionCarMaintenance",
     translatedTitle: "ملف 2 - صيانة السيارات في المعرض",
   },
   {

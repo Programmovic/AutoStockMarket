@@ -12,51 +12,45 @@ import {
   Paper,
 } from "@mui/material";
 
-const VehicleMaintenancePage = () => {
-  const [vehicleData, setVehicleData] = useState([]);
+const CarMaintenanceExhibitionPage = () => {
+  const [maintenanceData, setMaintenanceData] = useState([]);
 
   useEffect(() => {
-    // Fetch vehicle maintenance data here
-    const fetchVehicleData = async () => {
+    // Fetch car maintenance data for the exhibition
+    const fetchMaintenanceData = async () => {
       try {
-        // Replace this with the actual API endpoint to fetch vehicle data
-        const response = await fetch("API_ENDPOINT_TO_FETCH_VEHICLE_DATA");
+        // Replace this with the actual API endpoint to fetch car maintenance data
+        const response = await fetch("API_ENDPOINT_TO_FETCH_CAR_MAINTENANCE_DATA");
         if (response.ok) {
           const data = await response.json();
-          setVehicleData(data);
+          setMaintenanceData(data);
         } else {
-          console.error("Failed to fetch vehicle maintenance data");
+          console.error("Failed to fetch car maintenance data");
         }
       } catch (error) {
-        console.error("Error fetching vehicle maintenance data:", error);
+        console.error("Error fetching car maintenance data:", error);
       }
     };
 
-    fetchVehicleData();
+    fetchMaintenanceData();
   }, []);
 
   return (
-    <PageContainer title="Vehicle Maintenance" description="Details of vehicle maintenance tasks">
-      <DashboardCard title="Vehicle Maintenance Records">
+    <PageContainer title="Car Maintenance Exhibition" description="Maintenance expenses for exhibition cars">
+      <DashboardCard title="Car Maintenance Records">
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="vehicle maintenance table">
+          <Table sx={{ minWidth: 650 }} aria-label="car maintenance table">
             <TableHead>
               <TableRow>
-                <TableCell>Type</TableCell>
-                <TableCell>Color</TableCell>
-                <TableCell>Model</TableCell>
-                <TableCell>Chassis Number</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>Car Name</TableCell>
+                <TableCell>Maintenance Value</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {vehicleData.map((vehicle, index) => (
+              {maintenanceData.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{vehicle.type}</TableCell>
-                  <TableCell>{vehicle.color}</TableCell>
-                  <TableCell>{vehicle.model}</TableCell>
-                  <TableCell>{vehicle.chassisNumber}</TableCell>
-                  <TableCell>{vehicle.date}</TableCell>
+                  <TableCell>{item.carName}</TableCell>
+                  <TableCell>{item.maintenanceValue}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -67,4 +61,4 @@ const VehicleMaintenancePage = () => {
   );
 };
 
-export default VehicleMaintenancePage;
+export default CarMaintenanceExhibitionPage;
