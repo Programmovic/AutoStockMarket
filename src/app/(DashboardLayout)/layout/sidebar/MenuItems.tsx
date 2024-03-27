@@ -86,14 +86,14 @@ const Menuitems = [
     id: uniqueId(),
     title: "Expenses",
     icon: IconCoinEuro,
-    href: "/utilities/shadow",
+    href: "/SalesManagment/Expenses",
     translatedTitle: "ملف 2 - المصروفات",
   },
   {
     id: uniqueId(),
     title: "Maintenance",
     icon: IconMessageChatbot,
-    href: "/utilities/shadow",
+    href: "/SalesManagment/Maintenance",
     translatedTitle: "ملف 2 - الصيانة",
   },
   {

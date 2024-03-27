@@ -57,7 +57,7 @@ const CarsPage = () => {
                 <TableCell>Total</TableCell>
                 <TableCell>Day</TableCell>
                 <TableCell>Month</TableCell>
-                <TableCell>Today's Date</TableCell>
+                <TableCell>Today&apos;s Date</TableCell>
                 <TableCell>Vehicle Location</TableCell>
               </TableRow>
             </TableHead>
