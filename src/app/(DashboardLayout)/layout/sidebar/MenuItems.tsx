@@ -19,12 +19,24 @@ import {
   IconExchange,
   IconUser,
   IconGardenCart,
-  IconWaterpolo
+  IconWaterpolo,
+  IconDashboard
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
 
 const Menuitems = [
+  {
+    navlabel: true,
+    subheader: "Home",
+  },
+  {
+    id: uniqueId(),
+    title: "Dashboard",
+    icon: IconDashboard,
+    href: "/",
+    translatedTitle: "ملف 2 - السيارات",
+  },
   {
     navlabel: true,
     subheader: "Cars Inventory",
@@ -111,7 +123,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "Exhibition Debts",
     icon: IconMoneybag,
-    href: "/utilities/shadow",
+    href: "/CustomerManagement/ExhibitionDebts",
     translatedTitle: "ملف 1 - ديون المعرض",
   },
   {
@@ -122,14 +134,14 @@ const Menuitems = [
     id: uniqueId(),
     title: "Employee Attendance",
     icon: IconUser,
-    href: "/utilities/shadow",
+    href: "/EmployeeManagement/EmployeeAttendance",
     translatedTitle: "ملف 1 - حضور وغياب الموظفين",
   },
   {
     id: uniqueId(),
     title: "Employee Salaries",
     icon: IconMoneybag,
-    href: "/utilities/shadow",
+    href: "/EmployeeManagement/EmployeeSalary",
     translatedTitle: "ملف 1 - رواتب الموظفين",
   },
   {
@@ -145,27 +157,27 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "Settings",
-  },
-  {
-    id: uniqueId(),
-    title: "Reports and Analytics",
-    icon: IconReport,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 1 - التقارير والتحليلات",
+    subheader: "Reports and Analytics",
   },
   {
     id: uniqueId(),
     title: "Fixed Expenses",
     icon: IconMoneybag,
-    href: "/utilities/shadow",
+    href: "/ReportsAndAnalytics/FixedExpenses",
     translatedTitle: "ملف 1 - المصروفات الثابتة",
   },
   {
     id: uniqueId(),
     title: "Exhibition Expenses",
     icon: IconMoneybag,
-    href: "/utilities/shadow",
+    href: "/ReportsAndAnalytics/ExhibitionExpenses",
+    translatedTitle: "ملف 2 - مصروف المعرض",
+  },
+  {
+    id: uniqueId(),
+    title: "Recoveries",
+    icon: IconMoneybag,
+    href: "/ReportsAndAnalytics/Recoveries",
     translatedTitle: "ملف 2 - مصروف المعرض",
   },
   {
