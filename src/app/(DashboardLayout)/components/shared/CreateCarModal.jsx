@@ -136,7 +136,7 @@ const CreateCarModal = ({ open, handleClose }) => {
                 </Stepper>
                 {activeStep === steps.length ? (
                     <div style={{paddingTop: 20, paddingBottom: 20,}}>
-                        <Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you're finished</Typography>
+                        <Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you&apos;re finished</Typography>
                         <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                             <Box sx={{ flex: '1 1 auto' }} />
                             <Button onClick={handleClose}>Close</Button>

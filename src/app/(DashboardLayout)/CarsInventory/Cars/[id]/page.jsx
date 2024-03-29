@@ -169,7 +169,7 @@ const CarDetailsPage = ({ params }) => {
                     </TableRow>
                     <TableRow>
                       <TableCell>
-                        <strong>Today's Date:</strong>
+                        <strong>Today&apos;s Date:</strong>
                       </TableCell>
                       <TableCell>{car.todaysDate}</TableCell>
                     </TableRow>
