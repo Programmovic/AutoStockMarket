@@ -132,6 +132,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: "All Employees",
+    icon: IconUser,
+    href: "/EmployeeManagement/Employees",
+    translatedTitle: "ملف 1 - حضور وغياب الموظفين",
+  },
+  {
+    id: uniqueId(),
     title: "Employee Attendance",
     icon: IconUser,
     href: "/EmployeeManagement/EmployeeAttendance",
