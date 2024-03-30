@@ -1,18 +1,22 @@
 import Link from "next/link";
 import { styled } from "@mui/material";
-import Image from "next/image";
+import { CarRental } from "@mui/icons-material";
 
 const LinkStyled = styled(Link)(() => ({
   height: "70px",
   width: "180px",
   overflow: "hidden",
-  display: "block",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  textDecoration: "none", // To remove underline from the link
 }));
 
 const Logo = () => {
   return (
     <LinkStyled href="/">
-      <Image src="/images/logos/dark-logo.svg" alt="logo" height={70} width={174} priority />
+      <span>ASM</span>
+      <CarRental sx={{ fontSize: 40 }} />
     </LinkStyled>
   );
 };
