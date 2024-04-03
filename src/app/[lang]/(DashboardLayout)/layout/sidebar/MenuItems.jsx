@@ -235,5 +235,18 @@ const Menuitems = [
   },
 ];
 
-
-export default Menuitems;
+// Function to add language prefix to hrefs
+function localizeMenuItems(langCode) {
+  return Menuitems.map(item => {
+    // Check if item has an 'href' property
+    if (item.href) {
+      // Prepend the language code to the 'href' if langCode is not empty
+      const updatedHref = langCode ? `/${langCode}${item.href}` : item.href;
+      return { ...item, href: updatedHref };
+    }
+    // Return item as is if there's no 'href'
+    return item;
+  });
+}
+// Export the localized menu items
+export default localizeMenuItems;

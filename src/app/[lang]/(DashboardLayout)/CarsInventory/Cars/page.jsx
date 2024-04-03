@@ -15,7 +15,7 @@ import {
   Button,
 } from "@mui/material";
 
-const CarsPage = () => {
+const CarsPage = (params) => {
   const router = useRouter(); // Initialize useRouter
   const [cars, setCars] = useState([
     // Sample data
@@ -48,7 +48,7 @@ const CarsPage = () => {
   const handleRowClick = (id) => {
     router.push(`/CarsInventory/Cars/${id}`); // Use Router.push to navigate
   };
-
+console.log(params)
   return (
     <PageContainer title="Cars" description="Cars Inventory">
       <Button
