@@ -1,6 +1,8 @@
 "use client";
+// Import necessary libraries and components
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter from next/router
+import { useRouter } from "next/navigation";
+import axios from "axios";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import CreateCarModal from "@/app/(DashboardLayout)/components/shared/CreateCarModal";
@@ -15,40 +17,33 @@ import {
   Button,
 } from "@mui/material";
 
-const CarsPage = (params) => {
-  const router = useRouter(); // Initialize useRouter
-  const [cars, setCars] = useState([
-    // Sample data
-    {
-      id: 1,
-      carName: "Toyota Camry",
-      color: "Blue",
-      model: "2022",
-      chassisNumber: "ABC123456",
-      owner: "John Doe",
-      by: "Company XYZ",
-      source: "Dealer",
-      purchaseDate: "2023-01-15",
-      capital: 25000,
-      maintenance: 500,
-      total: 25500,
-      day: 15,
-      month: "January",
-      todaysDate: "2024-03-29",
-      vehicleLocation: "Garage",
-    },
-    // Add more sample data as needed
-  ]);
-  const [modalOpen, setModalOpen] = useState(false);
+// Define the CarsPage component
+const CarsPage = () => {
+  const router = useRouter();
+  const [cars, setCars] = useState([]); // State to hold the car data
+  const [modalOpen, setModalOpen] = useState(false); // State for the modal
+
+  // useEffect hook to fetch cars data when the component mounts
   useEffect(() => {
-    // This useEffect fetches data, but for the sample purpose, we don't need it now.
-    // You can replace it with actual data fetching logic if needed.
+    fetchCars(); // Fetch cars data
   }, []);
 
-  const handleRowClick = (id) => {
-    router.push(`/CarsInventory/Cars/${id}`); // Use Router.push to navigate
+  // Function to fetch cars data from the backend API
+  const fetchCars = async () => {
+    try {
+      // Make a GET request to fetch cars data
+      const response = await axios.get("/api/car");
+      setCars(response.data); // Update state with fetched cars data
+    } catch (error) {
+      console.error("Error fetching cars:", error);
+    }
   };
-console.log(params)
+
+  // Function to handle row click (navigate to car details page)
+  const handleRowClick = (id) => {
+    router.push(`/en/CarsInventory/Cars/${id}`);
+  };
+
   return (
     <PageContainer title="Cars" description="Cars Inventory">
       <Button
@@ -68,48 +63,34 @@ console.log(params)
               <TableRow>
                 {/* Table headers adjusted for your columns */}
                 <TableCell>ID</TableCell>
-                <TableCell>Car Name</TableCell>
+                <TableCell>Name</TableCell>
                 <TableCell>Color</TableCell>
                 <TableCell>Model</TableCell>
                 <TableCell>Chassis Number</TableCell>
                 <TableCell>Owner</TableCell>
-                <TableCell>By</TableCell>
-                <TableCell>Source</TableCell>
-                <TableCell>Purchase Date</TableCell>
-                <TableCell>Capital</TableCell>
+                <TableCell>Purchase Details</TableCell>
                 <TableCell>Maintenance</TableCell>
-                <TableCell>Total</TableCell>
-                <TableCell>Day</TableCell>
-                <TableCell>Month</TableCell>
-                <TableCell>Today&apos;s Date</TableCell>
-                <TableCell>Vehicle Location</TableCell>
+                <TableCell>Current Location</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {cars.map((car) => (
                 <TableRow
-                  key={car.id}
-                  onClick={() => handleRowClick(car.id)} // Handle row click
-                  style={{ cursor: "pointer" }} // Add pointer cursor for better UX
+                  key={car._id} // Use _id as the key for each row
+                  onClick={() => handleRowClick(car._id)}
+                  style={{ cursor: "pointer" }}
                   hover={true}
                 >
                   {/* Table cells adjusted for your data structure */}
-                  <TableCell>{car.id}</TableCell>
-                  <TableCell>{car.carName}</TableCell>
+                  <TableCell>{car._id}</TableCell>
+                  <TableCell>{car.name}</TableCell>
                   <TableCell>{car.color}</TableCell>
                   <TableCell>{car.model}</TableCell>
                   <TableCell>{car.chassisNumber}</TableCell>
                   <TableCell>{car.owner}</TableCell>
-                  <TableCell>{car.by}</TableCell>
-                  <TableCell>{car.source}</TableCell>
-                  <TableCell>{car.purchaseDate}</TableCell>
-                  <TableCell>{car.capital}</TableCell>
+                  <TableCell>{car.purchaseDetails}</TableCell>
                   <TableCell>{car.maintenance}</TableCell>
-                  <TableCell>{car.total}</TableCell>
-                  <TableCell>{car.day}</TableCell>
-                  <TableCell>{car.month}</TableCell>
-                  <TableCell>{car.todaysDate}</TableCell>
-                  <TableCell>{car.vehicleLocation}</TableCell>
+                  <TableCell>{car.currentLocation}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -124,4 +105,5 @@ console.log(params)
   );
 };
 
+// Export the CarsPage component
 export default CarsPage;

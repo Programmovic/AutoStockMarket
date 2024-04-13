@@ -12,7 +12,7 @@ const SidebarItems = ({ toggleMobileSidebar, params }: any) => {
   return (
     <Box sx={{ px: 3 }}>
       <List sx={{ pt: 0 }} className="sidebarNav" component="div">
-        {localizeMenuItems(params?.lang).map((item) => {
+        {localizeMenuItems(params?.lang || "en").map((item) => {
           // {/********SubHeader**********/}
           if (item.subheader) {
             return <NavGroup item={item} key={item.subheader} />;
