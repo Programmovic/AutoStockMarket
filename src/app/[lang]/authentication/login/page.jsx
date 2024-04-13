@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button, CircularProgress, TextField, Typography, Grid, Box } from "@mui/material";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 
-const AuthLogin = ({ subtext, subtitle }) => {
+const AuthLogin = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -86,8 +86,6 @@ const AuthLogin = ({ subtext, subtitle }) => {
               >
                 {loading ? <CircularProgress size={24} color="inherit" /> : "Sign In"}
               </Button>
-              {subtext}
-              {subtitle}
             </form>
           </Grid>
         </Grid>
