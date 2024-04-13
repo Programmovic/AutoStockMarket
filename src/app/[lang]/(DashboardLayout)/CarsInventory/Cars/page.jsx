@@ -61,8 +61,7 @@ const CarsPage = () => {
           <Table aria-label="cars table">
             <TableHead>
               <TableRow>
-                {/* Table headers adjusted for your columns */}
-                <TableCell>ID</TableCell>
+                
                 <TableCell>Name</TableCell>
                 <TableCell>Color</TableCell>
                 <TableCell>Model</TableCell>
@@ -81,8 +80,7 @@ const CarsPage = () => {
                   style={{ cursor: "pointer" }}
                   hover={true}
                 >
-                  {/* Table cells adjusted for your data structure */}
-                  <TableCell>{car._id}</TableCell>
+                  
                   <TableCell>{car.name}</TableCell>
                   <TableCell>{car.color}</TableCell>
                   <TableCell>{car.model}</TableCell>
@@ -100,6 +98,7 @@ const CarsPage = () => {
       <CreateCarModal
         open={modalOpen}
         handleClose={() => setModalOpen(false)}
+        fetchCars={fetchCars}
       />
     </PageContainer>
   );

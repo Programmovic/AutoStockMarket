@@ -40,7 +40,7 @@ const CarDetailsPage = ({ params }) => {
 
   return (
     <PageContainer
-      title="Car Details"
+      title={`Car Details | ${car?.name} | ${car?.model}`}
       description="Details of the selected car"
     >
       <DashboardCard>
