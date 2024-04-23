@@ -76,7 +76,7 @@ const InvoicePage = ({ params }) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  mb: 2,
+                  mb: 3,
                 }}
               >
                 <div>
@@ -90,8 +90,8 @@ const InvoicePage = ({ params }) => {
                 <Image
                   src="/images/logos/asm_logo.png"
                   alt="Company Logo"
-                  width={200}
-                  height={200}
+                  width={300}
+                  height={150}
                 />
               </Box>
 
