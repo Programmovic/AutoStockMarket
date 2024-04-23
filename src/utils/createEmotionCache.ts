@@ -1,3 +1,4 @@
+'use client'
 import createCache from '@emotion/cache';
 
 const isBrowser = typeof document !== 'undefined';

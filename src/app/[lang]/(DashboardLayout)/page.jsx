@@ -1,5 +1,5 @@
 'use client'
-import { Grid, Box } from '@mui/material';
+import { Grid, Box } from '../../../lib/mui';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 // components
 import SalesOverview from '@/app/(DashboardLayout)/components/dashboard/SalesOverview';
@@ -9,8 +9,7 @@ import ProductPerformance from '@/app/(DashboardLayout)/components/dashboard/Pro
 import Blog from '@/app/(DashboardLayout)/components/dashboard/Blog';
 import MonthlyEarnings from '@/app/(DashboardLayout)/components/dashboard/MonthlyEarnings';
 
-const Dashboard = (params) => {
-  console.log(params)
+const Dashboard = () => {
   return (
     <PageContainer title="Dashboard" description="this is Dashboard" >
       <Box>

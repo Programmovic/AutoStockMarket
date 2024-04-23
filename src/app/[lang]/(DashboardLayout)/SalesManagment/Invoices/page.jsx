@@ -1,6 +1,6 @@
-"use client";
+'use client'
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import {
@@ -11,46 +11,128 @@ import {
   TableHead,
   TableRow,
   Paper,
+  TextField,
+  Box,
+  Button,
 } from "@mui/material";
 
 const InvoicesPage = () => {
   const [invoices, setInvoices] = useState([]);
-  const router = useRouter(); // Use useRouter hook
+  const [filters, setFilters] = useState({
+    startDate: '',
+    endDate: '',
+    minAmount: '',
+    maxAmount: '',
+    transactionId: '',
+  });
+  const router = useRouter();
 
   useEffect(() => {
     const fetchInvoices = async () => {
-      // Placeholder for your actual invoice fetching logic
-      const data = [
-        {
-          id: 1,
-          transactionId: "TXN123456",
-          customerId: "CUST789",
-          invoiceDate: "2024-03-28",
-          totalAmount: 1000,
-        },
-        // Add more invoice mock data here if needed
-      ];
-      setInvoices(data);
+      try {
+        const queryParams = new URLSearchParams(filters).toString();
+        const response = await fetch(`/api/invoices?${queryParams}`);
+        if (response.ok) {
+          const data = await response.json();
+          setInvoices(data.invoices);
+        } else {
+          console.error("Failed to fetch invoices");
+        }
+      } catch (error) {
+        console.error("Error fetching invoices:", error);
+      }
     };
 
     fetchInvoices();
-  }, []);
+  }, [filters]);
 
   const handleRowClick = (invoiceId) => {
-    // Navigate to the invoice detail page
-    router.push(`/SalesManagment/Invoices/${invoiceId}`);
+    router.push(`/en/SalesManagment/Invoices/${invoiceId}`);
+  };
+
+  const handleFilterChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      startDate: '',
+      endDate: '',
+      minAmount: '',
+      maxAmount: '',
+      transactionId: '',
+    });
   };
 
   return (
     <PageContainer title="Invoices" description="List of all invoices">
       <DashboardCard title="Invoice List">
+        <Box mb={2} display="flex" alignItems="center">
+          <TextField
+            name="startDate"
+            label="Start Date"
+            type="date"
+            value={filters.startDate}
+            onChange={handleFilterChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{ marginRight: 2 }}
+          />
+          <TextField
+            name="endDate"
+            label="End Date"
+            type="date"
+            value={filters.endDate}
+            onChange={handleFilterChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{ marginRight: 2 }}
+          />
+          <TextField
+            name="minAmount"
+            label="Min Amount"
+            type="number"
+            value={filters.minAmount}
+            onChange={handleFilterChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{ marginRight: 2 }}
+          />
+          <TextField
+            name="maxAmount"
+            label="Max Amount"
+            type="number"
+            value={filters.maxAmount}
+            onChange={handleFilterChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{ marginRight: 2 }}
+          />
+          <TextField
+            name="transactionId"
+            label="Transaction ID"
+            value={filters.transactionId}
+            onChange={handleFilterChange}
+            sx={{ marginRight: 2 }}
+          />
+          <Button variant="contained" onClick={handleClearFilters}>
+            Clear Filters
+          </Button>
+        </Box>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="invoice table">
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Transaction ID</TableCell>
-                <TableCell>Customer ID</TableCell>
+                <TableCell>Customer</TableCell>
                 <TableCell>Invoice Date</TableCell>
                 <TableCell>Total Amount</TableCell>
               </TableRow>
@@ -58,15 +140,15 @@ const InvoicesPage = () => {
             <TableBody>
               {invoices.map((invoice) => (
                 <TableRow 
-                  key={invoice.id} 
+                  key={invoice._id} 
                   hover={true} 
-                  onClick={() => handleRowClick(invoice.id)} 
-                  style={{ cursor: 'pointer' }} // Change cursor to indicate clickability
+                  onClick={() => handleRowClick(invoice._id)} 
+                  style={{ cursor: 'pointer' }} 
                 >
-                  <TableCell>{invoice.id}</TableCell>
-                  <TableCell>{invoice.transactionId}</TableCell>
-                  <TableCell>{invoice.customerId}</TableCell>
-                  <TableCell>{invoice.invoiceDate}</TableCell>
+                  <TableCell>{invoice._id}</TableCell>
+                  <TableCell>{invoice.transaction._id}</TableCell>
+                  <TableCell>{invoice.customer.name}</TableCell>
+                  <TableCell>{new Date(invoice.invoiceDate).toLocaleString()}</TableCell>
                   <TableCell>{invoice.totalAmount}</TableCell>
                 </TableRow>
               ))}

@@ -10,7 +10,6 @@ const invoiceSchema = new mongoose.Schema(
     customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
-      required: true,
     },
     invoiceDate: Date,
     totalAmount: Number,
@@ -18,4 +17,4 @@ const invoiceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Invoice", invoiceSchema);
+module.exports = mongoose.models.Invoice || mongoose.model("Invoice", invoiceSchema);

@@ -10,11 +10,10 @@ const carSchema = new mongoose.Schema(
     purchaseDetails: String,
     maintenance: String,
     currentLocation: String,
-    // Assuming a car can have many services - demonstrating a Many-to-Many relationship
+    entryDate: { type: Date, default: Date.now }, // Add entryDate field
     services: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],
   },
   { timestamps: true }
 );
-
 
 module.exports = mongoose.models.Car || mongoose.model("Car", carSchema);

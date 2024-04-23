@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { styled } from "@mui/material/styles";
-import { CarRental } from "@mui/icons-material";
-import Typography from "@mui/material/Typography"; // Import Typography
+import Image from "next/image";
 
 const LinkStyled = styled(Link)(() => ({
-  height: "70px",
-  width: "180px",
   overflow: "hidden",
   display: "flex",
   alignItems: "center",
@@ -16,14 +13,7 @@ const LinkStyled = styled(Link)(() => ({
 const Logo = () => {
   return (
     <LinkStyled href="/">
-      <CarRental sx={{ fontSize: 40, color: "#5D87FF" }} />
-      <Typography
-        variant="h6"
-        component="span"
-        sx={{ marginLeft: 1, fontSize: 40, color: "#5D87FF" }}
-      >
-        ASM
-      </Typography>{" "}
+      <Image src="/images/logos/asm_logo.png" alt="Company Logo" width={200} height={100} />
       {/* Use Typography here */}
     </LinkStyled>
   );

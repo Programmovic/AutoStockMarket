@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 
 const transactionSchema = new mongoose.Schema(
   {
-    type: String, // Could use enum here as well
-    date: Date,
+    type: String,
+    date: { type: Date, default: Date.now },
     amount: Number,
     description: String,
-    // For Many-to-Many relation with Partners
     partners: [{ type: mongoose.Schema.Types.ObjectId, ref: "Partner" }],
+    car: { type: mongoose.Schema.Types.ObjectId, ref: "Car" },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Transaction", transactionSchema);
+module.exports = mongoose.models.Transaction || mongoose.model("Transaction", transactionSchema);

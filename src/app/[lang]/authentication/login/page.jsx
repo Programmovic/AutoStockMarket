@@ -5,6 +5,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Button, CircularProgress, TextField, Typography, Grid, Box } from "@mui/material";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
+import Cookies from "js-cookie";
+
 
 const AuthLogin = () => {
   const [formData, setFormData] = useState({
@@ -29,6 +31,8 @@ const AuthLogin = () => {
     try {
       const response = await axios.post("/api/admin/sign-in", formData);
       if (response.data.token) {
+        // Save token in cookies
+        Cookies.set("token", response.data.token, { expires: 7 }); // Token expires in 7 days
         // Login successful, navigate to /en
         router.push("/en");
       }
@@ -38,7 +42,7 @@ const AuthLogin = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <PageContainer title="Login" description="Login to your account">
       <Box

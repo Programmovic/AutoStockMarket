@@ -61,6 +61,13 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: "Transactions",
+    icon: IconMoneybag,
+    href: "/SalesManagment/Transactions",
+    translatedTitle: "ملف 1 - يومية",
+  },
+  {
+    id: uniqueId(),
     title: "Daily Transactions",
     icon: IconMoneybag,
     href: "/SalesManagment/DailyTransactions",
@@ -118,6 +125,13 @@ const Menuitems = [
   {
     navlabel: true,
     subheader: "Customer Management",
+  },
+  {
+    id: uniqueId(),
+    title: "Customers",
+    icon: IconUser,
+    href: "/CustomerManagement/Customers",
+    translatedTitle: "ملف 1 - ديون المعرض",
   },
   {
     id: uniqueId(),

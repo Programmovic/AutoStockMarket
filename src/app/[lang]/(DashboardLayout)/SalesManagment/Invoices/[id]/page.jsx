@@ -14,8 +14,10 @@ import {
   Box,
   TableContainer,
   Button,
+  Divider,
 } from "@mui/material";
-import { usePDF, Resolution, Margin } from "react-to-pdf";
+import { usePDF, Resolution } from "react-to-pdf";
+import Image from "next/image";
 
 const InvoicePage = ({ params }) => {
   const [invoice, setInvoice] = useState(null);
@@ -34,15 +36,21 @@ const InvoicePage = ({ params }) => {
   useEffect(() => {
     const fetchInvoice = async () => {
       if (id) {
-        // Simulated data until API integration
-        const data = {
-          id: 1,
-          transactionId: "TXN123456",
-          customerId: "CUST789",
-          invoiceDate: "2024-03-28",
-          totalAmount: 1000,
-        };
-        setInvoice(data);
+        try {
+          const response = await fetch(`/api/invoices/${id}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch invoice");
+          }
+          const data = await response.json();
+          setInvoice(data.invoice);
+        } catch (error) {
+          console.error("Error fetching invoice:", error);
+          setInvoice(null);
+        }
       }
     };
 
@@ -55,46 +63,136 @@ const InvoicePage = ({ params }) => {
       description="Details of the selected invoice"
     >
       <Box sx={{ mb: 2 }}>
-          <Button variant="contained" onClick={() => toPDF()}>
-            Download Invoice
-          </Button>
-        </Box>
+        <Button variant="contained" onClick={() => toPDF()}>
+          Download Invoice
+        </Button>
+      </Box>
       <DashboardCard>
-        
         <Box ref={targetRef}>
           {invoice ? (
             <Box>
-              <Typography variant="h5" align="center" gutterBottom sx={{ mb: 2 }}>
-                Invoice #{invoice.id}
-              </Typography>
-              <Typography variant="body1" align="center" sx={{ mb: 2 }}>
-                Detailed information about the transaction.
-              </Typography>
-              <TableContainer component={Paper}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <div>
+                  <Typography variant="h5" gutterBottom>
+                    Invoice #{invoice._id}
+                  </Typography>
+                  <Typography variant="body1">
+                    Detailed information about the transaction.
+                  </Typography>
+                </div>
+                <Image
+                  src="/images/logos/asm_logo.png"
+                  alt="Company Logo"
+                  width={200}
+                  height={200}
+                />
+              </Box>
+
+              <TableContainer component={Paper} sx={{p: 5}}>
                 <Table aria-label="invoice details table">
                   <TableBody>
                     <TableRow>
-                      <TableCell><strong>Transaction ID:</strong></TableCell>
-                      <TableCell>{invoice.transactionId}</TableCell>
+                      <TableCell>
+                        <strong>Transaction ID:</strong>
+                      </TableCell>
+                      <TableCell>{invoice.transaction._id}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell><strong>Customer ID:</strong></TableCell>
-                      <TableCell>{invoice.customerId}</TableCell>
+                      <TableCell>
+                        <strong>Transaction Type:</strong>
+                      </TableCell>
+                      <TableCell>{invoice.transaction.type}</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell><strong>Invoice Date:</strong></TableCell>
-                      <TableCell>{invoice.invoiceDate}</TableCell>
+                      <TableCell>
+                        <strong>Transaction Date:</strong>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(
+                          invoice.transaction.date
+                        ).toLocaleDateString()}
+                      </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell><strong>Total Amount:</strong></TableCell>
+                      <TableCell>
+                        <strong>Transaction Amount:</strong>
+                      </TableCell>
+                      <TableCell>
+                        ${invoice.transaction.amount.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Transaction Description:</strong>
+                      </TableCell>
+                      <TableCell>{invoice.transaction.description}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Customer Name:</strong>
+                      </TableCell>
+                      <TableCell>{invoice.customer.name}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Customer Contact Details:</strong>
+                      </TableCell>
+                      <TableCell>{invoice.customer.contactDetails}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Invoice Date:</strong>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(invoice.invoiceDate).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Total Amount:</strong>
+                      </TableCell>
                       <TableCell>${invoice.totalAmount.toFixed(2)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell colSpan={2}>
+                        <Divider variant="middle" sx={{ my: 2 }} />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <Typography
+                          variant="body1"
+                          sx={{ mr: 4, fontWeight: "bold" }}
+                        >
+                          <span style={{ fontSize: "1rem" }}>🖊️</span>{" "}
+                          Signature:
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          variant="body1"
+                          sx={{ mr: 4, fontWeight: "bold" }}
+                        >
+                          <span style={{ fontSize: "1rem" }}>🖊️</span>{" "}
+                          Signature:
+                        </Typography>
+                      </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>
             </Box>
           ) : (
-            <Typography variant="body1" align="center">Loading invoice data...</Typography>
+            <Typography variant="body1" align="center">
+              Loading invoice data...
+            </Typography>
           )}
         </Box>
       </DashboardCard>

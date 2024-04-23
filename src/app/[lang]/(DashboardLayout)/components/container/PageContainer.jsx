@@ -1,7 +1,9 @@
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import { useRouter } from "next/navigation";
 
-const PageContainer = ({ title, description, children, params }) => {
-  console.log(params)
+const PageContainer = ({ title, description, children }) => {
+  const router = useRouter();
+
   return (
     <HelmetProvider>
       <div>
@@ -14,8 +16,5 @@ const PageContainer = ({ title, description, children, params }) => {
     </HelmetProvider>
   );
 };
-export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ar' }]
-}
- 
+
 export default PageContainer;

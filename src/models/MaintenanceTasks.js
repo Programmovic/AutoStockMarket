@@ -10,4 +10,4 @@ const maintenanceTaskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("MaintenanceTask", maintenanceTaskSchema);
+module.exports = mongoose.models.MaintenanceTask || mongoose.model("MaintenanceTask", maintenanceTaskSchema);

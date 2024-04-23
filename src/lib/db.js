@@ -23,7 +23,7 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = connect(MONGODB_URI, opts)
+    cached.promise = await connect(MONGODB_URI, opts)
       .then((mongoose) => {
         console.log("✅ New connection established");
         return mongoose;
