@@ -1,9 +1,7 @@
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { useRouter } from "next/navigation";
 
-const PageContainer = ({ title, description, children }) => {
-  const router = useRouter();
-
+const PageContainer = ({ title, description, children, params }) => {
+console.log(params)
   return (
     <HelmetProvider>
       <div>

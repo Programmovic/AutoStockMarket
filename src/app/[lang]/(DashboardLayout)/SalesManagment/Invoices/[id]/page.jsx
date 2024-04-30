@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 import { usePDF, Resolution } from "react-to-pdf";
 import Image from "next/image";
+import Loading from "../../../loading";
+
 
 const InvoicePage = ({ params }) => {
   const [invoice, setInvoice] = useState(null);
@@ -102,13 +104,13 @@ const InvoicePage = ({ params }) => {
                       <TableCell>
                         <strong>Transaction ID:</strong>
                       </TableCell>
-                      <TableCell>{invoice.transaction._id}</TableCell>
+                      <TableCell>{invoice?.transaction?._id}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
                         <strong>Transaction Type:</strong>
                       </TableCell>
-                      <TableCell>{invoice.transaction.type}</TableCell>
+                      <TableCell>{invoice?.transaction?.type}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
@@ -116,7 +118,7 @@ const InvoicePage = ({ params }) => {
                       </TableCell>
                       <TableCell>
                         {new Date(
-                          invoice.transaction.date
+                          invoice?.transaction.date
                         ).toLocaleDateString()}
                       </TableCell>
                     </TableRow>
@@ -125,26 +127,26 @@ const InvoicePage = ({ params }) => {
                         <strong>Transaction Amount:</strong>
                       </TableCell>
                       <TableCell>
-                        ${invoice.transaction.amount.toFixed(2)}
+                        ${invoice?.transaction.amount.toFixed(2)}
                       </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
                         <strong>Transaction Description:</strong>
                       </TableCell>
-                      <TableCell>{invoice.transaction.description}</TableCell>
+                      <TableCell>{invoice?.transaction.description}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
                         <strong>Customer Name:</strong>
                       </TableCell>
-                      <TableCell>{invoice.customer.name}</TableCell>
+                      <TableCell>{invoice?.customer.name}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
                         <strong>Customer Contact Details:</strong>
                       </TableCell>
-                      <TableCell>{invoice.customer.contactDetails}</TableCell>
+                      <TableCell>{invoice?.customer.contactDetails}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
@@ -190,9 +192,7 @@ const InvoicePage = ({ params }) => {
               </TableContainer>
             </Box>
           ) : (
-            <Typography variant="body1" align="center">
-              Loading invoice data...
-            </Typography>
+            <Loading/>
           )}
         </Box>
       </DashboardCard>

@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import { styled, Container, Box } from "@mui/material";
 import React, { useState } from "react";
 import Header from "@/app/(DashboardLayout)/layout/header/Header";
@@ -20,19 +20,10 @@ const PageWrapper = styled("div")(() => ({
   backgroundColor: "transparent",
 }));
 
-interface Props {
-  children: React.ReactNode;
-}
-
-
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children, params }) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  console.log("params: " + params);
   return (
     <MainWrapper className="mainwrapper">
       {/* ------------------------------------------- */}

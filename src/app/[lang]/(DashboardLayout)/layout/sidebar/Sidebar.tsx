@@ -2,6 +2,7 @@ import { useMediaQuery, Box, Drawer } from "@mui/material";
 import Logo from "../shared/logo/Logo";
 import SidebarItems from "./SidebarItems";
 import { Upgrade } from "./Updrade";
+import { useParams } from "next/navigation";
 
 interface ItemType {
   isMobileSidebarOpen: boolean;
@@ -13,9 +14,9 @@ const Sidebar = ({
   isMobileSidebarOpen,
   onSidebarClose,
   isSidebarOpen,
-}: ItemType, {params}: any) => {
+}: ItemType, ) => {
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
-console.log(params)
+  
   const sidebarWidth = "270px";
 
   if (lgUp) {

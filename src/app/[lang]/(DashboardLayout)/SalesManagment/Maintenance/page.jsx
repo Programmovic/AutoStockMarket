@@ -10,61 +10,92 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
+  Grid
 } from "@mui/material";
+import Loading from "../../loading"; // Import the loading component
+import AnalysisCard from "../../components/shared/DashboardAnalysisCard";
 
-const VehicleMaintenancePage = () => {
-  const [vehicleData, setVehicleData] = useState([]);
+const MaintenancePage = () => {
+  const [maintenanceDetails, setMaintenanceDetails] = useState(null);
+  const [loading, setLoading] = useState(false); // Add loading state
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch vehicle maintenance data here
-    const fetchVehicleData = async () => {
+    const fetchMaintenanceDetails = async () => {
+      setLoading(true); // Set loading state to true when fetching starts
       try {
-        // Replace this with the actual API endpoint to fetch vehicle data
-        const response = await fetch("API_ENDPOINT_TO_FETCH_VEHICLE_DATA");
+        const response = await fetch("/api/maintenance_tasks"); // Adjust API endpoint to match your backend
         if (response.ok) {
           const data = await response.json();
-          setVehicleData(data);
+          setMaintenanceDetails(data.maintenanceDetails);
+          setError("");
         } else {
-          console.error("Failed to fetch vehicle maintenance data");
+          console.error("Failed to fetch maintenance data");
+          setError("Failed to fetch maintenance data. Please try again later.");
         }
       } catch (error) {
-        console.error("Error fetching vehicle maintenance data:", error);
+        console.error("Error fetching maintenance data:", error);
+        setError("Failed to fetch maintenance data. Please try again later.");
+      } finally {
+        setLoading(false); // Set loading state to false when fetching ends
       }
     };
 
-    fetchVehicleData();
+    fetchMaintenanceDetails();
   }, []);
 
   return (
-    <PageContainer title="Vehicle Maintenance" description="Details of vehicle maintenance tasks">
-      <DashboardCard title="Vehicle Maintenance Records">
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="vehicle maintenance table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Type</TableCell>
-                <TableCell>Color</TableCell>
-                <TableCell>Model</TableCell>
-                <TableCell>Chassis Number</TableCell>
-                <TableCell>Date</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {vehicleData.map((vehicle, index) => (
-                <TableRow key={index}>
-                  <TableCell>{vehicle.type}</TableCell>
-                  <TableCell>{vehicle.color}</TableCell>
-                  <TableCell>{vehicle.model}</TableCell>
-                  <TableCell>{vehicle.chassisNumber}</TableCell>
-                  <TableCell>{vehicle.date}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+    <PageContainer title="Maintenance" description="Total Maintenance Costs and Task Details">
+      <DashboardCard title="Maintenance">
+        {loading ? (
+          <Loading />
+        ) : error ? (
+          <div>{error}</div>
+        ) : maintenanceDetails ? (
+          <>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6} md={3}>
+                <AnalysisCard
+                  title="Total Maintenance Cost"
+                  number={maintenanceDetails.totalMaintenanceCost}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <AnalysisCard
+                  title="Number of Tasks"
+                  number={maintenanceDetails.totalTasks}
+                />
+              </Grid>
+            </Grid>
+
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="maintenance details table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Car ID</TableCell>
+                    <TableCell>Task Description</TableCell>
+                    <TableCell>Task Date</TableCell>
+                    <TableCell>Task Cost</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {maintenanceDetails.tasksDetails.map((task) => (
+                    <TableRow key={task._id}>
+                      <TableCell>{task.car._id}</TableCell>
+                      <TableCell>{task.taskDescription}</TableCell>
+                      <TableCell>{new Date(task.taskDate).toLocaleString()}</TableCell>
+                      <TableCell>{task.taskCost}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : null}
       </DashboardCard>
     </PageContainer>
   );
 };
 
-export default VehicleMaintenancePage;
+export default MaintenancePage;

@@ -146,8 +146,8 @@ const InvoicesPage = () => {
                   style={{ cursor: 'pointer' }} 
                 >
                   <TableCell>{invoice._id}</TableCell>
-                  <TableCell>{invoice.transaction._id}</TableCell>
-                  <TableCell>{invoice.customer.name}</TableCell>
+                  <TableCell>{invoice?.transaction?._id}</TableCell>
+                  <TableCell>{invoice?.customer?.name}</TableCell>
                   <TableCell>{new Date(invoice.invoiceDate).toLocaleString()}</TableCell>
                   <TableCell>{invoice.totalAmount}</TableCell>
                 </TableRow>

@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 import { CircularProgress, Box, Skeleton } from "@mui/material";
-import './loading.scss'
+import '../loading.scss'
 
 const Loading = () => {
   return (

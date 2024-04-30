@@ -1,8 +1,27 @@
 const mongoose = require("mongoose");
+import Customer from './Customer'
+import Car from './Cars'
 
 const maintenanceTaskSchema = new mongoose.Schema(
   {
-    car: { type: mongoose.Schema.Types.ObjectId, ref: "Car", required: true },
+    car: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Car" // Reference to Car model
+    },
+    externalCarDetails: {
+      // Store details of non-existing car
+      type: {
+        name: String,
+        color: String,
+        model: String,
+        chassisNumber: String,
+        Owner: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Customer" // Reference to Customer model
+        },
+      },
+      default: null
+    },
     taskDescription: String,
     taskDate: Date,
     taskCost: Number,

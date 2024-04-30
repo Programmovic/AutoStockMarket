@@ -1,7 +1,16 @@
-'use client'
+"use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 
@@ -17,9 +26,9 @@ const UserDataPage = ({ params }) => {
       try {
         // Send a GET request to the API endpoint to fetch user data
         const response = await axios.get(`/api/admin/${params.userId}`);
-
+        console.log(response);
         // Set user data in the state
-        setUserData(response.data.admin);
+        setUserData(response.data.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -54,6 +63,10 @@ const UserDataPage = ({ params }) => {
                 <TableRow>
                   <TableCell>Role</TableCell>
                   <TableCell>{userData?.role}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Benefits</TableCell>
+                  <TableCell>{userData?.employee?.benefits}</TableCell>
                 </TableRow>
                 {/* Add more rows for additional fields as needed */}
               </TableBody>

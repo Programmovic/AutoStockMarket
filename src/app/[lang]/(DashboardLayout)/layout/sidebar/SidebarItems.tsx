@@ -4,11 +4,13 @@ import { usePathname } from "next/navigation";
 import { Box, List } from "@mui/material";
 import NavItem from "./NavItem";
 import NavGroup from "./NavGroup/NavGroup";
+import { useParams } from "next/navigation";
 
-const SidebarItems = ({ toggleMobileSidebar, params }: any) => {
+const SidebarItems = ({ toggleMobileSidebar }: any) => {
   const pathname = usePathname();
   const pathDirect = pathname;
-  console.log(params)
+  const { params }: any = useParams();
+  console.log("params", params);
   return (
     <Box sx={{ px: 3 }}>
       <List sx={{ pt: 0 }} className="sidebarNav" component="div">

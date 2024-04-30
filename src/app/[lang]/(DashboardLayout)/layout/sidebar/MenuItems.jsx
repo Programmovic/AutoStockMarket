@@ -117,9 +117,9 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Exhibition Car Maintenance",
+    title: "External Car Maintenance",
     icon: IconExchange,
-    href: "/SalesManagment/ExhibitionCarMaintenance",
+    href: "/SalesManagment/ExternalCarMaintenance",
     translatedTitle: "ملف 2 - صيانة السيارات في المعرض",
   },
   {
@@ -164,17 +164,6 @@ const Menuitems = [
     icon: IconMoneybag,
     href: "/EmployeeManagement/EmployeeSalary",
     translatedTitle: "ملف 1 - رواتب الموظفين",
-  },
-  {
-    navlabel: true,
-    subheader: "Document Management",
-  },
-  {
-    id: uniqueId(),
-    title: "Jalal Decor",
-    icon: IconReport,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 2 - زينة جالل",
   },
   {
     navlabel: true,

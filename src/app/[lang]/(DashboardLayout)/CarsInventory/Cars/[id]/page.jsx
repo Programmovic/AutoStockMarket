@@ -21,6 +21,7 @@ import {
   Modal,
   TextField,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import { useReactToPrint } from "react-to-print";
 import jsPDF from "jspdf";
@@ -35,7 +36,7 @@ import {
 } from "@mui/icons-material";
 import CreateCarModal from "../../../components/shared/CreateCarModal";
 import MaintenanceTasksList from "../../../components/shared/CarMaintenanceTasks";
-import Loading from '../../../loading'
+import Loading from "../../../loading";
 
 const initialCarDetails = {
   value: "",
@@ -83,7 +84,7 @@ const CarDetailsPage = ({ params }) => {
   const handleSellCar = async () => {
     const updatedCarDetails = {
       ...carDetails,
-      purchaser: selectedPurchaser, 
+      purchaser: selectedPurchaser,
     };
 
     try {
@@ -232,11 +233,7 @@ const CarDetailsPage = ({ params }) => {
       <DashboardCard>
         <>
           {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
+            <Box display="flex" justifyContent="center" alignItems="center">
               <Loading />
             </Box>
           ) : (
@@ -323,7 +320,6 @@ const CarDetailsPage = ({ params }) => {
                   </Tooltip>
                 </Box>
               </Box>
-
               <TableContainer component={Paper} id="car-details">
                 <Table aria-label="car details table">
                   <TableBody>
@@ -425,7 +421,6 @@ const CarDetailsPage = ({ params }) => {
                   </TableBody>
                 </Table>
               </TableContainer>
-
               {/* Delete Confirmation Modal */}
               <Modal
                 open={deleteConfirmationOpen}
@@ -481,7 +476,6 @@ const CarDetailsPage = ({ params }) => {
                   </Box>
                 </Box>
               </Modal>
-
               <Modal
                 open={isSellModalOpen}
                 onClose={() => {
@@ -502,6 +496,7 @@ const CarDetailsPage = ({ params }) => {
                     boxShadow: 24,
                     p: 4,
                     borderRadius: 5,
+                    width: 800,
                   }}
                 >
                   <Typography
@@ -520,67 +515,106 @@ const CarDetailsPage = ({ params }) => {
                   >
                     Are you sure you want to sell {car?.name}?
                   </Typography>
-                  <Autocomplete
-                    options={customers}
-                    getOptionLabel={(option) => option.name}
-                    getOptionSelected={(option, value) =>
-                      option._id === value._id
-                    }
-                    renderInput={(params) => (
+
+                  <Grid container spacing={2}>
+                    {" "}
+                    {/* Set spacing between Grid items */}
+                    <Grid item xs={6}>
+                      {" "}
+                      {/* Each input takes up half of the space */}
+                      <Autocomplete
+                        options={customers}
+                        getOptionLabel={(option) => option.name}
+                        getOptionSelected={(option, value) =>
+                          option._id === value._id
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Purchaser"
+                            name="purchaser"
+                            fullWidth
+                            margin="normal"
+                          />
+                        )}
+                        onChange={(event, value) =>
+                          handlePurchaserChange(value)
+                        }
+                      />
+                    </Grid>
+                    
+                    <Grid item xs={6}>
                       <TextField
-                        {...params}
-                        label="Purchaser"
-                        name="purchaser"
+                        label="Selling Price"
+                        name="sellingPrice"
+                        value={carDetails.sellingPrice}
+                        onChange={handleInputChange}
                         fullWidth
                         margin="normal"
                       />
-                    )}
-                    onChange={(event, value) => handlePurchaserChange(value)}
-                  />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        label="Value"
+                        name="value"
+                        value={carDetails.value}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        label="Capital"
+                        name="capital"
+                        value={carDetails.capital}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        label="Maintenance Costs"
+                        name="maintenanceCosts"
+                        value={maintenanceCosts}
+                        fullWidth
+                        margin="normal"
+                        disabled // Set disabled to true to make it disabled but still visible
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        label="Net Profit"
+                        name="netProfit"
+                        value={carDetails.netProfit}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                        disabled
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={6}>
+  {/* Each input takes up half of the space */}
+  <Autocomplete
+    options={customers}
+    getOptionLabel={(option) => option.name}
+    getOptionSelected={(option, value) => option._id === value._id}
+    renderInput={(params) => (
+      <TextField
+        {...params}
+        label="Sales"
+        name="sales"
+        fullWidth
+        margin="normal"
+        helperText="Use this field only if the car is sold outsource."
+      />
+    )}
+    onChange={(event, value) => handlePurchaserChange(value)}
+  />
+</Grid>
 
-                  <TextField
-                    label="Selling Price"
-                    name="sellingPrice"
-                    value={carDetails.sellingPrice}
-                    onChange={handleInputChange}
-                    fullWidth
-                    margin="normal"
-                  />
-
-                  <TextField
-                    label="Value"
-                    name="value"
-                    value={carDetails.value}
-                    onChange={handleInputChange}
-                    fullWidth
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Capital"
-                    name="capital"
-                    value={carDetails.capital}
-                    onChange={handleInputChange}
-                    fullWidth
-                    margin="normal"
-                  />
-                  <TextField
-                    label="Maintenance Costs"
-                    name="maintenanceCosts"
-                    value={maintenanceCosts}
-                    fullWidth
-                    margin="normal"
-                    disabled // Set disabled to true to make it disabled but still visible
-                  />
-
-                  <TextField
-                    label="Net Profit"
-                    name="netProfit"
-                    value={carDetails.netProfit}
-                    onChange={handleInputChange}
-                    fullWidth
-                    margin="normal"
-                    disabled
-                  />
                   <Box textAlign="right">
                     <Button
                       onClick={() => {
@@ -603,7 +637,7 @@ const CarDetailsPage = ({ params }) => {
                   </Box>
                 </Box>
               </Modal>
-
+              
               <Modal
                 open={isAddMaintenanceModalOpen}
                 onClose={() => setIsAddMaintenanceModalOpen(false)}

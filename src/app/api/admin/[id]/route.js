@@ -1,5 +1,6 @@
 import connectDB from "../../../../lib/db";
 import Admin from "../../../../models/Admin";
+import Employee from "../../../../models/Employee"; // Import the Employee model
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
@@ -17,10 +18,15 @@ export async function GET(req, { params }) {
             return NextResponse.json({ error: "Admin not found" }, { status: 404 });
         }
 
-        // Return the user information
-        return NextResponse.json({ admin });
+        // Find associated employee by admin ID
+        const employee = await Employee.findOne({ admin: id });
+        // Merge admin and employee data into a single object
+        const mergedData = { ...admin.toObject(), employee: employee ? employee.toObject() : null };
+
+        // Return the merged data
+        return NextResponse.json({ data: mergedData });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: "Failed to fetch user information: " + error.message }, { status: 500 });
+        return NextResponse.json({ error: "Failed to fetch admin and employee information: " + error.message }, { status: 500 });
     }
 }

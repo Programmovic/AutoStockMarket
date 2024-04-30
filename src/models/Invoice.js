@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+import Transaction from "./Transaction";
+import Customer from "./Customer";
 
 const invoiceSchema = new mongoose.Schema(
   {

@@ -1,7 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
+import CreateEmployeeModal from "@/app/(DashboardLayout)/components/shared/CreateEmployee";
+import EmployeeAttendance from "@/app/(DashboardLayout)/components/shared/EmployeeAttendance";
+import BonusRecords from "@/app/(DashboardLayout)/components/shared/EmployeeBonus";
+import SalesRecords from "../../../components/shared/EmployeeSales";
+import Loading from "@/app/loading";
 import {
   Table,
   TableBody,
@@ -9,122 +16,237 @@ import {
   TableRow,
   Paper,
   Typography,
+  Box,
+  CircularProgress,
   Button,
+  IconButton,
+  Tooltip,
+  Fade,
+  Modal,
   TableContainer,
 } from "@mui/material";
-import { usePDF, Resolution } from "react-to-pdf";
-import { Margin } from "@mui/icons-material";
+import {
+  EditOutlined,
+  DeleteOutline,
+  PrintOutlined,
+  AddOutlined,
+} from "@mui/icons-material";
 
 const EmployeeDetailsPage = ({ params }) => {
   const [employee, setEmployee] = useState(null);
-  const { id } = params; // Get the employee ID from the query parameters
-  const { toPDF, targetRef } = usePDF({
-    filename: `Employee_Details_${id}.pdf`,
-    resolution: Resolution.HIGH,
-  });
+  const [loading, setLoading] = useState(true);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const router = useRouter();
+  const { id } = params;
+
+  // Fetch employee details
+  const fetchEmployeeDetails = async () => {
+    try {
+      const response = await axios.get(`/api/employee/${id}`);
+      setEmployee(response.data.employee);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching employee details:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchEmployeeDetails = async () => {
-      if (id) {
-        // Simulated data until API integration
-        const sampleEmployee = {
-          id: 1,
-          name: "John Doe",
-          position: "Manager",
-          hireDate: "2022-01-15",
-          salary: 50000,
-          bonuses: 2000,
-          deductions: 1000,
-          benefits: "Health Insurance",
-        };
-
-        if (sampleEmployee.id === parseInt(id)) {
-          setEmployee(sampleEmployee);
-        } else {
-          console.error("Employee not found");
-        }
-      }
-    };
-
     fetchEmployeeDetails();
   }, [id]);
 
+  const handleEditEmployee = () => {
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+  };
+
+  const handlePrintEmployee = () => {
+    // Add printing functionality here
+    console.log("Printing employee details...");
+  };
+
+  const handleDeleteEmployee = async () => {
+    try {
+      const response = await axios.delete(`/api/employee/${id}`);
+      console.log(response.data);
+      router.back(); // Redirect to employee list page after deletion
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+    }
+  };
+
   return (
     <PageContainer
-      title="Employee Details"
-      description={`Details of Employee ${id}`}
+      title={`Employee Details | ${employee?.name}`}
+      description="Details of the selected employee"
     >
       <DashboardCard>
-        <Button
-          variant="contained"
-          onClick={() => toPDF()}
-          sx={{ marginBottom: 4 }}
-        >
-          Download {employee?.name} Details PDF
-        </Button>
-        <div ref={targetRef}>
-          {employee ? (
-            <TableContainer component={Paper}>
-              <Table aria-label="employee details table">
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <strong>ID:</strong>
-                    </TableCell>
-                    <TableCell>{employee.id}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Name:</strong>
-                    </TableCell>
-                    <TableCell>{employee.name}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Position:</strong>
-                    </TableCell>
-                    <TableCell>{employee.position}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Hire Date:</strong>
-                    </TableCell>
-                    <TableCell>{employee.hireDate}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Salary:</strong>
-                    </TableCell>
-                    <TableCell>${employee.salary}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Bonuses:</strong>
-                    </TableCell>
-                    <TableCell>${employee.bonuses}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Deductions:</strong>
-                    </TableCell>
-                    <TableCell>${employee.deductions}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Benefits:</strong>
-                    </TableCell>
-                    <TableCell>{employee.benefits}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+        <>
+          {loading ? (
+            <Loading />
           ) : (
-            <Typography variant="body1" align="center">
-              Employee details not found
-            </Typography>
+            <Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                marginBottom={3}
+              >
+                <Typography variant="h5" gutterBottom>
+                  Employee Details - {employee.name}
+                </Typography>
+                <Box>
+                  <Tooltip
+                    title={`Edit ${employee?.name}`}
+                    arrow
+                    TransitionComponent={Fade}
+                    TransitionProps={{ timeout: 600 }}
+                  >
+                    <IconButton
+                      color="primary"
+                      onClick={handleEditEmployee}
+                      style={{ marginRight: 10 }}
+                    >
+                      <EditOutlined />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title={`Delete ${employee?.name}`}
+                    arrow
+                    TransitionComponent={Fade}
+                    TransitionProps={{ timeout: 600 }}
+                  >
+                    <IconButton
+                      color="primary"
+                      onClick={() => setDeleteConfirmationOpen(true)}
+                      style={{ marginRight: 10 }}
+                    >
+                      <DeleteOutline />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title={`Print ${employee?.name} Info`}
+                    arrow
+                    TransitionComponent={Fade}
+                    TransitionProps={{ timeout: 600 }}
+                  >
+                    <IconButton
+                      color="primary"
+                      onClick={handlePrintEmployee}
+                      style={{ marginRight: 10 }}
+                    >
+                      <PrintOutlined />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
+              <TableContainer component={Paper}>
+                <Table aria-label="employee details table">
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>
+                        <strong>ID:</strong>
+                      </TableCell>
+                      <TableCell>{employee._id}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Name:</strong>
+                      </TableCell>
+                      <TableCell>{employee.name}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Position:</strong>
+                      </TableCell>
+                      <TableCell>{employee.position}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Hire Date:</strong>
+                      </TableCell>
+                      <TableCell>{employee.hireDate}</TableCell>
+                    </TableRow>
+                    {/* Add more rows for additional employee details */}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
           )}
-        </div>
+          <EmployeeAttendance employeeId={id}/>
+          <BonusRecords employeeId={id} deductions={false}/>
+          <BonusRecords employeeId={id} deductions={true}/>
+          <SalesRecords employeeId={id}/>
+        </>
       </DashboardCard>
+
+      {/* Edit Employee Modal */}
+      <CreateEmployeeModal
+        open={editModalOpen}
+        handleClose={handleCloseEditModal}
+        fetchEmployees={fetchEmployeeDetails}
+        initialEmployeeData={employee}
+        isEditing={true}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        open={deleteConfirmationOpen}
+        onClose={() => setDeleteConfirmationOpen(false)}
+        aria-labelledby="delete-employee-confirmation-title"
+        aria-describedby="delete-employee-confirmation-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 5,
+          }}
+        >
+          <Typography
+            id="delete-employee-confirmation-title"
+            variant="h6"
+            component="h2"
+            gutterBottom
+          >
+            Confirm Deletion
+          </Typography>
+          <Typography
+            id="delete-employee-confirmation-description"
+            variant="body1"
+            component="div"
+            gutterBottom
+          >
+            Are you sure you want to delete {employee?.name}?
+          </Typography>
+          <Box textAlign="right">
+            <Button
+              onClick={() => setDeleteConfirmationOpen(false)}
+              color="primary"
+              variant="outlined"
+              style={{ marginRight: 10 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeleteEmployee}
+              color="error"
+              variant="outlined"
+            >
+              Delete
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </PageContainer>
   );
 };

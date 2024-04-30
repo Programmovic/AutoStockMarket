@@ -10,66 +10,91 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Box,
+  Grid
 } from "@mui/material";
+import Loading from "../../loading"; // Import the loading component
+import AnalysisCard from "../../components/shared/DashboardAnalysisCard";
 
 const IncomePage = () => {
-  const [incomeData, setIncomeData] = useState([]);
+  const [incomeDetails, setIncomeDetails] = useState(null);
+  const [loading, setLoading] = useState(false); // Add loading state
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch income data here
-    const fetchIncomeData = async () => {
+    const fetchIncomeDetails = async () => {
+      setLoading(true); // Set loading state to true when fetching starts
       try {
-        // Replace this with actual API endpoint to fetch income data
-        const response = await fetch("API_ENDPOINT_TO_FETCH_INCOME_DATA");
+        const response = await fetch("/api/income");
         if (response.ok) {
           const data = await response.json();
-          setIncomeData(data);
+          setIncomeDetails(data.incomeDetails);
+          setError("");
         } else {
           console.error("Failed to fetch income data");
+          setError("Failed to fetch income data. Please try again later.");
         }
       } catch (error) {
         console.error("Error fetching income data:", error);
+        setError("Failed to fetch income data. Please try again later.");
+      } finally {
+        setLoading(false); // Set loading state to false when fetching ends
       }
     };
 
-    fetchIncomeData();
+    fetchIncomeDetails();
   }, []);
 
   return (
-    <PageContainer title="Income" description="Income Details">
+    <PageContainer title="Income" description="Total Income and Car Details">
       <DashboardCard title="Income">
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="income table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Car Name</TableCell>
-                <TableCell>Model</TableCell>
-                <TableCell>Chassis Number</TableCell>
-                <TableCell>Net Profit</TableCell>
-                <TableCell>Exhibition Profit</TableCell>
-                <TableCell>Financier</TableCell>
-                <TableCell>Partner Profit</TableCell>
-                <TableCell>Date</TableCell>
-                {/* Add more table headings for additional income details */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {incomeData.map((income) => (
-                <TableRow key={income.id}>
-                  <TableCell>{income.carName}</TableCell>
-                  <TableCell>{income.model}</TableCell>
-                  <TableCell>{income.chassisNumber}</TableCell>
-                  <TableCell>{income.netProfit}</TableCell>
-                  <TableCell>{income.exhibitionProfit}</TableCell>
-                  <TableCell>{income.financier}</TableCell>
-                  <TableCell>{income.partnerProfit}</TableCell>
-                  <TableCell>{income.date}</TableCell>
-                  {/* Render additional cell data for other income details */}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {loading ? (
+          <Loading />
+        ) : error ? (
+          <div>{error}</div>
+        ) : incomeDetails ? (
+          <>
+            <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={3}>
+            <AnalysisCard
+              title="Total Income"
+              number={incomeDetails.totalIncome}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <AnalysisCard
+              title="Number of Cars"
+              number={incomeDetails.totalCars}
+            />
+          </Grid>
+        </Grid>
+
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="income details table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Car ID</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Color</TableCell>
+                    <TableCell>Model</TableCell>
+                    <TableCell>Net Profit</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {incomeDetails.soldCarsDetails.map((carDetail) => (
+                    <TableRow key={carDetail._id}>
+                      <TableCell>{carDetail.car._id}</TableCell>
+                      <TableCell>{carDetail.car.name}</TableCell>
+                      <TableCell>{carDetail.car.color}</TableCell>
+                      <TableCell>{carDetail.car.model}</TableCell>
+                      <TableCell>{carDetail.netProfit}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : null}
       </DashboardCard>
     </PageContainer>
   );

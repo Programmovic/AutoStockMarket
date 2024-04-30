@@ -1,4 +1,3 @@
-
 import {
     Typography, Box,
     Table,
@@ -10,12 +9,12 @@ import {
 } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)//components/shared/DashboardCard';
 
-const products = [
+// Sample employee data
+const employees = [
     {
         id: "1",
         name: "Sunil Joshi",
         post: "Web Designer",
-        pname: "Elite Admin",
         priority: "Low",
         pbg: "primary.main",
         budget: "3.9",
@@ -24,7 +23,6 @@ const products = [
         id: "2",
         name: "Andrew McDownland",
         post: "Project Manager",
-        pname: "Real Homes WP Theme",
         priority: "Medium",
         pbg: "secondary.main",
         budget: "24.5",
@@ -33,7 +31,6 @@ const products = [
         id: "3",
         name: "Christopher Jamil",
         post: "Project Manager",
-        pname: "MedicalPro WP Theme",
         priority: "High",
         pbg: "error.main",
         budget: "12.8",
@@ -42,18 +39,15 @@ const products = [
         id: "4",
         name: "Nirav Joshi",
         post: "Frontend Engineer",
-        pname: "Hosting Press HTML",
         priority: "Critical",
         pbg: "success.main",
         budget: "2.4",
     },
 ];
 
-
-const ProductPerformance = () => {
+const TopEmployees = () => {
     return (
-
-        <DashboardCard title="Product Performance">
+        <DashboardCard title="Top Employees">
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
                 <Table
                     aria-label="simple table"
@@ -71,12 +65,12 @@ const ProductPerformance = () => {
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Assigned
+                                    Employee
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Name
+                                    Post
                                 </Typography>
                             </TableCell>
                             <TableCell>
@@ -92,8 +86,8 @@ const ProductPerformance = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {products.map((product) => (
-                            <TableRow key={product.name}>
+                        {employees.map((employee) => (
+                            <TableRow key={employee.name}>
                                 <TableCell>
                                     <Typography
                                         sx={{
@@ -101,7 +95,7 @@ const ProductPerformance = () => {
                                             fontWeight: "500",
                                         }}
                                     >
-                                        {product.id}
+                                        {employee.id}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -113,7 +107,7 @@ const ProductPerformance = () => {
                                     >
                                         <Box>
                                             <Typography variant="subtitle2" fontWeight={600}>
-                                                {product.name}
+                                                {employee.name}
                                             </Typography>
                                             <Typography
                                                 color="textSecondary"
@@ -121,29 +115,29 @@ const ProductPerformance = () => {
                                                     fontSize: "13px",
                                                 }}
                                             >
-                                                {product.post}
+                                                {employee.post}
                                             </Typography>
                                         </Box>
                                     </Box>
                                 </TableCell>
                                 <TableCell>
                                     <Typography color="textSecondary" variant="subtitle2" fontWeight={400}>
-                                        {product.pname}
+                                        {employee.post}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
                                     <Chip
                                         sx={{
                                             px: "4px",
-                                            backgroundColor: product.pbg,
+                                            backgroundColor: employee.pbg,
                                             color: "#fff",
                                         }}
                                         size="small"
-                                        label={product.priority}
+                                        label={employee.priority}
                                     ></Chip>
                                 </TableCell>
                                 <TableCell align="right">
-                                    <Typography variant="h6">${product.budget}k</Typography>
+                                    <Typography variant="h6">${employee.budget}k</Typography>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -154,4 +148,4 @@ const ProductPerformance = () => {
     );
 };
 
-export default ProductPerformance;
+export default TopEmployees;
