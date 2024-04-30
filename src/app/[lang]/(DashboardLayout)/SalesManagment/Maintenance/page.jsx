@@ -82,7 +82,7 @@ const MaintenancePage = () => {
                 <TableBody>
                   {maintenanceDetails.tasksDetails.map((task) => (
                     <TableRow key={task._id}>
-                      <TableCell>{task.car._id}</TableCell>
+                      <TableCell>{task?.car?._id}</TableCell>
                       <TableCell>{task.taskDescription}</TableCell>
                       <TableCell>{new Date(task.taskDate).toLocaleString()}</TableCell>
                       <TableCell>{task.taskCost}</TableCell>
