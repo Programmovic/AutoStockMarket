@@ -4,11 +4,12 @@ import CarDetails from "../../../models/CarDetails";
 import { NextResponse } from "next/server";
 import { CoPresentOutlined } from "@mui/icons-material";
 
-// Connect to the database
-connectDB();
+
 
 // Create a new car and its details
 export async function POST(req, res) {
+  // Connect to the database
+await connectDB();
   const {
     name,
     color,
@@ -75,6 +76,8 @@ export async function POST(req, res) {
 
 // Get all cars with pagination and filters
 export async function GET(req, res) {
+  // Connect to the database
+await connectDB();
   try {
     // Parse query parameters
     const searchParams = new URL(req.url).searchParams;
