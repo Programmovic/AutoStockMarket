@@ -14,9 +14,9 @@ const Sidebar = ({
   isMobileSidebarOpen,
   onSidebarClose,
   isSidebarOpen,
-}: ItemType, ) => {
+}: ItemType) => {
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
-  
+
   const sidebarWidth = "270px";
 
   if (lgUp) {
@@ -47,18 +47,25 @@ const Sidebar = ({
           <Box
             sx={{
               height: "100%",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            {/* ------------------------------------------- */}
-            {/* Logo */}
-            {/* ------------------------------------------- */}
-            <Box px={3}>
+            {/* Logo - Fixed at the top */}
+            <Box
+  p={3}
+  sx={{
+    position: "sticky",
+    top: 0,
+    zIndex: 1100, // Higher z-index to ensure it stays on top of other content
+    bgcolor: "background.paper",
+  }}
+>
               <Logo />
             </Box>
-            <Box>
-              {/* ------------------------------------------- */}
-              {/* Sidebar Items */}
-              {/* ------------------------------------------- */}
+
+            {/* Sidebar Content */}
+            <Box sx={{ flex: 1, overflowY: "auto" }}>
               <SidebarItems />
               <Upgrade />
             </Box>

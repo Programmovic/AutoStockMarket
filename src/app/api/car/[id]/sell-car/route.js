@@ -28,17 +28,20 @@ export async function POST(req, { params }) {
       { new: true }
     );
     if (!updatedCarDetails) {
-      return NextResponse.json({ error: "Car details not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Car details not found" },
+        { status: 404 }
+      );
     }
 
     // Create or update the transaction
     const transaction = new Transaction({
-      type: "Sale",
+      type: "income",
       date: new Date(),
       amount: updatedCarDetails.sellingPrice,
       description: `Sale of ${car.name}`,
       partners: [],
-      car: car._id
+      car: car._id,
     });
     await transaction.save();
 
@@ -58,7 +61,8 @@ export async function POST(req, { params }) {
       purchaser: carDetailsData.purchaser, // Set the purchaser to the buyer provided in the request
       purchaseDate: new Date(), // Set the purchaseDate to the current date
       purchasePrice: updatedCarDetails.sellingPrice, // Set the purchasePrice to the selling price of the car
-      // Add more fields as needed
+      salesMember: salesMember,
+      source: source,
     });
     await soldCar.save();
 

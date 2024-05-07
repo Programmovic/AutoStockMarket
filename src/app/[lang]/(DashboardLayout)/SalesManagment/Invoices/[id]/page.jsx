@@ -1,4 +1,3 @@
-// InvoicePage.jsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -15,16 +14,18 @@ import {
   TableContainer,
   Button,
   Divider,
+  TextField,
+  InputAdornment
 } from "@mui/material";
 import { usePDF, Resolution } from "react-to-pdf";
 import Image from "next/image";
 import Loading from "../../../loading";
 
-
 const InvoicePage = ({ params }) => {
   const [invoice, setInvoice] = useState(null);
+
   const router = useRouter();
-  const { id } = params; // Get the invoice ID from the query parameters
+  const { id } = params;
   const { toPDF, targetRef } = usePDF({
     filename: `Invoice_${id}.pdf`,
     resolution: Resolution.HIGH,
@@ -34,27 +35,31 @@ const InvoicePage = ({ params }) => {
       orientation: "portrait",
     },
   });
-
-  useEffect(() => {
-    const fetchInvoice = async () => {
-      if (id) {
-        try {
-          const response = await fetch(`/api/invoices/${id}`, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          if (!response.ok) {
-            throw new Error("Failed to fetch invoice");
-          }
-          const data = await response.json();
-          setInvoice(data.invoice);
-        } catch (error) {
-          console.error("Error fetching invoice:", error);
-          setInvoice(null);
+  const fetchInvoice = async () => {
+    if (id) {
+      try {
+        const response = await fetch(`/api/invoices/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch invoice");
         }
+        const data = await response.json();
+        setInvoice(data.invoice);
+        setEditableTransactionAmount(data.invoice.transaction.amount.toFixed(2));
+        setEditableTotalAmount(data.invoice.totalAmount.toFixed(2));
+      } catch (error) {
+        console.error("Error fetching invoice:", error);
+        setInvoice(null);
       }
-    };
+    }
+  };
+  const [editableTransactionAmount, setEditableTransactionAmount] = useState(invoice?.transaction.amount);
+  const [editableTotalAmount, setEditableTotalAmount] = useState(invoice?.totalAmount);
+  useEffect(() => {
+
 
     fetchInvoice();
   }, [id]);
@@ -70,6 +75,18 @@ const InvoicePage = ({ params }) => {
         </Button>
       </Box>
       <DashboardCard>
+        <TextField
+          value={editableTransactionAmount}
+          onChange={(e) => setEditableTransactionAmount(e.target.value)}
+          type="number"
+          InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
+          variant="outlined"
+          sx={{
+            maxWidth: '200px', // Limits the width of the input
+            marginRight: 2, // Adds spacing to the right
+          }}
+        />
+
         <Box ref={targetRef}>
           {invoice ? (
             <Box>
@@ -97,9 +114,18 @@ const InvoicePage = ({ params }) => {
                 />
               </Box>
 
-              <TableContainer component={Paper} sx={{p: 5}}>
+              <TableContainer component={Paper} sx={{ p: 5 }}>
                 <Table aria-label="invoice details table">
                   <TableBody>
+                    {/* Editable Transaction Amount */}
+                    <TableRow>
+                      <TableCell>
+                        <strong>Transaction Amount:</strong>
+                      </TableCell>
+                      <TableCell>
+                        {editableTransactionAmount}
+                      </TableCell>
+                    </TableRow>
                     <TableRow>
                       <TableCell>
                         <strong>Transaction ID:</strong>
@@ -187,12 +213,14 @@ const InvoicePage = ({ params }) => {
                         </Typography>
                       </TableCell>
                     </TableRow>
+
+                    {/* Other rows remain unchanged */}
                   </TableBody>
                 </Table>
               </TableContainer>
             </Box>
           ) : (
-            <Loading/>
+            <Loading />
           )}
         </Box>
       </DashboardCard>

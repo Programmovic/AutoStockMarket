@@ -1,11 +1,12 @@
 import connectDB from "../../../../../lib/db";
 import Car from "../../../../../models/Cars";
 import MaintenanceTask from "../../../../../models/MaintenanceTasks";
-import CarDetails from "../../../../../models/CarDetails"; // Import CarDetails model
+import CarDetails from "../../../../../models/CarDetails";
+import Transaction from "../../../../../models/Transaction"; // Import Transaction model
 import { NextResponse } from "next/server";
 
 // Endpoint to add maintenance task for a car by ID
-export async function POST(req, {params}) {
+export async function POST(req, { params }) {
   const { id } = params;
   const maintenanceTaskData = await req.json(); // Received maintenance task details from the request body
 
@@ -25,6 +26,16 @@ export async function POST(req, {params}) {
       ...maintenanceTaskData,
     });
     await maintenanceTask.save();
+
+    // Create a transaction for the maintenance task
+    const transaction = new Transaction({
+      type: "expense", // Assuming maintenance task is an expense
+      date: maintenanceTaskData.date,
+      amount: maintenanceTaskData.taskCost,
+      description: `Maintenance task for car with chassis ${car.chassisNumber}`,
+      car: car._id,
+    });
+    await transaction.save();
 
     // Update maintenance costs in CarDetails
     const carDetails = await CarDetails.findOne({ car: car._id });

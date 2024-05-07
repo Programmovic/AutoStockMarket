@@ -81,7 +81,7 @@ const CarsPage = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0); // Reset current page when changing rows per page
+    setCurrentPage(0);
   };
 
   const getDurationMarker = (entryDate) => {
@@ -102,57 +102,66 @@ const CarsPage = () => {
   return (
     <PageContainer title="Cars" description="Cars Inventory">
       <DashboardCard title="Cars">
-        {loading ? (
-          <Loading />
-        ) : (
-          <>
-            <Box
-              mb={2}
-              display="flex"
-              alignItems="center"
-              justifyContent={"space-between"}
-            >
-              <Box mr={1}>
-                <IconButton
-                  onClick={() => setModalOpen(true)}
-                  aria-label="add new car"
-                  color="primary"
-                >
-                  <Add />
-                </IconButton>
-              </Box>
 
-              <Box flexGrow={1}>
-                <TextField
-                  name="name"
-                  label="Name"
-                  variant="outlined"
-                  size="small"
-                  value={filters.name}
-                  onChange={handleFilterChange}
-                  style={{ marginRight: 10 }}
-                />
-                <TextField
-                  name="color"
-                  label="Color"
-                  variant="outlined"
-                  size="small"
-                  value={filters.color}
-                  onChange={handleFilterChange}
-                  style={{ marginRight: 10 }}
-                />
-                <TextField
-                  name="model"
-                  label="Model"
-                  variant="outlined"
-                  size="small"
-                  value={filters.model}
-                  onChange={handleFilterChange}
-                />
-              </Box>
+
+        <>
+          <Box
+            mb={2}
+            display="flex"
+            alignItems="center"
+            justifyContent={"space-between"}
+          >
+            <Box mr={1}>
+              <IconButton
+                onClick={() => setModalOpen(true)}
+                aria-label="add new car"
+                color="primary"
+              >
+                <Add />
+              </IconButton>
             </Box>
 
-            <TableContainer
+            <Box flexGrow={1}>
+              <TextField
+                name="name"
+                label="Name"
+                variant="outlined"
+                size="small"
+                value={filters.name}
+                onChange={handleFilterChange}
+                style={{ marginRight: 10 }}
+              />
+              <TextField
+                name="color"
+                label="Color"
+                variant="outlined"
+                size="small"
+                value={filters.color}
+                onChange={handleFilterChange}
+                style={{ marginRight: 10 }}
+              />
+              <TextField
+                name="model"
+                label="Model"
+                variant="outlined"
+                size="small"
+                value={filters.model}
+                onChange={handleFilterChange}
+                style={{ marginRight: 10 }}
+              />
+              <TextField
+                name="chassisNumber"
+                label="Chassis Number"
+                variant="outlined"
+                size="small"
+                value={filters.chassisNumber}
+                onChange={handleFilterChange}
+              />
+
+            </Box>
+          </Box>
+          {loading ? (<Loading />) :
+            (<TableContainer
               component={Paper}
               sx={{ maxWidth: "100%", overflowX: "auto" }}
             >
@@ -197,20 +206,19 @@ const CarsPage = () => {
                   ))}
                 </TableBody>
               </Table>
-            </TableContainer>
-
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={cars.length}
-              rowsPerPage={rowsPerPage}
-              page={currentPage}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              style={{ marginTop: 10 }}
-            />
-          </>
-        )}
+            </TableContainer>)
+          }
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={cars.length}
+            rowsPerPage={rowsPerPage}
+            page={currentPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            style={{ marginTop: 10 }}
+          />
+        </>
       </DashboardCard>
       <CreateCarModal
         open={modalOpen}

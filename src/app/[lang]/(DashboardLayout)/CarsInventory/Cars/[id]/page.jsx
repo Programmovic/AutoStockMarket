@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
+import CreateCustomerModal from "../../../components/shared/CreateCustomerModal";
 import Autocomplete from "@mui/material/Autocomplete";
 import {
   Table,
@@ -23,11 +24,13 @@ import {
   CircularProgress,
   Grid,
 } from "@mui/material";
+import CreateTransactionModal from "../../../components/shared/CreateTransactionModal"
 import { useReactToPrint } from "react-to-print";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import {
   SellOutlined,
+  MoneyOutlined,
   PrintOutlined,
   GarageOutlined,
   BuildOutlined,
@@ -36,6 +39,8 @@ import {
 } from "@mui/icons-material";
 import CreateCarModal from "../../../components/shared/CreateCarModal";
 import MaintenanceTasksList from "../../../components/shared/CarMaintenanceTasks";
+import PartnersList from "../../../components/shared/CarPartners";
+import CarTransactionsList from "../../../components/shared/CarTransactions"
 import Loading from "../../../loading";
 
 const initialCarDetails = {
@@ -48,11 +53,14 @@ const initialCarDetails = {
 const CarDetailsPage = ({ params }) => {
   const [car, setCar] = useState(null);
   const [customers, setCustomers] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [isSellModalOpen, setIsSellModalOpen] = useState(false);
   const [isAddMaintenanceModalOpen, setIsAddMaintenanceModalOpen] =
     useState(false);
   const [carDetails, setCarDetails] = useState(initialCarDetails);
   const [maintenanceCosts, setMaintenanceCosts] = useState("");
+  const [partnersList, setPartnersList] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [maintenanceTask, setMaintenanceTask] = useState({
     taskDescription: "",
     taskDate: "",
@@ -60,6 +68,7 @@ const CarDetailsPage = ({ params }) => {
   });
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [transactionModalOpen, setTransactionModalOpen] = useState(false);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const router = useRouter();
   const { id } = params;
@@ -67,15 +76,41 @@ const CarDetailsPage = ({ params }) => {
   const fetchCarDetails = async () => {
     try {
       const response = await axios.get(`/api/car/${id}`);
+      console.log(response);
       setCar(response.data.car);
       setCarDetails(response.data.carDetails);
+      setPartnersList(response.data.partners);
       setMaintenanceCosts(response.data.carDetails.maintenanceCosts);
       setCustomers(response.data.customers);
+      setEmployees(response.data.employees);
+      setTransactions(response.data.transactions);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching car details:", error);
     }
   };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get(`/api/car/${id}?customersOnly=true`);
+      setCustomers(response.data.customers);
+    } catch (error) {
+      console.error("Error fetching car details:", error);
+    }
+  };
+  const fetchTransactions = async () => {
+    try {
+      const response = await axios.get(`/api/car/${id}?TransactionsOnly=true`);
+      setTransactions(response.data.transactions);
+    } catch (error) {
+      console.error("Error fetching car details:", error);
+    }
+  };
+  // Calculate the sum of all partnership percentages
+  const sumPercentages = partnersList.reduce(
+    (total, partner) => total + partner.partnershipPercentage,
+    0
+  );
   useEffect(() => {
     fetchMaintenanceTasks();
     fetchCarDetails();
@@ -85,6 +120,8 @@ const CarDetailsPage = ({ params }) => {
     const updatedCarDetails = {
       ...carDetails,
       purchaser: selectedPurchaser,
+      source: selectedSource,
+      salesMember: selectedSalesMember,
     };
 
     try {
@@ -130,39 +167,45 @@ const CarDetailsPage = ({ params }) => {
     });
   };
   useEffect(() => {
-    // Parse input values to floats, defaulting to 0 if parsing fails
-    const parsedValue = parseFloat(carDetails.value) || 0;
-    const parsedSellingPrice = parseFloat(carDetails.sellingPrice) || 0;
-    const parsedMaintenanceCosts = parseFloat(carDetails.maintenanceCosts) || 0;
+    if (carDetails.value > 0) {
+      const totalTransactionsAmount = transactions.reduce((acc, transaction) => {
+        return acc + transaction.amount;
+      }, 0);
+      // Parse input values to floats, defaulting to 0 if parsing fails
+      const parsedValue = parseFloat(carDetails.value) || 0;
+      const parsedSellingPrice = parseFloat(carDetails.sellingPrice) || 0;
+      const parsedMaintenanceCosts =
+        parseFloat(carDetails.maintenanceCosts) || 0;
 
-    // Calculate net profit using only the current input value
-    const netProfit =
-      parsedSellingPrice - (parsedValue + parsedMaintenanceCosts);
+      // Calculate net profit using only the current input value
+      const netProfit =
+        parsedSellingPrice - (parsedValue + totalTransactionsAmount);
 
-    // Log calculation process
-    console.log("--- Calculation Process ---");
-    console.log("Selling Price:", parsedSellingPrice);
-    console.log("Input Value:", parsedValue);
-    console.log("Maintenance Costs:", parsedMaintenanceCosts);
-    console.log(
-      "Net Profit = Selling Price - (Input Value + Maintenance Costs)"
-    );
-    console.log(
-      "Net Profit =",
-      parsedSellingPrice,
-      "-",
-      parsedValue,
-      "-",
-      parsedMaintenanceCosts,
-      "=",
-      netProfit
-    );
+      // Log calculation process
+      console.log("--- Calculation Process ---");
+      console.log("Selling Price:", parsedSellingPrice);
+      console.log("Input Value:", parsedValue);
+      console.log("Maintenance Costs:", parsedMaintenanceCosts);
+      console.log(
+        "Net Profit = Selling Price - (Input Value + Maintenance Costs)"
+      );
+      console.log(
+        "Net Profit =",
+        parsedSellingPrice,
+        "-",
+        parsedValue,
+        "-",
+        parsedMaintenanceCosts,
+        "=",
+        netProfit
+      );
 
-    // Update state with the calculated net profit
-    setCarDetails((prevState) => ({
-      ...prevState,
-      netProfit: isNaN(netProfit) ? "" : netProfit.toFixed(2), // Ensure netProfit is a valid number
-    }));
+      // Update state with the calculated net profit
+      setCarDetails((prevState) => ({
+        ...prevState,
+        netProfit: isNaN(netProfit) ? "" : netProfit.toFixed(2), // Ensure netProfit is a valid number
+      }));
+    }
   }, [
     carDetails.value,
     carDetails.sellingPrice,
@@ -222,14 +265,36 @@ const CarDetailsPage = ({ params }) => {
 
   // Define the handlePurchaserChange function
   const handlePurchaserChange = (value) => {
-    setSelectedPurchaser(value._id);
+    setSelectedPurchaser(value?._id);
   };
-  console.log(selectedPurchaser);
+  // Define state to store the selected purchaser
+  const [selectedSalesMember, setSelectedSalesMember] = useState(null);
+
+  // Define the handlePurchaserChange function
+  const handleSalesMemberChange = (value) => {
+    setSelectedSalesMember(value?._id);
+  };
+  // Define state to store the selected purchaser
+  const [selectedSource, setSelectedSource] = useState(null);
+
+  // Define the handlePurchaserChange function
+  const handleSourceChange = (value) => {
+    setSelectedSource(value?._id);
+  };
+  const sellingSources = [
+    "OLX",
+    "eBay",
+    "Amazon",
+    "Craigslist",
+    "Facebook Marketplace",
+  ]; // Example array of selling sources
+  const [customerModalOpen, setCustomerModalOpen] = useState(false);
   return (
     <PageContainer
       title={`Car Details | ${car?.name} | ${car?.model}`}
       description="Details of the selected car"
     >
+      <CreateTransactionModal open={transactionModalOpen} car={car} fetchTransactions={fetchTransactions} handleClose={() => setTransactionModalOpen(false)} />
       <DashboardCard>
         <>
           {loading ? (
@@ -238,6 +303,15 @@ const CarDetailsPage = ({ params }) => {
             </Box>
           ) : (
             <Box>
+              <CreateCustomerModal // Render CreateCustomerModal component
+                open={customerModalOpen}
+                handleClose={() => setCustomerModalOpen(false)}
+                fetchCustomers={() => {
+                  fetchCustomers();
+                  setSelectedPurchaser(customers[0]._id);
+                  console.log(selectedPurchaser);
+                }}
+              />
               <Box
                 display="flex"
                 flexDirection="row"
@@ -249,6 +323,20 @@ const CarDetailsPage = ({ params }) => {
                   Car Details - {car?.name}
                 </Typography>
                 <Box display="flex" alignItems="center">
+                  <Tooltip
+                    title={`Add Expenses for ${car?.name}`}
+                    arrow
+                    TransitionComponent={Fade}
+                    TransitionProps={{ timeout: 600 }}
+                  >
+                    <IconButton
+                      color="primary"
+                      onClick={() => setTransactionModalOpen(true)}
+                      style={{ marginRight: 10 }}
+                    >
+                      <MoneyOutlined />
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip
                     title={`Sell ${car?.name}`}
                     arrow
@@ -386,10 +474,24 @@ const CarDetailsPage = ({ params }) => {
                     </TableRow>
                     <TableRow>
                       <TableCell>
+                        <strong>Price:</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>
+                          {carDetails.value} ({sumPercentages}% Partnership,{" "}
+                          {carDetails.value -
+                            (sumPercentages / 100) * carDetails.value}{" "}
+                          for ASM)
+                        </strong>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
                         <strong>Current Location:</strong>
                       </TableCell>
                       <TableCell>{car?.currentLocation}</TableCell>
                     </TableRow>
+
                     {car?.currentLocation === "Sold" && (
                       <>
                         <TableRow>
@@ -398,12 +500,7 @@ const CarDetailsPage = ({ params }) => {
                           </TableCell>
                           <TableCell>{carDetails.sellingPrice}</TableCell>
                         </TableRow>
-                        <TableRow>
-                          <TableCell>
-                            <strong>Price:</strong>
-                          </TableCell>
-                          <TableCell>{carDetails.value}</TableCell>
-                        </TableRow>
+
                         <TableRow>
                           <TableCell>
                             <strong>Maintenance Costs:</strong>
@@ -491,12 +588,11 @@ const CarDetailsPage = ({ params }) => {
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    width: 400,
                     bgcolor: "background.paper",
                     boxShadow: 24,
                     p: 4,
                     borderRadius: 5,
-                    width: 800,
+                    width: 1200,
                   }}
                 >
                   <Typography
@@ -519,15 +615,13 @@ const CarDetailsPage = ({ params }) => {
                   <Grid container spacing={2}>
                     {" "}
                     {/* Set spacing between Grid items */}
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       {" "}
                       {/* Each input takes up half of the space */}
                       <Autocomplete
                         options={customers}
-                        getOptionLabel={(option) => option.name}
-                        getOptionSelected={(option, value) =>
-                          option._id === value._id
-                        }
+                        getOptionLabel={(option) => `${option?.name} - ${option?.contactDetails}`} // Combine name and phone number
+                        getOptionSelected={(option, value) => option._id === value._id}
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -535,15 +629,24 @@ const CarDetailsPage = ({ params }) => {
                             name="purchaser"
                             fullWidth
                             margin="normal"
+                            InputProps={{
+                              ...params.InputProps,
+                              endAdornment: (
+                                <React.Fragment>
+                                  {params.InputProps.endAdornment}
+                                  <Button onClick={() => setCustomerModalOpen(true)}>
+                                    Add New
+                                  </Button>{" "}
+                                  {/* Button to open dialog for adding new customer */}
+                                </React.Fragment>
+                              ),
+                            }}
                           />
                         )}
-                        onChange={(event, value) =>
-                          handlePurchaserChange(value)
-                        }
+                        onChange={(event, value) => handlePurchaserChange(value)}
                       />
                     </Grid>
-                    
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       <TextField
                         label="Selling Price"
                         name="sellingPrice"
@@ -553,7 +656,7 @@ const CarDetailsPage = ({ params }) => {
                         margin="normal"
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       <TextField
                         label="Value"
                         name="value"
@@ -563,7 +666,7 @@ const CarDetailsPage = ({ params }) => {
                         margin="normal"
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       <TextField
                         label="Capital"
                         name="capital"
@@ -573,7 +676,7 @@ const CarDetailsPage = ({ params }) => {
                         margin="normal"
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       <TextField
                         label="Maintenance Costs"
                         name="maintenanceCosts"
@@ -583,7 +686,7 @@ const CarDetailsPage = ({ params }) => {
                         disabled // Set disabled to true to make it disabled but still visible
                       />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                       <TextField
                         label="Net Profit"
                         name="netProfit"
@@ -594,26 +697,47 @@ const CarDetailsPage = ({ params }) => {
                         disabled
                       />
                     </Grid>
+                    <Grid item xs={6}>
+                      {/* Each input takes up half of the space */}
+                      <Autocomplete
+                        options={employees}
+                        getOptionLabel={(option) =>
+                          `${option.name} - ${option?.contactInfo?.phone}`
+                        }
+                        getOptionSelected={(option, value) =>
+                          option._id === value._id
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Sales"
+                            name="sales"
+                            margin="normal"
+                          />
+                        )}
+                        onChange={(event, value) =>
+                          handleSalesMemberChange(value)
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      {/* Autocomplete for source of selling */}
+                      <Autocomplete
+                        options={sellingSources}
+                        getOptionLabel={(option) => option}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Source of Selling"
+                            name="sourceOfSelling"
+                            margin="normal"
+                            helperText="Select the source of selling (Only if Outsource)"
+                          />
+                        )}
+                        onChange={(event, value) => handleSourceChange(value)}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-  {/* Each input takes up half of the space */}
-  <Autocomplete
-    options={customers}
-    getOptionLabel={(option) => option.name}
-    getOptionSelected={(option, value) => option._id === value._id}
-    renderInput={(params) => (
-      <TextField
-        {...params}
-        label="Sales"
-        name="sales"
-        fullWidth
-        margin="normal"
-        helperText="Use this field only if the car is sold outsource."
-      />
-    )}
-    onChange={(event, value) => handlePurchaserChange(value)}
-  />
-</Grid>
 
                   <Box textAlign="right">
                     <Button
@@ -637,7 +761,7 @@ const CarDetailsPage = ({ params }) => {
                   </Box>
                 </Box>
               </Modal>
-              
+
               <Modal
                 open={isAddMaintenanceModalOpen}
                 onClose={() => setIsAddMaintenanceModalOpen(false)}
@@ -728,6 +852,12 @@ const CarDetailsPage = ({ params }) => {
       </DashboardCard>
       <DashboardCard>
         <MaintenanceTasksList maintenanceTasks={maintenanceTasks} />
+      </DashboardCard>
+      <DashboardCard>
+        <PartnersList partners={partnersList} car={carDetails} />
+      </DashboardCard>
+      <DashboardCard>
+        <CarTransactionsList transactions={transactions} />
       </DashboardCard>
     </PageContainer>
   );

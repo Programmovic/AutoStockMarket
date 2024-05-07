@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 import Transaction from "./Transaction";
 import Customer from "./Customer";
+import Partner from "./Partner";
 
 const invoiceSchema = new mongoose.Schema(
   {
@@ -9,9 +10,16 @@ const invoiceSchema = new mongoose.Schema(
       ref: "Transaction",
       required: true,
     },
+    customerType: {
+      type: String,
+      required: true,
+      enum: ['Customer', 'Partner'], // Limits the value to either 'Customer' or 'Partner'
+      default: 'Customer' // Set 'Customer' as the default type
+    },
     customer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
+      required: true,
+      refPath: 'customerType', // Dynamically determines the model to reference
     },
     invoiceDate: Date,
     totalAmount: Number,

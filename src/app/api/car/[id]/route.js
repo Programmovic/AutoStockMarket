@@ -2,6 +2,10 @@ import connectDB from "../../../../lib/db";
 import Car from "../../../../models/Cars";
 import CarDetails from "../../../../models/CarDetails";
 import Customer from "../../../../models/Customer";
+import Employee from "../../../../models/Employee";
+import Partner from "../../../../models/Partner";
+import Transaction from "../../../../models/Transaction"; // Make sure to import the Transaction model
+
 import { NextResponse } from "next/server";
 
 // Add extra data to car by ID
@@ -40,7 +44,6 @@ export async function POST(req, { params }) {
   }
 }
 
-
 // Retrieve car and customers details by their IDs
 export async function GET(req, { params }) {
   const { id } = params;
@@ -49,52 +52,106 @@ export async function GET(req, { params }) {
     // Connect to the database
     await connectDB();
 
-    // Find the car by ID
-    const car = await Car.findById(id);
-    if (!car) {
-      return NextResponse.json({ error: "Car not found" }, { status: 404 });
-    }
-
-    // Find the car details associated with the car
-    const carDetails = await CarDetails.findOne({ car: car._id });
-    if (!carDetails) {
-      return NextResponse.json(
-        { error: "Car details not found" },
-        { status: 404 }
-      );
-    }
-
     // Find the customers
-    const customers = await Customer.find({});
-    if (!customers || customers.length === 0) {
-      return NextResponse.json(
-        { error: "No customers found" },
-        { status: 404 }
-      );
+    let customers;
+    if (!params.CustomersOnly) {
+      customers = await Customer.find({});
+      if (!customers || customers.length === 0) {
+        return NextResponse.json(
+          { error: "No customers found" },
+          { status: 404 }
+        );
+      }
     }
+    if (!params.TransactionsOnly) {
+      try {
+        const transactions = await Transaction.find({});
+        if (!transactions || transactions.length === 0) {
+          return NextResponse.json(
+            { error: "No transactions found" },
+            { status: 404 }
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+        return NextResponse.json(
+          { error: "Could not retrieve transactions: " + error.message },
+          { status: 500 }
+        );
+      }
+    }
+    
+    if (!params.CustomersOnly) {
+      // Find the car by ID
+      const car = await Car.findById(id);
+      if (!car) {
+        return NextResponse.json({ error: "Car not found" }, { status: 404 });
+      }
 
-    // Prepare the response with car, car details, and customers
-    const responseData = {
-      message: "Car and customers details retrieved successfully",
-      car: car,
-      carDetails: carDetails,
-      customers: customers,
-    };
+      // Find the car details associated with the car
+      const carDetails = await CarDetails.findOne({ car: car._id });
+      if (!carDetails) {
+        return NextResponse.json(
+          { error: "Car details not found" },
+          { status: 404 }
+        );
+      }
 
-    console.log("Retrieved car and customers details successfully:", responseData);
+      // Find the employees
+      const employees = await Employee.find({});
+      if (!employees || employees.length === 0) {
+        return NextResponse.json(
+          { error: "No employees found" },
+          { status: 404 }
+        );
+      }
 
-    // Send success response
-    return NextResponse.json(responseData);
+      // Find the partners associated with the car
+      const partners = await Partner.find({ cars: car._id });
+      // Fetch the transactions related to the car
+      const transactions = await Transaction.find({ car: car._id }).populate(
+        "partners"
+      );
+      if (!transactions || transactions.length === 0) {
+        return NextResponse.json(
+          { error: "No transactions found for this car" },
+          { status: 404 }
+        );
+      }
+      // Prepare the response with car, car details, and customers
+      const responseData = {
+        message: "Car and customers details retrieved successfully",
+        car: car,
+        carDetails: carDetails,
+        customers: customers,
+        employees: employees,
+        partners: partners,
+        transactions: transactions,
+      };
+
+      // Send success response
+      return NextResponse.json(responseData);
+    } else {
+      // Prepare the response with only customers
+      const responseData = {
+        message: "Customers retrieved successfully",
+        customers: customers,
+      };
+
+      // Send success response
+      return NextResponse.json(responseData);
+    }
   } catch (error) {
-    console.error("Error retrieving car and customers details:", error);
+    console.error("Error retrieving data:", error);
     // Send error response
     return NextResponse.json(
-      { error: `Could not retrieve car and customers details: ${error.message}` },
+      {
+        error: `Could not retrieve data: ${error.message}`,
+      },
       { status: 500 }
     );
   }
 }
-
 
 // Update car by ID
 export async function PUT(req, { params }) {

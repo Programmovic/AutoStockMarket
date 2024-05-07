@@ -1,5 +1,4 @@
-
-import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
+import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import {
   Timeline,
   TimelineItem,
@@ -9,10 +8,34 @@ import {
   TimelineConnector,
   TimelineContent,
   timelineOppositeContentClasses,
-} from '@mui/lab';
-import { Link, Typography } from '@mui/material';
+} from "@mui/lab";
+import { Link, Typography } from "@mui/material";
 
-const RecentTransactions = () => {
+const RecentTransactions = ({ transactions }: any) => {
+  // Function to generate a random color from the provided options
+  const generateRandomColor = () => {
+    const colors = [
+      "inherit",
+      "grey",
+      "primary",
+      "secondary",
+      "error",
+      "info",
+      "success",
+      "warning",
+    ];
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors[randomIndex] as
+      | "inherit"
+      | "grey"
+      | "primary"
+      | "secondary"
+      | "error"
+      | "info"
+      | "success"
+      | "warning";
+  };
+
   return (
     <DashboardCard title="Recent Transactions">
       <>
@@ -23,10 +46,9 @@ const RecentTransactions = () => {
           onResizeCapture={undefined}
           sx={{
             p: 0,
-            mb: '-40px',
-            '& .MuiTimelineConnector-root': {
-              width: '1px',
-              backgroundColor: '#efefef'
+            "& .MuiTimelineConnector-root": {
+              width: "1px",
+              backgroundColor: "#efefef",
             },
             [`& .${timelineOppositeContentClasses.root}`]: {
               flex: 0.5,
@@ -34,65 +56,30 @@ const RecentTransactions = () => {
             },
           }}
         >
-          <TimelineItem>
-            <TimelineOppositeContent>09:30 am</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="primary" variant="outlined" />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>Payment received from John Doe of $385.90</TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent>10:00 am</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="secondary" variant="outlined" />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Typography fontWeight="600">New sale recorded</Typography>{' '}
-              <Link href="/" underline="none">
-                #ML-3467
-              </Link>
-            </TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent>12:00 am</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="success" variant="outlined" />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>Payment was made of $64.95 to Michael</TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent>09:30 am</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="warning" variant="outlined" />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Typography fontWeight="600">New sale recorded</Typography>{' '}
-              <Link href="/" underline="none">
-                #ML-3467
-              </Link>
-            </TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent>09:30 am</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="error" variant="outlined" />
-              <TimelineConnector />
-            </TimelineSeparator>
-            <TimelineContent>
-              <Typography fontWeight="600">New arrival recorded</Typography>
-            </TimelineContent>
-          </TimelineItem>
-          <TimelineItem>
-            <TimelineOppositeContent>12:00 am</TimelineOppositeContent>
-            <TimelineSeparator>
-              <TimelineDot color="success" variant="outlined" />
-            </TimelineSeparator>
-            <TimelineContent>Payment Received</TimelineContent>
-          </TimelineItem>
+          {transactions?.map((transaction: any, index: number) => (
+            <TimelineItem key={index}>
+              <TimelineOppositeContent>
+                {new Date(transaction?.createdAt).toLocaleTimeString()}
+              </TimelineOppositeContent>
+              <TimelineSeparator>
+                <TimelineDot
+                  color={generateRandomColor()} // Set color randomly
+                  variant="outlined"
+                />
+                <TimelineConnector />
+              </TimelineSeparator>
+              <TimelineContent>
+                <strong>
+                  {new Intl.NumberFormat("en-AE", {
+                    style: "currency",
+                    currency: "AED",
+                  }).format(transaction?.amount)}
+                </strong>
+                <br />
+                {transaction?.description}
+              </TimelineContent>
+            </TimelineItem>
+          ))}
         </Timeline>
       </>
     </DashboardCard>

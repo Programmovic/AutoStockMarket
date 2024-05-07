@@ -4,11 +4,18 @@ const soldCarSchema = new mongoose.Schema(
   {
     car: { type: mongoose.Schema.Types.ObjectId, ref: "Car", required: true },
     previousOwner: String,
-    purchaser: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true }, // Reference to Customer model
+    purchaser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Customer",
+      required: true,
+    }, // Reference to Customer model
     purchaseDate: Date,
     purchasePrice: Number,
+    salesMember: { type: mongoose.Schema.Types.ObjectId, ref: "Employee" }, // Reference to Employee model
+    sourceOfSelling: String, // Source of selling (e.g., OLX)
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.models.SoldCar || mongoose.model("SoldCar", soldCarSchema);
+module.exports =
+  mongoose.models.SoldCar || mongoose.model("SoldCar", soldCarSchema);
