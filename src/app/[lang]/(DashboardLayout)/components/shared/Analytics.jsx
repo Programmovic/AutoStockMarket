@@ -66,6 +66,12 @@ const Analytics = ({ params, today = false }) => {
         <Grid item xs={4}>
           <AnalyticsDashboard title={"Total Profit"} data={analytics?.carDetails?.totalProfit} icon={<IconCurrencyDollar width={24} />} />
         </Grid>
+        <Grid item xs={4}>
+          <AnalyticsDashboard title={"Total Partners"} data={analytics?.totalPartners} icon={<IconCurrencyDollar width={24} />} />
+        </Grid>
+        <Grid item xs={4}>
+          <AnalyticsDashboard title={"Total Partners Percentages"} data={`${analytics?.totalPartnerPercentage}%`} icon={<IconCurrencyDollar width={24} />} />
+        </Grid>
       </Grid>
       <Grid container spacing={2}>
         {!today && (

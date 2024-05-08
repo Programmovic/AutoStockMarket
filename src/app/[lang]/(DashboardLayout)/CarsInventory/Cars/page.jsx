@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
@@ -24,8 +24,11 @@ import Loading from "../../loading";
 
 const CarsPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams()
+
+  const createCar = searchParams.get('CreateCar')
   const [cars, setCars] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(createCar || false);
   const [filters, setFilters] = useState({
     name: "",
     color: "",
@@ -85,17 +88,16 @@ const CarsPage = () => {
   };
 
   const getDurationMarker = (entryDate) => {
-    const oneWeek = 7 * 24 * 60 * 60 * 1000;
-    const twoWeeks = 2 * oneWeek;
     const currentDate = new Date();
     const carEntryDate = new Date(entryDate);
-    const duration = currentDate.getTime() - carEntryDate.getTime();
-    if (duration < oneWeek) {
-      return "🟢";
-    } else if (duration < twoWeeks) {
-      return "🟠";
+    const durationInMonths = (currentDate.getFullYear() - carEntryDate.getFullYear()) * 12 + currentDate.getMonth() - carEntryDate.getMonth();
+
+    if (durationInMonths < 3) {
+      return "🟢"; // Less than 3 months (green)
+    } else if (durationInMonths < 6) {
+      return "🟠"; // 3 to 6 months (orange)
     } else {
-      return "🔴";
+      return "🔴"; // Greater than 6 months (red)
     }
   };
 

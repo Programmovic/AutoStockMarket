@@ -5,6 +5,7 @@ import Customer from "../../../models/Customer";
 import CarDetails from "../../../models/CarDetails";
 import MaintenanceTask from "../../../models/MaintenanceTasks";
 import SoldCar from "../../../models/SoldCars";
+import Partner from "../../../models/Partner"; // Import the Partner model
 import { NextResponse } from "next/server";
 import moment from "moment"; // Import moment.js library for date manipulation
 
@@ -58,6 +59,11 @@ export async function GET(req, { params }) {
       }
     });
 
+    // Fetch partners and calculate total percentages
+    const partners = await Partner.find({});
+    const totalPartners = partners.length;
+    const totalPartnerPercentage = partners.reduce((acc, partner) => acc + partner.partnershipPercentage, 0);
+
     const response = {
       totalCars,
       totalTransactions,
@@ -69,6 +75,8 @@ export async function GET(req, { params }) {
       recentTransactions,
       totalReceived,
       totalExpenses,
+      totalPartners, // Add total partners
+      totalPartnerPercentage, // Add total partner percentage
     };
 
     return NextResponse.json(response);
@@ -80,4 +88,3 @@ export async function GET(req, { params }) {
     );
   }
 }
-

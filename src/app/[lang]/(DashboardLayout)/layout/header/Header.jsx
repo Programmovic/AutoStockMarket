@@ -39,10 +39,10 @@ const Header = ({ toggleMobileSidebar }) => {
         console.error('Error fetching notifications:', error);
       }
     };
-  
+
     fetchNotifications();
   }, []);
-  
+
   // Function to handle opening the popover
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -95,17 +95,24 @@ const Header = ({ toggleMobileSidebar }) => {
           onClose={handlePopoverClose}
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'right',
+            horizontal: 'left',
           }}
           transformOrigin={{
             vertical: 'top',
             horizontal: 'right',
           }}
+          PaperProps={{
+            sx: {
+              width: '300px', // Adjust width as needed
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Add shadow
+              borderRadius: '8px', // Add border radius
+            },
+          }}
         >
-          <Box sx={{ p: 1 }}>
-            <List>
+          <Box sx={{ p: 1, px: 2 }}>
+            <List sx={{ overflowY: 'auto', maxHeight: '300px' }}> {/* Add overflow and max-height */}
               {notifications?.notifications?.map((notification, index) => (
-                <ListItem key={index} disablePadding>
+                <ListItem key={index} disablePadding sx={{ borderBottom: '1px solid #f0f2f5' }}> {/* Add border bottom */}
                   <ListItemText primary={notification.message} />
                 </ListItem>
               ))}
@@ -113,9 +120,10 @@ const Header = ({ toggleMobileSidebar }) => {
           </Box>
         </Popover>
 
+
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-          <Profile/>
+          <Profile />
         </Stack>
       </ToolbarStyled>
     </AppBarStyled>
