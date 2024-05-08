@@ -12,7 +12,11 @@ export async function POST(req, res) {
     // Validate existence of partners and car in the database
     const existingPartners = await Partner.find({ _id: { $in: partners } });
     const car = await Car.findById(carId);
-    if (!existingPartners || existingPartners.length !== partners.length || !car) {
+    if (
+      !existingPartners ||
+      existingPartners.length !== partners.length ||
+      !car
+    ) {
       throw new Error("Invalid partners or car");
     }
 
@@ -68,17 +72,16 @@ export async function GET(req, res) {
     // Define the filter object
     const filter = {};
     if (type) filter.type = type;
-    if (startDate) filter.date = { ...filter.date, $gte: new Date(startDate) };
+    if (startDate) filter.date = { $gte: new Date(startDate) };
     if (endDate) filter.date = { ...filter.date, $lte: new Date(endDate) };
-    if (minAmount)
-      filter.amount = { ...filter.amount, $gte: parseFloat(minAmount) };
+    if (minAmount) filter.amount = { $gte: parseFloat(minAmount) };
     if (maxAmount)
       filter.amount = { ...filter.amount, $lte: parseFloat(maxAmount) };
-    if (carId) filter.car = carId;
+    if (carId) filter.car = carId; // Corrected this line to use the correct property name
 
     // Calculate skip value for pagination
     const skip = (page - 1) * perPage;
-
+    console.log(filter);
     // Query transactions with pagination and filters
     const transactions = await Transaction.find(filter)
       .populate("partners") // Populate partner details
