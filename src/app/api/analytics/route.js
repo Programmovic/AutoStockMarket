@@ -21,19 +21,20 @@ export async function GET(req, { params }) {
       filter = { createdAt: { $gte: today.toDate(), $lt: tomorrow.toDate() } };
     }
 
-    const totalCars = await Car.countDocuments(filter);
-    const totalTransactions = await Transaction.countDocuments(filter);
-    const totalCustomers = await Customer.countDocuments(filter);
-    const totalSoldCars = await SoldCar.countDocuments(filter);
-    const totalMaintenanceCosts = await MaintenanceTask.aggregate([
+    // Define promises to fetch data asynchronously
+    const totalCarsPromise = Car.countDocuments(filter);
+    const totalTransactionsPromise = Transaction.countDocuments(filter);
+    const totalCustomersPromise = Customer.countDocuments(filter);
+    const totalSoldCarsPromise = SoldCar.countDocuments(filter);
+    const totalMaintenanceCostsPromise = MaintenanceTask.aggregate([
       { $match: filter },
       { $group: { _id: null, totalCost: { $sum: "$taskCost" } } },
     ]);
-    const totalCustomerDebt = await Customer.aggregate([
+    const totalCustomerDebtPromise = Customer.aggregate([
       { $match: filter },
       { $group: { _id: null, totalDebt: { $sum: "$debts" } } },
     ]);
-    const carDetails = await CarDetails.aggregate([
+    const carDetailsPromise = CarDetails.aggregate([
       { $match: filter },
       {
         $group: {
@@ -45,8 +46,28 @@ export async function GET(req, { params }) {
         },
       },
     ]);
+    const recentTransactionsPromise = Transaction.find(filter).sort({ createdAt: -1 }).limit(5);
 
-    const recentTransactions = await Transaction.find(filter).sort({ createdAt: -1 }).limit(5);
+    // Execute promises concurrently
+    const [
+      totalCars,
+      totalTransactions,
+      totalCustomers,
+      totalSoldCars,
+      totalMaintenanceCosts,
+      totalCustomerDebt,
+      carDetails,
+      recentTransactions
+    ] = await Promise.all([
+      totalCarsPromise,
+      totalTransactionsPromise,
+      totalCustomersPromise,
+      totalSoldCarsPromise,
+      totalMaintenanceCostsPromise,
+      totalCustomerDebtPromise,
+      carDetailsPromise,
+      recentTransactionsPromise
+    ]);
 
     // Calculate total received and total expenses
     let totalReceived = 0;

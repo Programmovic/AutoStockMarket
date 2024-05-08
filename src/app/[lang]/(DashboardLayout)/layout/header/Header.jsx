@@ -95,17 +95,17 @@ const Header = ({ toggleMobileSidebar }) => {
           onClose={handlePopoverClose}
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'left',
+            horizontal: 'right',
           }}
           transformOrigin={{
             vertical: 'top',
-            horizontal: 'right',
+            horizontal: 'left',
           }}
           PaperProps={{
             sx: {
               width: '300px', // Adjust width as needed
-              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Add shadow
               borderRadius: '8px', // Add border radius
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Add shadow
             },
           }}
         >
@@ -113,7 +113,8 @@ const Header = ({ toggleMobileSidebar }) => {
             <List sx={{ overflowY: 'auto', maxHeight: '300px' }}> {/* Add overflow and max-height */}
               {notifications?.notifications?.map((notification, index) => (
                 <ListItem key={index} disablePadding sx={{ borderBottom: '1px solid #f0f2f5' }}> {/* Add border bottom */}
-                  <ListItemText primary={notification.message} />
+                  <ListItemText primary={notification.message} primaryTypographyProps={{ variant: 'body1' }} /> {/* Adjust typography */}
+
                 </ListItem>
               ))}
             </List>
