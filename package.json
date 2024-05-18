@@ -47,6 +47,7 @@
     "react-intl": "^6.6.4",
     "react-to-pdf": "^1.0.1",
     "react-to-print": "^2.15.1",
+    "react-toastify": "^10.0.5",
     "sass": "^1.75.0",
     "typescript": "5.0.4",
     "xlsx": "^0.18.5",

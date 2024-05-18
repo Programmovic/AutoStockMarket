@@ -163,9 +163,27 @@ const CustomerDetailsPage = ({ params }) => {
                     </TableRow>
                     <TableRow>
                       <TableCell>
-                        <strong>Contact Details:</strong>
+                        <strong>Phone:</strong>
                       </TableCell>
-                      <TableCell>{customer.contactDetails}</TableCell>
+                      <TableCell>{customer?.contactDetails?.phone}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Email:</strong>
+                      </TableCell>
+                      <TableCell>{customer?.contactDetails?.email}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Nationality:</strong>
+                      </TableCell>
+                      <TableCell>{customer?.contactDetails?.nationality}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>National ID:</strong>
+                      </TableCell>
+                      <TableCell>{customer?.nationalID}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>

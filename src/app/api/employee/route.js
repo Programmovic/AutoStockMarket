@@ -10,19 +10,11 @@ export async function POST(req, res) {
 
   try {
     // Extract employee data from the request body
-    const { name, position, hireDate, salary, benefits, contactInfo, admin } =
+    const empData =
       await req.json();
 
     // Create a new employee instance with admin association
-    const employee = new Employee({
-      name,
-      position,
-      hireDate,
-      salary,
-      benefits,
-      contactInfo,
-      admin,
-    });
+    const employee = new Employee(empData);
 
     // Save the employee to the database
     await employee.save();

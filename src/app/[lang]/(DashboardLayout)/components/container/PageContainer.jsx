@@ -6,7 +6,7 @@ console.log(params)
     <HelmetProvider>
       <div>
         <Helmet>
-          <title>{`ASM ${title ? `| ${title}` : ""}`}</title>
+          <title>{`(Beta) ASM ${title ? `| ${title}` : ""}`}</title>
           <meta name="description" content={description || ""} />
         </Helmet>
         {children}

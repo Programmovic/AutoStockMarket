@@ -12,6 +12,8 @@ const employeeSchema = new mongoose.Schema(
       email: String,
       phone: String,
       address: String,
+      nationalID: String, // Add nationalID field
+      nationality: String 
     },
     admin: {
       type: mongoose.Schema.Types.ObjectId,

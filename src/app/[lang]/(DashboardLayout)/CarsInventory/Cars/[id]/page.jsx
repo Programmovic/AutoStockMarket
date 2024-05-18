@@ -25,6 +25,7 @@ import {
   Grid,
 } from "@mui/material";
 import CreateTransactionModal from "../../../components/shared/CreateTransactionModal"
+import CreateInstallmentModal from "../../../components/shared/CreateInstallmentModal";
 import { useReactToPrint } from "react-to-print";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -36,9 +37,11 @@ import {
   BuildOutlined,
   EditOutlined,
   DeleteOutline,
+  MoneyOffOutlined
 } from "@mui/icons-material";
 import CreateCarModal from "../../../components/shared/CreateCarModal";
 import MaintenanceTasksList from "../../../components/shared/CarMaintenanceTasks";
+import InstallmentsList from "../../../components/shared/CarInstallments";
 import PartnersList from "../../../components/shared/CarPartners";
 import CarTransactionsList from "../../../components/shared/CarTransactions"
 import Loading from "../../../loading";
@@ -60,6 +63,7 @@ const CarDetailsPage = ({ params }) => {
   const [carDetails, setCarDetails] = useState(initialCarDetails);
   const [maintenanceCosts, setMaintenanceCosts] = useState("");
   const [partnersList, setPartnersList] = useState([]);
+  const [installments, setInstallments] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [maintenanceTask, setMaintenanceTask] = useState({
     taskDescription: "",
@@ -69,6 +73,7 @@ const CarDetailsPage = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+  const [installmentModalOpen, setInstallmentModalOpen] = useState(false);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const router = useRouter();
   const { id } = params;
@@ -84,6 +89,7 @@ const CarDetailsPage = ({ params }) => {
       setCustomers(response.data.customers);
       setEmployees(response.data.employees);
       setTransactions(response.data.transactions);
+      setInstallments(response.data.installments);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching car details:", error);
@@ -102,6 +108,14 @@ const CarDetailsPage = ({ params }) => {
     try {
       const response = await axios.get(`/api/car/${id}?TransactionsOnly=true`);
       setTransactions(response.data.transactions);
+    } catch (error) {
+      console.error("Error fetching car details:", error);
+    }
+  };
+  const fetchInstallments = async () => {
+    try {
+      const response = await axios.get(`/api/car/${id}?TransactionsOnly=true`);
+      setInstallments(response.data.installments);
     } catch (error) {
       console.error("Error fetching car details:", error);
     }
@@ -166,11 +180,15 @@ const CarDetailsPage = ({ params }) => {
       [name]: value,
     });
   };
+  const totalInstallmentsAmount = installments.reduce((acc, installment) => {
+    return installment.paid && acc + installment.amount;
+  }, 0);
   useEffect(() => {
     if (carDetails.value > 0) {
       const totalTransactionsAmount = transactions.reduce((acc, transaction) => {
-        return acc + transaction.amount;
+        return transaction.type === "expense" && acc + transaction.amount;
       }, 0);
+
       // Parse input values to floats, defaulting to 0 if parsing fails
       const parsedValue = parseFloat(carDetails.value) || 0;
       const parsedSellingPrice = parseFloat(carDetails.sellingPrice) || 0;
@@ -295,6 +313,7 @@ const CarDetailsPage = ({ params }) => {
       description="Details of the selected car"
     >
       <CreateTransactionModal open={transactionModalOpen} car={car} fetchTransactions={fetchTransactions} handleClose={() => setTransactionModalOpen(false)} />
+      <CreateInstallmentModal open={installmentModalOpen} car={car} fetchInstallments={fetchInstallments} handleClose={() => setInstallmentModalOpen(false)} />
       <DashboardCard>
         <>
           {loading ? (
@@ -335,6 +354,20 @@ const CarDetailsPage = ({ params }) => {
                       style={{ marginRight: 10 }}
                     >
                       <MoneyOutlined />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title={`Add Installment for ${car?.name}`}
+                    arrow
+                    TransitionComponent={Fade}
+                    TransitionProps={{ timeout: 600 }}
+                  >
+                    <IconButton
+                      color="primary"
+                      onClick={() => setInstallmentModalOpen(true)}
+                      style={{ marginRight: 10 }}
+                    >
+                      <MoneyOffOutlined />
                     </IconButton>
                   </Tooltip>
                   <Tooltip
@@ -482,6 +515,7 @@ const CarDetailsPage = ({ params }) => {
                           {carDetails.value -
                             (sumPercentages / 100) * carDetails.value}{" "}
                           for ASM)
+                          (Paid {totalInstallmentsAmount})
                         </strong>
                       </TableCell>
                     </TableRow>
@@ -858,6 +892,9 @@ const CarDetailsPage = ({ params }) => {
       </DashboardCard>
       <DashboardCard>
         <CarTransactionsList transactions={transactions} />
+      </DashboardCard>
+      <DashboardCard>
+        <InstallmentsList installments={installments} />
       </DashboardCard>
     </PageContainer>
   );

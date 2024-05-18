@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+import Employee from "./Employee";
 
 const attendanceSchema = new mongoose.Schema(
   {
@@ -7,11 +8,11 @@ const attendanceSchema = new mongoose.Schema(
       ref: "Employee",
       required: true,
     },
-    date: { type: Date, required: true },
+    date: { type: Date, default: new Date },
     attendanceStatus: {
       type: String,
-      enum: ["Present", "Absent", "Late"],
-      default: "Present",
+      enum: ["Present", "Absent", "Late", "Unsigned"],
+      default: "Unsigned",
     },
     shift: {
       type: String,
@@ -20,11 +21,11 @@ const attendanceSchema = new mongoose.Schema(
     location: String,
     notes: String,
     timeIn: { 
-      type: Date, 
+      type: String, 
       required: function() { return this.attendanceStatus === 'Present' || this.attendanceStatus === 'Late'; } 
     },
     timeOut: { 
-      type: Date, 
+      type: String, 
       required: function() { return this.attendanceStatus === 'Present' || this.attendanceStatus === 'Late'; } 
     },
   },

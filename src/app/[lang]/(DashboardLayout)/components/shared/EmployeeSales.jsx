@@ -1,6 +1,6 @@
-// SalesRecords.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// EmployeeSoldCars.js
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Table,
   TableBody,
@@ -11,27 +11,28 @@ import {
   Box,
   TableHead,
   TableContainer,
-} from '@mui/material';
-import Loading from '../../loading'; // Ensure correct path for the Loading component
+} from "@mui/material";
+import Loading from "../../loading";
 
 const SalesRecords = ({ employeeId }) => {
-  const [sales, setSales] = useState([]);
+  const [soldCars, setSoldCars] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch employee sales records
+  // Fetch employee's sold cars
   useEffect(() => {
-    const fetchSales = async () => {
+    const fetchSoldCars = async () => {
       try {
-        const response = await axios.get(`/api/employee/${employeeId}/sales`);
-        setSales(response.data.sales); // Adjust according to your API response structure
+        const response = await axios.get(
+          `/api/employee/${employeeId}/sales_cars`
+        );
+        setSoldCars(response.data.soldCars);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching employee sales:', error);
-        setLoading(false);
+        console.error("Error fetching employee's sold cars:", error);
       }
     };
 
-    fetchSales();
+    fetchSoldCars();
   }, [employeeId]);
 
   return (
@@ -42,27 +43,31 @@ const SalesRecords = ({ employeeId }) => {
         <>
           <Box marginBottom={5}>
             <Typography variant="h6" gutterBottom>
-              Employee Sales Records
+              Employee Sold Cars
             </Typography>
           </Box>
 
           <TableContainer component={Paper}>
-            <Table aria-label="employee sales table">
+            <Table aria-label="employee sold cars table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Sale Amount</TableCell>
-                  <TableCell>Product</TableCell>
-                  <TableCell>Customer</TableCell>
+                  <TableCell>Car</TableCell>
+                  <TableCell>Previous Owner</TableCell>
+                  <TableCell>Purchaser</TableCell>
+                  <TableCell>Purchase Date</TableCell>
+                  <TableCell>Purchase Price</TableCell>
+                  <TableCell>Source of Selling</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {sales.map((sale) => (
-                  <TableRow key={sale._id}>
-                    <TableCell>{sale.date}</TableCell>
-                    <TableCell>${sale.amount}</TableCell>
-                    <TableCell>{sale.productName}</TableCell>
-                    <TableCell>{sale.customerName}</TableCell>
+                {soldCars?.map((soldCar) => (
+                  <TableRow key={soldCar._id}>
+                    <TableCell>{soldCar.car}</TableCell>
+                    <TableCell>{soldCar.previousOwner}</TableCell>
+                    <TableCell>{soldCar.purchaser}</TableCell>
+                    <TableCell>{soldCar.purchaseDate}</TableCell>
+                    <TableCell>{soldCar.purchasePrice}</TableCell>
+                    <TableCell>{soldCar.sourceOfSelling}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

@@ -36,6 +36,28 @@ const modalStyle = {
   p: 4,
   borderRadius: "16px", // Rounded corners
 };
+const InvoiceTable = ({ invoices }) => (
+  <TableContainer component={Paper}>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Invoice Number</TableCell>
+          <TableCell>Date</TableCell>
+          <TableCell>Amount</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {invoices.map((invoice, index) => (
+          <TableRow key={index}>
+            <TableCell>{invoice.number}</TableCell>
+            <TableCell>{invoice.date}</TableCell>
+            <TableCell>{invoice.amount}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
+);
 
 function getStepContent(step, carData, partners, handleInputChange, handlePartnerInputChange, removePartner) {
   console.log(carData)
@@ -79,7 +101,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <TextField
               fullWidth
               label="Price"
@@ -88,8 +110,24 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="First Installment"
+              name="firstInstallment"
+              value={carData?.firstInstallment || carData?.value}
+              onChange={(e) => {
+                const newValue = parseInt(e.target.value);
+                const price = parseInt(carData?.value);
+                if (!isNaN(newValue) && newValue <= price) {
+                  handleInputChange(e);
+                }
+              }}
+            />
+          </Grid>
         </Grid>
       );
+
     case 1: // Ownership
       return (
         <Grid container spacing={2}>
@@ -337,6 +375,7 @@ const CreateCarModal = ({
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   const [partners, setPartners] = useState([{ name: "", type: "Partner", email: "", phone: "", percentage: 0 }]);
+  const [invoices, setInvoices] = useState([]); // State to store invoices
 
   // Function to add a new partner
   const addPartner = () => {
@@ -402,7 +441,7 @@ const CreateCarModal = ({
     // Make a POST request to create a new car
     const response = await axios.post("/api/car", data);
     if (response.data.message) {
-      // Reset form and close modal if car creation is successful
+      setInvoices(response.data.invoices); // Store invoices in state
       handleReset();
       handleClose();
       fetchCars();
@@ -418,7 +457,7 @@ const CreateCarModal = ({
         // Make a PUT request to update the car data
         const response = await axios.put(`/api/car/${carData?._id}`, mergedData);
         if (response.data.message) {
-          // Reset form and close modal if car update is successful
+          setInvoices(response.data.invoices); // Store invoices in state
           handleReset();
           handleClose();
           fetchCars();
@@ -528,7 +567,12 @@ const CreateCarModal = ({
             <Button onClick={handleNext}>
               {activeStep === steps.length - 1 ? "Finish" : errorMessage ? errorMessage : "Next"}
             </Button>
-
+            {invoices.length > 0 && (
+              <Box sx={{ marginTop: 4 }}>
+                <Typography variant="h6">Associated Invoices</Typography>
+                <InvoiceTable invoices={invoices} />
+              </Box>
+            )}
 
           </Box>
         </div>

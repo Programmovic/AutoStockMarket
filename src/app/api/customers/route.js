@@ -7,14 +7,10 @@ connectDB();
 
 // Create a new customer
 export async function POST(req, res) {
-  const { name, contactDetails, debts } = await req.json();
+  const customerData = await req.json();
   try {
     // Create a new customer instance
-    const customer = new Customer({
-      name,
-      contactDetails,
-      debts,
-    });
+    const customer = new Customer(customerData);
 
     // Save the customer to the database
     await customer.save();
@@ -61,7 +57,7 @@ export async function GET(req, res) {
 
     // Get total count of customers (without pagination)
     const totalCount = await Customer.countDocuments(filter);
-
+console.table(customers)
     return NextResponse.json({ customers, totalCount });
   } catch (error) {
     console.error(error);

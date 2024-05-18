@@ -14,9 +14,13 @@ import {
   Table,
   TableBody,
   TableRow,
-  Paper
+  Paper,
+  Autocomplete,
+  MenuItem, // Import MenuItem for select list
+  InputAdornment
 } from "@mui/material";
 import axios from "axios";
+import Image from "next/image";
 
 const steps = ["Customer Details", "Review"];
 
@@ -33,7 +37,12 @@ const modalStyle = {
   borderRadius: "16px", // Rounded corners
 };
 
-function getStepContent(step, customerData, handleInputChange) {
+function getStepContent(step, customerData, handleInputChange, nationalities) {
+  const getCountryCode = (nationality) => {
+    // Assuming nationality data has a structure like { name: 'Country Name', code: 'Country Code' }
+    const selectedCountry = nationalities.find((country) => country.name.common === nationality);
+    return selectedCountry ? selectedCountry?.idd?.root : ''; // Return the country code or an empty string if not found
+  };
   switch (step) {
     case 0: // Customer Details
       return (
@@ -50,9 +59,60 @@ function getStepContent(step, customerData, handleInputChange) {
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Contact Details"
-              name="contactDetails"
-              value={customerData?.contactDetails}
+              label="Email"
+              name="email"
+              value={customerData?.contactDetails?.email}
+              onChange={handleInputChange}
+            />
+          </Grid>
+
+
+          <Grid item xs={6}>
+            <Autocomplete
+              options={nationalities}
+              getOptionLabel={(country) => country.name.common}
+              fullWidth
+              renderOption={(props, country) => (
+                <MenuItem {...props}>
+                  <img src={country.flags.png} alt={country.name.common} style={{ width: '20px', marginRight: '10px' }} /> {/* Flag image */}
+                  {country.name.common}
+                </MenuItem>
+              )}
+              renderInput={(params) => <TextField {...params} label="Nationality" variant="outlined" />}
+              value={nationalities.find((country) => country.name.common === customerData?.contactDetails?.nationality) || null}
+              onChange={(event, newValue) => {
+                handleInputChange({ target: { name: 'nationality', value: newValue ? newValue.name.common : '' } });
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Phone"
+              name="phone"
+              value={customerData?.contactDetails?.phone}
+              onChange={handleInputChange}
+              disabled={!customerData?.contactDetails?.nationality} // Disable the phone field if nationality is not selected
+              InputProps={{
+                startAdornment: customerData?.contactDetails?.nationality ? (
+                  <InputAdornment position="start">
+                    <>
+                      <img src={nationalities.find((country) => country.name.common === customerData?.contactDetails?.nationality)?.flags?.png} alt={customerData?.contactDetails?.nationality} style={{ width: '20px', marginRight: '10px' }} />
+                      {getCountryCode(customerData.contactDetails.nationality)}
+                    </>
+                  </InputAdornment>
+                ) : null,
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="National ID"
+              name="nationalID"
+              value={customerData?.nationalID}
               onChange={handleInputChange}
             />
           </Grid>
@@ -69,8 +129,20 @@ function getStepContent(step, customerData, handleInputChange) {
                   <TableCell>{customerData?.name}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">Contact Details</TableCell>
-                  <TableCell>{customerData?.contactDetails}</TableCell>
+                  <TableCell component="th" scope="row">Email</TableCell>
+                  <TableCell>{customerData?.contactDetails?.email}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Phone</TableCell>
+                  <TableCell>{customerData?.contactDetails?.phone}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Nationality</TableCell>
+                  <TableCell>{customerData?.contactDetails?.nationality}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">National ID</TableCell>
+                  <TableCell>{customerData?.nationalID}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -86,11 +158,22 @@ function getStepContent(step, customerData, handleInputChange) {
 const CreateCustomerModal = ({ open, handleClose, fetchCustomers, initialCustomerData, isEditing }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [customerData, setCustomerData] = useState(initialCustomerData);
+  const [nationalities, setNationalities] = useState([]);
 
   useEffect(() => {
     setCustomerData(initialCustomerData);
     setActiveStep(0);
+    fetchNationalities(); // Fetch nationalities when component mounts
   }, [open, initialCustomerData]);
+
+  const fetchNationalities = async () => {
+    try {
+      const response = await axios.get("https://restcountries.com/v3.1/all");
+      setNationalities(response.data);
+    } catch (error) {
+      console.error("Error fetching nationalities:", error);
+    }
+  };
 
   const handleReset = () => {
     setActiveStep(0);
@@ -111,7 +194,18 @@ const CreateCustomerModal = ({ open, handleClose, fetchCustomers, initialCustome
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCustomerData({ ...customerData, [name]: value });
+    if (name === "email" || name === "phone" || name === "nationality") {
+      setCustomerData({
+        ...customerData,
+        contactDetails: {
+          ...customerData?.contactDetails,
+          [name]: value
+        }
+      });
+    } else {
+      setCustomerData({ ...customerData, [name]: value });
+    }
+    console.log(customerData);
   };
 
   const handleSubmit = async () => {
@@ -160,7 +254,7 @@ const CreateCustomerModal = ({ open, handleClose, fetchCustomers, initialCustome
           ))}
         </Stepper>
         <div style={{ paddingTop: 20, paddingBottom: 20 }}>
-          {getStepContent(activeStep, customerData, handleInputChange)}
+          {getStepContent(activeStep, customerData, handleInputChange, nationalities)}
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Button
               color="inherit"

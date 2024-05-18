@@ -15,7 +15,7 @@ import {
   TableBody,
   TableRow,
   Paper,
-  MenuItem, // Import MenuItem for select list
+  MenuItem,
   FormControl,
   InputLabel,
   Select,
@@ -29,16 +29,16 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "80%", // Adjusted width
-  maxWidth: "1500px", // Max width
+  width: "80%",
+  maxWidth: "1500px",
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
-  borderRadius: "16px", // Rounded corners
+  borderRadius: "16px",
 };
 
 function getStepContent(step, employeeData, handleInputChange, admins) {
-  console.log(admins)
+  console.log(admins);
   switch (step) {
     case 0: // Employee Details
       return (
@@ -118,8 +118,25 @@ function getStepContent(step, employeeData, handleInputChange, admins) {
               onChange={handleInputChange}
             />
           </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="National ID"
+              name="nationalID"
+              value={employeeData?.contactInfo?.nationalID}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Nationality"
+              name="nationality"
+              value={employeeData?.contactInfo?.nationality}
+              onChange={handleInputChange}
+            />
+          </Grid>
           <Grid item xs={12}>
-            {/* Select list for Admin */}
             <FormControl fullWidth>
               <InputLabel htmlFor="admin-select">Admin</InputLabel>
               <Select
@@ -133,7 +150,6 @@ function getStepContent(step, employeeData, handleInputChange, admins) {
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                {/* Map through admins and populate options */}
                 {admins?.map((admin) => (
                   <MenuItem key={admin._id} value={admin._id}>
                     {admin.username}
@@ -163,7 +179,7 @@ function getStepContent(step, employeeData, handleInputChange, admins) {
                   <TableCell>{employeeData?.salary}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">Salary</TableCell>
+                  <TableCell component="th" scope="row">Hire Date</TableCell>
                   <TableCell>{employeeData?.hireDate}</TableCell>
                 </TableRow>
                 <TableRow>
@@ -183,6 +199,14 @@ function getStepContent(step, employeeData, handleInputChange, admins) {
                   <TableCell>{employeeData?.contactInfo?.address}</TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell component="th" scope="row">National ID</TableCell>
+                  <TableCell>{employeeData?.contactInfo?.nationalID}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Nationality</TableCell>
+                  <TableCell>{employeeData?.contactInfo?.nationality}</TableCell>
+                </TableRow>
+                <TableRow>
                   <TableCell component="th" scope="row">Admin</TableCell>
                   <TableCell>{employeeData?.admin}</TableCell>
                 </TableRow>
@@ -200,15 +224,14 @@ function getStepContent(step, employeeData, handleInputChange, admins) {
 const CreateEmployeeModal = ({ open, handleClose, fetchEmployees, initialEmployeeData, isEditing }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [employeeData, setEmployeeData] = useState(initialEmployeeData);
-  const [admins, setAdmins] = useState([]); // State to store fetched admins
+  const [admins, setAdmins] = useState([]);
 
   useEffect(() => {
     setEmployeeData(initialEmployeeData);
     setActiveStep(0);
-    fetchAdmins(); // Fetch admins when component mounts
+    fetchAdmins();
   }, [open, initialEmployeeData]);
 
-  // Function to fetch admins
   const fetchAdmins = async () => {
     try {
       const response = await axios.get("/api/admin");
@@ -225,7 +248,7 @@ const CreateEmployeeModal = ({ open, handleClose, fetchEmployees, initialEmploye
 
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
-      handleSubmit(); // Call the handleSubmit function to submit the form data
+      handleSubmit();
     } else {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
@@ -237,8 +260,7 @@ const CreateEmployeeModal = ({ open, handleClose, fetchEmployees, initialEmploye
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'email' || name === 'phone' || name === 'address') {
-      // If the input field belongs to contactInfo, update nested state
+    if (name === 'email' || name === 'phone' || name === 'address' || name === 'nationalID' || name === 'nationality') {
       setEmployeeData({
         ...employeeData,
         contactInfo: {
@@ -247,7 +269,6 @@ const CreateEmployeeModal = ({ open, handleClose, fetchEmployees, initialEmploye
         },
       });
     } else {
-      // Otherwise, update top-level state
       setEmployeeData({ ...employeeData, [name]: value });
     }
   };
@@ -255,10 +276,8 @@ const CreateEmployeeModal = ({ open, handleClose, fetchEmployees, initialEmploye
   const handleSubmit = async () => {
     try {
       if (isEditing) {
-        // Make a PUT request to update the employee data
         const response = await axios.put(`/api/employees/${employeeData?._id}`, employeeData);
         if (response.data.message) {
-          // Reset form and close modal if employee update is successful
           handleReset();
           handleClose();
           fetchEmployees();
@@ -266,10 +285,8 @@ const CreateEmployeeModal = ({ open, handleClose, fetchEmployees, initialEmploye
           console.error("Error updating employee:", response.data.error);
         }
       } else {
-        // Make a POST request to create a new employee
         const response = await axios.post("/api/employee", employeeData);
         if (response.data.message) {
-          // Reset form and close modal if employee creation is successful
           handleReset();
           handleClose();
           fetchEmployees();

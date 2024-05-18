@@ -15,7 +15,7 @@ import {
   Box,
   Pagination,
   IconButton,
-  
+
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import Loading from "../../loading"; // Import the loading component
@@ -163,27 +163,26 @@ const TransactionsPage = () => {
               <Table sx={{ minWidth: 650 }} aria-label="transactions table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
                     <TableCell>Type</TableCell>
                     <TableCell>Date</TableCell>
                     <TableCell>Amount</TableCell>
+                    <TableCell>Car Name | Chassis Number</TableCell>
                     <TableCell>Description</TableCell>
-                    <TableCell>Car ID</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {transactions.map((transaction) => (
                     <TableRow key={transaction._id}>
-                      <TableCell>{transaction._id}</TableCell>
                       <TableCell>{transaction.type}</TableCell>
                       <TableCell>
                         {new Date(transaction.date).toLocaleDateString()}
                       </TableCell>
                       <TableCell>{transaction.amount}</TableCell>
-                      <TableCell>{transaction.description}</TableCell>
                       <TableCell>
-                        {transaction.car ? transaction.car._id : "-"}
+                        {transaction.car ? `${transaction.car?.name} | ${transaction.car?.chassisNumber}` : "-"}
+
                       </TableCell>
+                      <TableCell>{transaction.description}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

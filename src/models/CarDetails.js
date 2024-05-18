@@ -8,9 +8,9 @@ const carDetailsSchema = new mongoose.Schema(
     capital: { type: Number, default: 0 },
     maintenanceCosts: { type: Number, default: 0 },
     netProfit: Number,
+    purchaseCompleted: { type: Boolean, default: false }, // New field
   },
   { timestamps: true }
 );
-
 
 module.exports = mongoose.models.CarDetails || mongoose.model("CarDetails", carDetailsSchema);

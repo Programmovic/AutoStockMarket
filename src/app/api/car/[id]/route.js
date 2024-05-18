@@ -5,6 +5,7 @@ import Customer from "../../../../models/Customer";
 import Employee from "../../../../models/Employee";
 import Partner from "../../../../models/Partner";
 import Transaction from "../../../../models/Transaction"; // Make sure to import the Transaction model
+import Installment from "../../../../models/Installment";
 
 import { NextResponse } from "next/server";
 
@@ -56,22 +57,12 @@ export async function GET(req, { params }) {
     let customers;
     if (!params.CustomersOnly) {
       customers = await Customer.find({});
-      if (!customers || customers.length === 0) {
-        return NextResponse.json(
-          { error: "No customers found" },
-          { status: 404 }
-        );
-      }
+      
     }
     if (!params.TransactionsOnly) {
       try {
         const transactions = await Transaction.find({});
-        if (!transactions || transactions.length === 0) {
-          return NextResponse.json(
-            { error: "No transactions found" },
-            { status: 404 }
-          );
-        }
+        
       } catch (error) {
         console.error("Error fetching transactions:", error);
         return NextResponse.json(
@@ -80,7 +71,7 @@ export async function GET(req, { params }) {
         );
       }
     }
-    
+
     if (!params.CustomersOnly) {
       // Find the car by ID
       const car = await Car.findById(id);
@@ -90,21 +81,11 @@ export async function GET(req, { params }) {
 
       // Find the car details associated with the car
       const carDetails = await CarDetails.findOne({ car: car._id });
-      if (!carDetails) {
-        return NextResponse.json(
-          { error: "Car details not found" },
-          { status: 404 }
-        );
-      }
+      
 
       // Find the employees
       const employees = await Employee.find({});
-      if (!employees || employees.length === 0) {
-        return NextResponse.json(
-          { error: "No employees found" },
-          { status: 404 }
-        );
-      }
+      
 
       // Find the partners associated with the car
       const partners = await Partner.find({ cars: car._id });
@@ -112,23 +93,19 @@ export async function GET(req, { params }) {
       const transactions = await Transaction.find({ car: car._id }).populate(
         "partners"
       );
-      if (!transactions || transactions.length === 0) {
-        return NextResponse.json(
-          { error: "No transactions found for this car" },
-          { status: 404 }
-        );
-      }
+      const installments = await Installment.find({ car: car._id });
       // Prepare the response with car, car details, and customers
       const responseData = {
         message: "Car and customers details retrieved successfully",
-        car: car,
-        carDetails: carDetails,
-        customers: customers,
-        employees: employees,
-        partners: partners,
-        transactions: transactions,
-      };
-
+        car: car || { message: "No car details were retrieved" },
+        carDetails: carDetails || { message: "No car details were retrieved" },
+        customers: customers || { message: "No customer details were retrieved" },
+        employees: employees || { message: "No employee details were retrieved" },
+        partners: partners || { message: "No partner details were retrieved" },
+        transactions: transactions || { message: "No transaction details were retrieved" },
+        installments: installments || { message: "No installment details were retrieved" },
+    };
+    
       // Send success response
       return NextResponse.json(responseData);
     } else {

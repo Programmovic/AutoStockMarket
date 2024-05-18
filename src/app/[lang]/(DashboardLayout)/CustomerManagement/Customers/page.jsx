@@ -123,7 +123,10 @@ const CustomersPage = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
-                <TableCell>Contact Details</TableCell>
+                <TableCell>Phone Number</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Nationality</TableCell>
+                <TableCell>National ID</TableCell>
                 <TableCell>Debts</TableCell>
                 {/* Add more table headers as needed */}
               </TableRow>
@@ -137,7 +140,10 @@ const CustomersPage = () => {
                   hover={true}
                 >
                   <TableCell>{customer.name}</TableCell>
-                  <TableCell>{customer.contactDetails}</TableCell>
+                  <TableCell>{customer.contactDetails.phone}</TableCell>
+                  <TableCell>{customer.contactDetails.email}</TableCell>
+                  <TableCell>{customer.contactDetails.nationality}</TableCell>
+                  <TableCell>{customer.contactDetails.nationalID}</TableCell>
                   <TableCell>{customer.debts}</TableCell>
                   {/* Display more customer details as needed */}
                 </TableRow>

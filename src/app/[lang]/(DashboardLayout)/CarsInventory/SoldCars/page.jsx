@@ -114,7 +114,7 @@ const SoldCarsPage = () => {
           <Table aria-label="sold cars table">
             <TableHead>
               <TableRow>
-                <TableCell>Car ID</TableCell>
+                <TableCell>Car Name</TableCell>
                 <TableCell>Purchaser Name</TableCell>
                 <TableCell>Purchase Date</TableCell>
                 <TableCell>Purchase Price</TableCell>
@@ -128,7 +128,7 @@ const SoldCarsPage = () => {
                   style={{ cursor: "pointer" }}
                   hover={true}
                 >
-                  <TableCell>{soldCar.car._id}</TableCell>
+                  <TableCell>{soldCar.car.name}</TableCell>
                   <TableCell>{soldCar.purchaser.name}</TableCell>
                   <TableCell>{new Date(soldCar.purchaseDate).toLocaleDateString()}</TableCell>
                   <TableCell>${soldCar.purchasePrice}</TableCell>

@@ -4,6 +4,7 @@ import CarDetails from "../../../models/CarDetails";
 import Partner from "../../../models/Partner";
 import Transaction from "../../../models/Transaction";
 import Invoice from "../../../models/Invoice";
+import Installment from "../../../models/Installment";
 import { NextResponse } from "next/server";
 import { CoPresentOutlined } from "@mui/icons-material";
 
@@ -23,10 +24,13 @@ export async function POST(req, res) {
     currentLocation,
     value,
     partners,
+    firstInstallment,
   } = await req.json();
   try {
-    // Check if a car with the given chassisNumber already exists
-    const carExists = await Car.findOne({ chassisNumber });
+    const carExists = await Car.findOne({
+      chassisNumber,
+      location: { $ne: "Sold" },
+    });
 
     if (carExists) {
       return NextResponse.json(
@@ -63,10 +67,21 @@ export async function POST(req, res) {
 
     // Save the car details to the database
     await carDetails.save();
-    
+
+    const firstInstallmentRecord = new Installment({
+      amount: firstInstallment, // Set the amount of the first installment equal to the value of the car
+      description: "First Installment", // Optional description
+      car: car._id,
+    });
+
+    // Save the first installment to the database
+    await firstInstallmentRecord.save();
+
+    const invoices = []; // Array to store associated invoices
 
     // Calculate the total amount to be paid by all partners
     const totalAmount = value;
+    
     // Loop through partnerData
     for (const partner of partners) {
       // Check if partner with given phone number exists
@@ -95,8 +110,7 @@ export async function POST(req, res) {
         });
         await newPartner.save();
         // Calculate the amount this partner needs to pay based on their percentage
-        const partnerAmount =
-          (partner.percentage / 100) * totalAmount;
+        const partnerAmount = (partner.percentage / 100) * totalAmount;
 
         // Create a transaction for the amount this partner is paying
         const partnerTransaction = new Transaction({
@@ -118,6 +132,7 @@ export async function POST(req, res) {
         });
 
         await partnerInvoice.save();
+        invoices.push(partnerInvoice); // Push the invoice to the invoices array
       } else {
         // If partner exists, push the car to their list of associated cars
         existingPartner.cars.push(car._id);
@@ -125,8 +140,33 @@ export async function POST(req, res) {
       }
     }
 
-    // Return a success message
-    return NextResponse.json({ message: "Car created successfully", car });
+    // Determine the purchase amount based on the first installment
+    const purchaseAmount = Math.min(firstInstallment, value);
+
+    // Create a transaction for the purchase amount
+    const purchaseTransaction = new Transaction({
+      type: "expense",
+      amount: purchaseAmount,
+      description: `Purchase of car with chassis number ${chassisNumber}`,
+      car: car._id,
+    });
+
+    await purchaseTransaction.save();
+
+    // Create an invoice for the purchase transaction
+    const purchaseInvoice = new Invoice({
+      transaction: purchaseTransaction._id,
+      customerType: "Car",
+      customer: car._id,
+      invoiceDate: new Date(),
+      totalAmount: purchaseAmount,
+    });
+
+    await purchaseInvoice.save();
+    invoices.push(purchaseInvoice); // Push the purchase invoice to the invoices array
+
+    // Return success response with the created car and associated invoices
+    return NextResponse.json({ message: "Car created successfully", car, invoices });
   } catch (error) {
     // Handle any errors
     console.error(error);
@@ -136,6 +176,7 @@ export async function POST(req, res) {
     );
   }
 }
+
 
 // Get all cars with pagination and filters
 export async function GET(req, res) {
@@ -159,7 +200,8 @@ export async function GET(req, res) {
     if (name) filter.name = { $regex: new RegExp(name, "i") }; // Case-insensitive search
     if (color) filter.color = { $regex: new RegExp(color, "i") };
     if (model) filter.model = { $regex: new RegExp(model, "i") };
-    if (chassisNumber) filter.chassisNumber = { $regex: new RegExp(chassisNumber, "i") };
+    if (chassisNumber)
+      filter.chassisNumber = { $regex: new RegExp(chassisNumber, "i") };
 
     // Calculate skip value for pagination
     const skip = (page - 1) * perPage;
