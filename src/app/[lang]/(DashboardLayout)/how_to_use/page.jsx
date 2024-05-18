@@ -209,7 +209,7 @@ const DocumentationPage = ({ params }) => {
                   <li><strong>Purchase Details:</strong> Information about the purchase transaction.</li>
                   <li><strong>Maintenance:</strong> Details about the car maintenance history.</li>
                   <li><strong>Price:</strong> The selling price of the car.</li>
-                  <li><strong>Current Location:</strong> The car's current location.</li>
+                  <li><strong>Current Location:</strong> The car&apos;s current location.</li>
                 </ul>
               </Typography>
 
@@ -276,7 +276,7 @@ const DocumentationPage = ({ params }) => {
 
               <Typography variant="h6">Step 4: Review and Submit</Typography>
               <Typography variant="body1" gutterBottom>
-                Review all the entered data to ensure accuracy. Once verified, click the Finish button to add the expense to the car's record.
+                Review all the entered data to ensure accuracy. Once verified, click the Finish button to add the expense to the car&apos;s record.
               </Typography>
             </Box>
           </Collapse>
@@ -324,14 +324,14 @@ const DocumentationPage = ({ params }) => {
                     <strong>Description:</strong> Provide a brief description of the installment.
                   </li>
                   <li>
-                    <strong>Paid:</strong> Check the box if the installment has been paid. Leave unchecked if it's pending.
+                    <strong>Paid:</strong> Check the box if the installment has been paid. Leave unchecked if it&apos;s pending.
                   </li>
                 </ul>
               </Typography>
 
               <Typography variant="h6">Step 4: Review and Submit</Typography>
               <Typography variant="body1" gutterBottom>
-                Review all the entered data to ensure accuracy. Once verified, click the "Finish" button to add the installment to the car's record.
+                Review all the entered data to ensure accuracy. Once verified, click the &apos;Finish&apos; button to add the installment to the car&apos;s record.
               </Typography>
             </Box>
           </Collapse>
@@ -372,7 +372,7 @@ const DocumentationPage = ({ params }) => {
 
               <Typography variant="h6">Step 4: Review and Save Changes</Typography>
               <Typography variant="body1" gutterBottom>
-                Review all the updated data to ensure accuracy. Once verified, click the Save Changes button to apply the edits to the car's record.
+                Review all the updated data to ensure accuracy. Once verified, click the Save Changes button to apply the edits to the car&apos;s record.
               </Typography>
             </Box>
           </Collapse>
