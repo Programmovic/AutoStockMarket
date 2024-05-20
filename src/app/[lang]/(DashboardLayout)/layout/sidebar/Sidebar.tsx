@@ -63,6 +63,11 @@ const Sidebar = ({
             >
               <Logo />
             </Box>
+
+            {/* Sidebar Content */}
+            <Box sx={{ flex: 1, overflowY: "auto" }}>
+              <SidebarItems />
+            </Box>
           </Box>
         </Drawer>
       </Box>
