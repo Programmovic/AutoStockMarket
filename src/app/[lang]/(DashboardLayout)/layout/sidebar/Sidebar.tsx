@@ -53,14 +53,14 @@ const Sidebar = ({
           >
             {/* Logo - Fixed at the top */}
             <Box
-  p={3}
-  sx={{
-    position: "sticky",
-    top: 0,
-    zIndex: 1100, // Higher z-index to ensure it stays on top of other content
-    bgcolor: "background.paper",
-  }}
->
+              p={3}
+              sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1100, // Higher z-index to ensure it stays on top of other content
+                bgcolor: "background.paper",
+              }}
+            >
               <Logo />
             </Box>
 
@@ -98,7 +98,6 @@ const Sidebar = ({
       {/* Sidebar For Mobile */}
       {/* ------------------------------------------- */}
       <SidebarItems />
-      <Upgrade />
     </Drawer>
   );
 };
