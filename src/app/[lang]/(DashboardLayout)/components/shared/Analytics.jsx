@@ -30,49 +30,46 @@ const Analytics = ({ params, today = false }) => {
   return (
     <Box>
       <Grid container spacing={2}>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Cars"} data={analytics?.totalCars} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/Cars"}/>
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Sold Cars"} data={analytics?.totalSoldCars} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/SoldCars"}/>
-        </Grid>
-        {/* Analytics for total transactions */}
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Transactions"} data={analytics?.totalTransactions} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Received"} data={analytics?.totalReceived} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Expenses"} data={analytics?.totalExpenses} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        {/* Analytics for total customers */}
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Customers"} data={analytics?.totalCustomers} icon={<IconMan width={24} />} />
-        </Grid>
-        {/* Analytics for total maintenance costs */}
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Maintenance Costs"} data={analytics?.totalMaintenanceCosts} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Customers Debts"} data={analytics?.totalCustomerDebt} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Cars Prices"} data={analytics?.carDetails?.totalValue} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Selling Prices"} data={analytics?.carDetails?.totalSellingPrice} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Profit"} data={analytics?.carDetails?.totalProfit} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Partners"} data={analytics?.totalPartners} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
-        <Grid item xs={4}>
-          <AnalyticsDashboard title={"Total Partners Percentages"} data={`${analytics?.totalPartnerPercentage}%`} icon={<IconCurrencyDollar width={24} />} />
-        </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Cars"} data={analytics?.totalCars} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/Cars"} />
       </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Sold Cars"} data={analytics?.totalSoldCars} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/SoldCars"} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Transactions"} data={analytics?.totalTransactions} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Received"} data={analytics?.totalReceived} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Expenses"} data={analytics?.totalExpenses} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Customers"} data={analytics?.totalCustomers} icon={<IconMan width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Maintenance Costs"} data={analytics?.totalMaintenanceCosts} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Customers Debts"} data={analytics?.totalCustomerDebt} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Cars Prices"} data={analytics?.carDetails?.totalValue} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Selling Prices"} data={analytics?.carDetails?.totalSellingPrice} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Profit"} data={analytics?.carDetails?.totalProfit} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Partners"} data={analytics?.totalPartners} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+        <AnalyticsDashboard title={"Total Partners Percentages"} data={`${analytics?.totalPartnerPercentage}%`} icon={<IconCurrencyDollar width={24} />} />
+      </Grid>
+    </Grid>
       <Grid container spacing={2}>
         {!today && (
           <>
