@@ -96,13 +96,6 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Inventory Management",
-    icon: IconVector,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 2 - إدارة المخزون",
-  },
-  {
-    id: uniqueId(),
     title: "Expenses",
     icon: IconCoinEuro,
     href: "/SalesManagment/Expenses",
@@ -189,52 +182,6 @@ const Menuitems = [
     icon: IconMoneybag,
     href: "/ReportsAndAnalytics/Recoveries",
     translatedTitle: "ملف 2 - مصروف المعرض",
-  },
-  {
-    navlabel: true,
-    subheader: "Quick Links to other sections/pages",
-  },
-  {
-    id: uniqueId(),
-    title: "External Car Maintenance",
-    icon: IconCar,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 2 - صيانة السيارات الخارجية",
-  },
-  {
-    id: uniqueId(),
-    title: "Vehicle Maintenance",
-    icon: IconCar,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 2 - صيانة المركبات",
-  },
-  {
-    id: uniqueId(),
-    title: "Precision Garage",
-    icon: IconGardenCart,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 2 - كراج الدقة",
-  },
-  {
-    id: uniqueId(),
-    title: "Garages and Car Washes",
-    icon: IconWaterpolo,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 2 - كراجات ومغاسل السيارات",
-  },
-  {
-    id: uniqueId(),
-    title: "Recoveries",
-    icon: IconMoneybag,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 2 – التعويضات",
-  },
-  {
-    id: uniqueId(),
-    title: "External Debts",
-    icon: IconMoneybag,
-    href: "/utilities/shadow",
-    translatedTitle: "ملف 2 - الديون الخارجية",
   },
 ];
 
