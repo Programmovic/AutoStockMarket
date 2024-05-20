@@ -1,15 +1,13 @@
 import Chart from "react-apexcharts";
-import { useTheme, useMediaQuery } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import { Stack, Typography, Avatar, Fab, Link, IconButton } from "@mui/material";
 import { IconArrowDownRight, IconCurrencyDollar, IconEye } from "@tabler/icons-react";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import { useState } from "react";
-
 const AnalyticsDashboard = ({ data, title, icon, iconLink }) => {
   // chart color
   const theme = useTheme();
   const secondarylight = "#f5fcff";
-  const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
 
   const generateRandomColor = () => {
     const colors = ["red", "orange", "green", "blue", "purple", "pink"];
@@ -64,7 +62,6 @@ const AnalyticsDashboard = ({ data, title, icon, iconLink }) => {
   const handleMouseOut = () => {
     setIsHovered(false);
   };
-
   return (
     <DashboardCard
       title={title}
@@ -72,7 +69,7 @@ const AnalyticsDashboard = ({ data, title, icon, iconLink }) => {
         <Link href={iconLink} underline="none">
           <Fab
             color="secondary"
-            size={isSmUp ? "medium" : "small"}
+            size="medium"
             sx={{
               color: "#ffffff",
             }}
@@ -92,9 +89,11 @@ const AnalyticsDashboard = ({ data, title, icon, iconLink }) => {
         />
       }
     >
-      <Typography variant={isSmUp ? "h3" : "h4"} fontWeight="700" mt="-20px">
-        {data}
-      </Typography>
+      <>
+        <Typography variant="h3" fontWeight="700" mt="-20px">
+          {data}
+        </Typography>
+      </>
     </DashboardCard>
   );
 };
