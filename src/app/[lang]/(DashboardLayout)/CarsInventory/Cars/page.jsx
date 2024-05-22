@@ -19,6 +19,7 @@ import {
   IconButton,
   TablePagination, // Import TablePagination component
 } from "@mui/material";
+import { IconFileInvoice } from "@tabler/icons-react";
 import { Add } from "@mui/icons-material";
 import Loading from "../../loading";
 
@@ -180,29 +181,39 @@ const CarsPage = () => {
                     <TableCell>Maintenance</TableCell>
                     <TableCell>Current Location</TableCell>
                     <TableCell>Status</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {cars.map((car) => (
                     <TableRow
                       key={car._id}
-                      onClick={() => handleRowClick(car._id)}
                       style={{ cursor: "pointer" }}
                       hover={true}
                     >
-                      <TableCell>{car.name}</TableCell>
+                      <TableCell 
+                      onClick={() => handleRowClick(car._id)}>{car.name}</TableCell>
                       <TableCell>{car.color}</TableCell>
                       <TableCell>{car.model}</TableCell>
                       <TableCell>{car.chassisNumber}</TableCell>
                       <TableCell>{car.owner}</TableCell>
                       <TableCell>{car.purchaseDetails}</TableCell>
                       <TableCell>
-                        {new Date(car.entryDate).toLocaleString()}
+                        {new Date(car.entryDate).toLocaleDateString()}
                       </TableCell>
                       <TableCell>{car.maintenance}</TableCell>
                       <TableCell>{car.currentLocation}</TableCell>
                       <TableCell sx={{ textAlign: "center" }}>
                         {getDurationMarker(car.entryDate)}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        <IconButton
+                          onClick={() => router.push(`/en/SalesManagment/Invoices/Car/${car._id}`)}
+                          aria-label="See Invoices"
+                          color="primary"
+                        >
+                          <IconFileInvoice />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}

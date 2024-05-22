@@ -23,10 +23,6 @@ const partnerSchema = new mongoose.Schema(
       phone: {
         type: String,
         trim: true,
-        match: [
-          /^\+(?:[0-9] ?){6,14}[0-9]$/, // Validate international phone number format
-          "Please enter a valid phone number",
-        ],
       },
       address: {
         street: { type: String, trim: true },

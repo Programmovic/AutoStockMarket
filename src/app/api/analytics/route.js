@@ -5,22 +5,19 @@ import Customer from "../../../models/Customer";
 import CarDetails from "../../../models/CarDetails";
 import MaintenanceTask from "../../../models/MaintenanceTasks";
 import SoldCar from "../../../models/SoldCars";
-import Partner from "../../../models/Partner"; // Import the Partner model
+import Partner from "../../../models/Partner";
 import { NextResponse } from "next/server";
-import moment from "moment"; // Import moment.js library for date manipulation
+import moment from "moment";
 
 export async function GET(req, { params }) {
   await connectDB();
-  const today = req.nextUrl.searchParams.get("today");
+  const month = req.nextUrl.searchParams.get("month");
+  const startDate = moment().month(month - 1).startOf("month").toDate();
+  const endDate = moment().month(month - 1).endOf("month").toDate();
+  
+  const filter = { createdAt: { $gte: startDate, $lt: endDate } };
+
   try {
-    let filter = {};
-
-    if (today === "true") {
-      const today = moment().startOf("day");
-      const tomorrow = moment(today).endOf("day");
-      filter = { createdAt: { $gte: today.toDate(), $lt: tomorrow.toDate() } };
-    }
-
     // Define promises to fetch data asynchronously
     const totalCarsPromise = Car.countDocuments(filter);
     const totalTransactionsPromise = Transaction.countDocuments(filter);
@@ -85,6 +82,18 @@ export async function GET(req, { params }) {
     const totalPartners = partners.length;
     const totalPartnerPercentage = partners.reduce((acc, partner) => acc + partner.partnershipPercentage, 0);
 
+    // Group transactions by month and calculate earnings and expenses
+    const monthlyTransactions = await Transaction.aggregate([
+      {
+        $group: {
+          _id: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
+          earnings: { $sum: { $cond: [{ $eq: ["$type", "income"] }, "$amount", 0] } },
+          expenses: { $sum: { $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0] } }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+
     const response = {
       totalCars,
       totalTransactions,
@@ -96,8 +105,12 @@ export async function GET(req, { params }) {
       recentTransactions,
       totalReceived,
       totalExpenses,
-      totalPartners, // Add total partners
-      totalPartnerPercentage, // Add total partner percentage
+      totalPartners,
+      totalPartnerPercentage,
+      // Return earnings and expenses for the chart
+      earnings: recentTransactions.filter(tr => tr.type === 'income').map(tr => tr.amount),
+      expenses: recentTransactions.filter(tr => tr.type === 'expense').map(tr => tr.amount),
+      monthlyTransactions // Add monthly transactions data
     };
 
     return NextResponse.json(response);

@@ -1,46 +1,23 @@
 import connectDB from "../../../lib/db";
+import mongoose from "mongoose"; // Import mongoose to use transactions
 import Car from "../../../models/Cars";
 import CarDetails from "../../../models/CarDetails";
 import Partner from "../../../models/Partner";
 import Transaction from "../../../models/Transaction";
 import Invoice from "../../../models/Invoice";
 import Installment from "../../../models/Installment";
+import Customer from "../../../models/Customer"; // Import the Customer model
 import { NextResponse } from "next/server";
-import { CoPresentOutlined } from "@mui/icons-material";
 
 // Create a new car and its details
 export async function POST(req, res) {
-  // Connect to the database
   await connectDB();
-  const {
-    name,
-    color,
-    model,
-    chassisNumber,
-    owner,
-    purchaseDetails,
-    entryDate,
-    maintenance,
-    currentLocation,
-    value,
-    partners,
-    firstInstallment,
-  } = await req.json();
+
+  const session = await mongoose.startSession(); // Start a transaction session
+  session.startTransaction(); // Start the transaction
+
   try {
-    const carExists = await Car.findOne({
-      chassisNumber,
-      location: { $ne: "Sold" },
-    });
-
-    if (carExists) {
-      return NextResponse.json(
-        { error: "Car already exists", carExists },
-        { status: 400 }
-      );
-    }
-
-    // Create a new car instance
-    const car = new Car({
+    const {
       name,
       color,
       model,
@@ -50,46 +27,80 @@ export async function POST(req, res) {
       entryDate,
       maintenance,
       currentLocation,
+      value,
+      partners,
+      firstInstallment,
+    } = await req.json();
+
+    const carExists = await Car.findOne(
+      { chassisNumber, location: { $ne: "Sold" } },
+      null,
+      { session }
+    );
+
+    if (carExists) {
+      await session.abortTransaction();
+      session.endSession();
+      return NextResponse.json(
+        { error: "Car already exists", carExists },
+        { status: 400 }
+      );
+    }
+// Inside the try block of your POST method, after extracting request body variables
+let customer = await Customer.findOne({ name: owner }, null, { session });
+if (!customer) {
+    customer = new Customer({
+        name: owner,
+        // Additional fields can be included based on the incoming request if needed
+    });
+    await customer.save({ session });
+}
+    const car = new Car({
+      name,
+      color,
+      model,
+      chassisNumber,
+      owner: customer._id,
+      purchaseDetails,
+      entryDate,
+      maintenance,
+      currentLocation,
     });
 
-    // Save the car to the database
-    await car.save();
+    await car.save({ session });
 
-    // Create a corresponding car details entry
     const carDetails = new CarDetails({
-      car: car._id, // Reference to the newly created car
-      value: value, // Set default values for other fields
+      car: car._id,
+      value: value,
       sellingPrice: 0,
       capital: 0,
       maintenanceCosts: 0,
       netProfit: 0,
     });
 
-    // Save the car details to the database
-    await carDetails.save();
+    await carDetails.save({ session });
 
     const firstInstallmentRecord = new Installment({
-      amount: firstInstallment, // Set the amount of the first installment equal to the value of the car
-      description: "First Installment", // Optional description
+      amount: firstInstallment,
+      description: "First Installment",
       car: car._id,
     });
 
-    // Save the first installment to the database
-    await firstInstallmentRecord.save();
+    await firstInstallmentRecord.save({ session });
 
-    const invoices = []; // Array to store associated invoices
+    const invoices = [];
 
-    // Calculate the total amount to be paid by all partners
     const totalAmount = value;
-    
-    // Loop through partnerData
-    for (const partner of partners) {
-      // Check if partner with given phone number exists
-      let existingPartner = await Partner.findOne({
-        "contactInfo.phone": partner.phone,
-      });
 
-      // If partner doesn't exist, create new partner
+    for (const partner of partners) {
+      let existingPartner = await Partner.findOne(
+        {
+          "contactInfo.phone": partner.phone,
+        },
+        null,
+        { session }
+      );
+
       if (!existingPartner) {
         const newPartner = new Partner({
           name: partner.name,
@@ -106,13 +117,11 @@ export async function POST(req, res) {
             },
           },
           partnershipPercentage: partner.percentage,
-          cars: [car._id], // Associate the partner with the newly created car
+          cars: [car._id],
         });
-        await newPartner.save();
-        // Calculate the amount this partner needs to pay based on their percentage
-        const partnerAmount = (partner.percentage / 100) * totalAmount;
+        await newPartner.save({ session });
 
-        // Create a transaction for the amount this partner is paying
+        const partnerAmount = (partner.percentage / 100) * totalAmount;
         const partnerTransaction = new Transaction({
           type: "income",
           amount: partnerAmount,
@@ -121,8 +130,8 @@ export async function POST(req, res) {
           partner: newPartner._id,
         });
 
-        await partnerTransaction.save();
-        // Create an invoice for this partner
+        await partnerTransaction.save({ session });
+
         const partnerInvoice = new Invoice({
           transaction: partnerTransaction._id,
           customerType: "Partner",
@@ -131,19 +140,15 @@ export async function POST(req, res) {
           totalAmount: partnerAmount,
         });
 
-        await partnerInvoice.save();
-        invoices.push(partnerInvoice); // Push the invoice to the invoices array
+        await partnerInvoice.save({ session });
+        invoices.push(partnerInvoice);
       } else {
-        // If partner exists, push the car to their list of associated cars
         existingPartner.cars.push(car._id);
-        await existingPartner.save();
+        await existingPartner.save({ session });
       }
     }
 
-    // Determine the purchase amount based on the first installment
     const purchaseAmount = Math.min(firstInstallment, value);
-
-    // Create a transaction for the purchase amount
     const purchaseTransaction = new Transaction({
       type: "expense",
       amount: purchaseAmount,
@@ -151,24 +156,31 @@ export async function POST(req, res) {
       car: car._id,
     });
 
-    await purchaseTransaction.save();
+    await purchaseTransaction.save({ session });
 
-    // Create an invoice for the purchase transaction
+    
     const purchaseInvoice = new Invoice({
       transaction: purchaseTransaction._id,
-      customerType: "Car",
-      customer: car._id,
+      customerType: "Customer",
+      customer: customer._id,
       invoiceDate: new Date(),
       totalAmount: purchaseAmount,
     });
 
-    await purchaseInvoice.save();
-    invoices.push(purchaseInvoice); // Push the purchase invoice to the invoices array
+    await purchaseInvoice.save({ session });
+    invoices.push(purchaseInvoice);
 
-    // Return success response with the created car and associated invoices
-    return NextResponse.json({ message: "Car created successfully", car, invoices });
+    await session.commitTransaction(); // Commit the transaction if all operations are successful
+    session.endSession();
+
+    return NextResponse.json({
+      message: "Car created successfully",
+      car,
+      invoices,
+    });
   } catch (error) {
-    // Handle any errors
+    await session.abortTransaction(); // Rollback the transaction on error
+    session.endSession();
     console.error(error);
     return NextResponse.json(
       { error: "Could not create car: " + error.message },
@@ -176,7 +188,6 @@ export async function POST(req, res) {
     );
   }
 }
-
 
 // Get all cars with pagination and filters
 export async function GET(req, res) {
