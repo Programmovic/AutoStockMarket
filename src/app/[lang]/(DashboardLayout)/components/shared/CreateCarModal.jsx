@@ -21,6 +21,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import * as XLSX from "xlsx"; // Import xlsx library
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const steps = ["Car Details", "Ownership", "Partnership", "Review"];
 
@@ -372,8 +374,9 @@ const CreateCarModal = ({
   const [activeStep, setActiveStep] = useState(0);
   console.log(initialCarData)
   const [carData, setCarData] = useState(initialCarData);
-  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [partners, setPartners] = useState([{ name: "", type: "Partner", email: "", phone: "", percentage: 0 }]);
   const [invoices, setInvoices] = useState([]); // State to store invoices
 
@@ -442,11 +445,38 @@ const CreateCarModal = ({
     const response = await axios.post("/api/car", data);
     if (response.data.message) {
       setInvoices(response.data.invoices); // Store invoices in state
-      handleReset();
-      handleClose();
-      fetchCars();
+
+      console.log(response.data)
+      toast.success(response.data.message, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: "Flip"
+      }).then(() => {
+        handleReset();
+        handleClose();
+        fetchCars();
+      });
+
+
     } else {
       console.error("Error creating car:", response.data.error);
+      toast.error(response.data.error, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: "Flip",
+      });
     }
   };
   const handleSubmit = async () => {
@@ -469,6 +499,17 @@ const CreateCarModal = ({
       }
     } catch (error) {
       console.error("Error:", error);
+      toast.error(error.response.data.error, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: "Flip",
+      });
     }
   };
   const [loading, setLoading] = useState(false);
@@ -517,67 +558,84 @@ const CreateCarModal = ({
 
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={modalStyle}>
-        <Stepper activeStep={activeStep}>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <div style={{ paddingTop: 20, paddingBottom: 20 }}>
+    <>
 
-          <Box sx={{ maxHeight: '300px', overflowY: 'auto' }}>
-            {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner)}
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <input
-              accept=".xlsx,.xls"
-              style={{ display: "none" }}
-              id="contained-button-file"
-              multiple={false}
-              type="file"
-              onChange={handleFileUpload}
-            />
-            <label htmlFor="contained-button-file">
-              <Button variant="contained" component="span">
-                {loading ? "Loading" : "Upload Excel"}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+
+        <Box sx={modalStyle}>
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+            transition="Flip"
+          />
+          <Stepper activeStep={activeStep}>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <div style={{ paddingTop: 20, paddingBottom: 20 }}>
+
+            <Box sx={{ maxHeight: '300px', overflowY: 'auto' }}>
+              {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner)}
+            </Box>
+            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+              <input
+                accept=".xlsx,.xls"
+                style={{ display: "none" }}
+                id="contained-button-file"
+                multiple={false}
+                type="file"
+                onChange={handleFileUpload}
+              />
+              <label htmlFor="contained-button-file">
+                <Button variant="contained" component="span">
+                  {loading ? "Loading" : "Upload Excel"}
+                </Button>
+              </label>
+              <Button
+                color="inherit"
+                disabled={activeStep === 0}
+                onClick={handleBack}
+              >
+                Back
               </Button>
-            </label>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-            >
-              Back
-            </Button>
 
 
 
-            <Box sx={{ flex: "1 1 auto" }} />
-            {activeStep === 2 && (
-              <Button variant="outlined" onClick={addPartner}>Add Partner</Button>
-            )}
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? "Finish" : errorMessage ? errorMessage : "Next"}
-            </Button>
-            {invoices.length > 0 && (
-              <Box sx={{ marginTop: 4 }}>
-                <Typography variant="h6">Associated Invoices</Typography>
-                <InvoiceTable invoices={invoices} />
-              </Box>
-            )}
+              <Box sx={{ flex: "1 1 auto" }} />
+              {activeStep === 2 && (
+                <Button variant="outlined" onClick={addPartner}>Add Partner</Button>
+              )}
+              <Button onClick={handleNext}>
+                {activeStep === steps.length - 1 ? "Finish" : errorMessage ? errorMessage : "Next"}
+              </Button>
+              {invoices.length > 0 && (
+                <Box sx={{ marginTop: 4 }}>
+                  <Typography variant="h6">Associated Invoices</Typography>
+                  <InvoiceTable invoices={invoices} />
+                </Box>
+              )}
 
-          </Box>
-        </div>
-      </Box>
-    </Modal>
+            </Box>
+          </div>
+        </Box>
+      </Modal>
+    </>
   );
 };
 
