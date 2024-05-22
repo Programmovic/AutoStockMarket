@@ -61,7 +61,7 @@ const Analytics = ({ params, today = false }) => {
           <AnalyticsDashboard title={"Total Selling Prices"} data={analytics?.carDetails?.totalSellingPrice} icon={<IconCurrencyDollar width={24} />} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <AnalyticsDashboard title={"Total Profit"} data={analytics?.carDetails?.totalProfit} icon={<IconCurrencyDollar width={24} />} />
+          <AnalyticsDashboard title={"Total Profit"} data={analytics?.earnings} icon={<IconCurrencyDollar width={24} />} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <AnalyticsDashboard title={"Total Partners"} data={analytics?.totalPartners} icon={<IconCurrencyDollar width={24} />} />

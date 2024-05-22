@@ -22,7 +22,6 @@ import { Add } from "@mui/icons-material";
 const SoldCarsPage = () => {
   const router = useRouter();
   const [soldCars, setSoldCars] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     carId: "",
     purchaserId: "",
@@ -79,15 +78,6 @@ const SoldCarsPage = () => {
           alignItems="center"
           justifyContent={"space-between"}
         >
-          <Box mr={1}>
-            <IconButton
-              onClick={() => setModalOpen(true)}
-              aria-label="add new sold car record"
-              color="primary"
-            >
-              <Add />
-            </IconButton>
-          </Box>
 
           <Box flexGrow={1}>
             <TextField

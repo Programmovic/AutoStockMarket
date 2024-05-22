@@ -11,10 +11,18 @@ import moment from "moment";
 
 export async function GET(req, { params }) {
   await connectDB();
-  const month = req.nextUrl.searchParams.get("month");
-  const startDate = moment().month(month - 1).startOf("month").toDate();
-  const endDate = moment().month(month - 1).endOf("month").toDate();
   
+  let startDate, endDate;
+  const month = req.nextUrl.searchParams.get("month");
+
+  if (month) {
+    startDate = moment().month(month - 1).startOf("month").toDate();
+    endDate = moment().month(month - 1).endOf("month").toDate();
+  } else {
+    startDate = moment().startOf("month").toDate();
+    endDate = moment().endOf("month").toDate();
+  }
+
   const filter = { createdAt: { $gte: startDate, $lt: endDate } };
 
   try {

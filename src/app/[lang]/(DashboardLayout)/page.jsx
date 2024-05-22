@@ -39,7 +39,7 @@ const Dashboard = ({ params }) => {
 
           </Box>
           <Collapse in={isQuickActionsOpen}>
-            <Box sx={{ p: 2 }}>
+            <Box>
               <Link href="/en/CarsInventory/Cars?CreateCar=true" target="_blank" underline="none">
                 <DashboardCard title={"Add New Car"} />
               </Link>
