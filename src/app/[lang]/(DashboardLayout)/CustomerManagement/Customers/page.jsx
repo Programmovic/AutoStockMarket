@@ -140,10 +140,10 @@ const CustomersPage = () => {
                   hover={true}
                 >
                   <TableCell>{customer.name}</TableCell>
-                  <TableCell>{customer.contactDetails.phone}</TableCell>
-                  <TableCell>{customer.contactDetails.email}</TableCell>
-                  <TableCell>{customer.contactDetails.nationality}</TableCell>
-                  <TableCell>{customer.contactDetails.nationalID}</TableCell>
+                  <TableCell>{customer.contactDetails?.phone}</TableCell>
+                  <TableCell>{customer.contactDetails?.email}</TableCell>
+                  <TableCell>{customer.contactDetails?.nationality}</TableCell>
+                  <TableCell>{customer.contactDetails?.nationalID}</TableCell>
                   <TableCell>{customer.debts}</TableCell>
                   {/* Display more customer details as needed */}
                 </TableRow>
