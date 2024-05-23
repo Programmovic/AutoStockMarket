@@ -2,11 +2,10 @@ import connectDB from "../../../lib/db";
 import Customer from "../../../models/Customer";
 import { NextResponse } from "next/server";
 
-// Connect to the database
-connectDB();
-
 // Create a new customer
 export async function POST(req, res) {
+  // Connect to the database
+  await connectDB();
   const customerData = await req.json();
   try {
     // Create a new customer instance
@@ -32,6 +31,8 @@ export async function POST(req, res) {
 
 // Get all customers with pagination and filters
 export async function GET(req, res) {
+  // Connect to the database
+  await connectDB();
   try {
     // Parse query parameters
     const searchParams = new URL(req.url).searchParams;
@@ -57,7 +58,7 @@ export async function GET(req, res) {
 
     // Get total count of customers (without pagination)
     const totalCount = await Customer.countDocuments(filter);
-console.table(customers)
+    console.table(customers);
     return NextResponse.json({ customers, totalCount });
   } catch (error) {
     console.error(error);
