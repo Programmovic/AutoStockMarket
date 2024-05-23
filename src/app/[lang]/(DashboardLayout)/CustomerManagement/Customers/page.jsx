@@ -48,7 +48,7 @@ const CustomersPage = () => {
       setCustomers(response.data.customers);
       setError(""); // Clear error on successful fetch
     } catch (error) {
-      console.error("Error fetching customers:", error);
+      console.error("Error fetching customers:", error.response.data);
       setError("Failed to fetch customers. Please try again later.");
       setCustomers([]); // Set customers array to empty in case of error
     }
@@ -168,3 +168,4 @@ const CustomersPage = () => {
 };
 
 export default CustomersPage;
+
