@@ -45,12 +45,11 @@ const CarInvoicesPage = ({params}) => {
 
   return (
     <PageContainer title="Car Invoices" description="List of invoices for the selected car">
-      <DashboardCard title="Invoice List">
+      <DashboardCard title={`Invoice List`}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="invoice table">
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
                 <TableCell>Transaction ID</TableCell>
                 <TableCell>Customer</TableCell>
                 <TableCell>Invoice Date</TableCell>
@@ -65,7 +64,6 @@ const CarInvoicesPage = ({params}) => {
                   onClick={() => handleRowClick(invoice._id)} 
                   style={{ cursor: 'pointer' }} 
                 >
-                  <TableCell>{invoice._id}</TableCell>
                   <TableCell>{invoice?.transaction?._id}</TableCell>
                   <TableCell>{invoice?.customer?.name}</TableCell>
                   <TableCell>{new Date(invoice.invoiceDate).toLocaleString()}</TableCell>
