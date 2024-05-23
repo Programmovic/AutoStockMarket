@@ -31,13 +31,13 @@ const Analytics = ({ params, today = false }) => {
     <Box>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} md={4}>
-          <AnalyticsDashboard title={"Total Cars"} data={analytics?.totalCars} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/Cars"} />
+          <AnalyticsDashboard title={"Total Cars"} data={analytics?.totalCars} chartData={analytics?.carValues} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/Cars"} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <AnalyticsDashboard title={"Total Sold Cars"} data={analytics?.totalSoldCars} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/SoldCars"} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <AnalyticsDashboard title={"Total Transactions"} data={analytics?.totalTransactions} icon={<IconCurrencyDollar width={24} />} />
+          <AnalyticsDashboard title={"Total Transactions"} data={analytics?.totalTransactions} chartData={analytics?.transactionAmounts} icon={<IconCurrencyDollar width={24} />} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <AnalyticsDashboard title={"Total Received"} data={analytics?.totalReceived} icon={<IconCurrencyDollar width={24} />} />

@@ -27,10 +27,10 @@ export async function GET(req, { params }) {
 
   try {
     // Define promises to fetch data asynchronously
-    const totalCarsPromise = Car.countDocuments(filter);
-    const totalTransactionsPromise = Transaction.countDocuments(filter);
-    const totalCustomersPromise = Customer.countDocuments(filter);
-    const totalSoldCarsPromise = SoldCar.countDocuments(filter);
+    const totalCarsPromise = Car.find(filter);
+    const totalTransactionsPromise = Transaction.find(filter);
+    const totalCustomersPromise = Customer.find(filter);
+    const totalSoldCarsPromise = SoldCar.find(filter);
     const totalMaintenanceCostsPromise = MaintenanceTask.aggregate([
       { $match: filter },
       { $group: { _id: null, totalCost: { $sum: "$taskCost" } } },
@@ -39,26 +39,15 @@ export async function GET(req, { params }) {
       { $match: filter },
       { $group: { _id: null, totalDebt: { $sum: "$debts" } } },
     ]);
-    const carDetailsPromise = CarDetails.aggregate([
-      { $match: filter },
-      {
-        $group: {
-          _id: null,
-          totalValue: { $sum: "$value" },
-          totalSellingPrice: { $sum: "$sellingPrice" },
-          totalCapital: { $sum: "$capital" },
-          totalProfit: { $sum: "$netProfit" },
-        },
-      },
-    ]);
+    const carDetailsPromise = CarDetails.find(filter);
     const recentTransactionsPromise = Transaction.find(filter).sort({ createdAt: -1 }).limit(5);
 
     // Execute promises concurrently
     const [
-      totalCars,
-      totalTransactions,
-      totalCustomers,
-      totalSoldCars,
+      cars,
+      transactions,
+      customers,
+      soldCars,
       totalMaintenanceCosts,
       totalCustomerDebt,
       carDetails,
@@ -77,11 +66,13 @@ export async function GET(req, { params }) {
     // Calculate total received and total expenses
     let totalReceived = 0;
     let totalExpenses = 0;
-    recentTransactions.forEach(transaction => {
+    const transactionAmounts = transactions.map(transaction => {
       if (transaction.type === 'income') {
         totalReceived += transaction.amount;
+        return transaction.amount;
       } else if (transaction.type === 'expense') {
         totalExpenses += transaction.amount;
+        return transaction.amount;
       }
     });
 
@@ -89,6 +80,9 @@ export async function GET(req, { params }) {
     const partners = await Partner.find({});
     const totalPartners = partners.length;
     const totalPartnerPercentage = partners.reduce((acc, partner) => acc + partner.partnershipPercentage, 0);
+
+    // Extract car values for chart visualization
+    const carValues = carDetails.map(car => car.value);
 
     // Group transactions by month and calculate earnings and expenses
     const monthlyTransactions = await Transaction.aggregate([
@@ -103,21 +97,26 @@ export async function GET(req, { params }) {
     ]);
 
     const response = {
-      totalCars,
-      totalTransactions,
-      totalCustomers,
+      totalCars: cars.length,
+      cars,
+      totalTransactions: transactions.length,
+      transactions,
+      totalCustomers: customers.length,
+      customers,
       totalMaintenanceCosts: totalMaintenanceCosts[0]?.totalCost || 0,
       totalCustomerDebt: totalCustomerDebt[0]?.totalDebt || 0,
       carDetails: carDetails[0] || {},
-      totalSoldCars,
+      carValues,
+      totalSoldCars: soldCars.length,
+      soldCars,
       recentTransactions,
       totalReceived,
       totalExpenses,
       totalPartners,
       totalPartnerPercentage,
-      // Return earnings and expenses for the chart
       earnings: recentTransactions.filter(tr => tr.type === 'income').map(tr => tr.amount),
       expenses: recentTransactions.filter(tr => tr.type === 'expense').map(tr => tr.amount),
+      transactionAmounts,
       monthlyTransactions // Add monthly transactions data
     };
 

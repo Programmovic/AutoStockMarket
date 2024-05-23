@@ -4,7 +4,7 @@ import { Stack, Typography, Avatar, Fab, Link, IconButton } from "@mui/material"
 import { IconArrowDownRight, IconCurrencyDollar, IconEye } from "@tabler/icons-react";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
 import { useState } from "react";
-const AnalyticsDashboard = ({ data, title, icon, iconLink }) => {
+const AnalyticsDashboard = ({ data, chartData, title, icon, iconLink }) => {
   // chart color
   const theme = useTheme();
   const secondarylight = "#f5fcff";
@@ -50,7 +50,7 @@ const AnalyticsDashboard = ({ data, title, icon, iconLink }) => {
     {
       name: "",
       color: generateRandomColor(), // Random color for the chart series
-      data: [25, 66, 20, 40, 12, 58, 20],
+      data: chartData,
     },
   ];
   const [isHovered, setIsHovered] = useState(false);

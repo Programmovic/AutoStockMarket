@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+import Customer from "./Customer";
+import Car from "./Cars";
 
 const soldCarSchema = new mongoose.Schema(
   {

@@ -22,6 +22,7 @@ import { Add } from "@mui/icons-material";
 const SoldCarsPage = () => {
   const router = useRouter();
   const [soldCars, setSoldCars] = useState([]);
+  const [filteredSoldCars, setFilteredSoldCars] = useState([]); // State for filtered sold cars
   const [filters, setFilters] = useState({
     carId: "",
     purchaserId: "",
@@ -34,13 +35,7 @@ const SoldCarsPage = () => {
   const fetchSoldCars = async () => {
     try {
       console.log("fetching sold cars");
-      const response = await axios.get("/api/sold-cars", {
-        params: {
-          ...filters,
-          page: currentPage,
-          perPage: perPage,
-        },
-      });
+      const response = await axios.get("/api/sold-cars");
       setSoldCars(response.data.soldCars);
       setError(""); // Clear error on successful fetch
     } catch (error) {
@@ -50,9 +45,32 @@ const SoldCarsPage = () => {
     }
   };
 
+  // Apply filters client-side
+  const applyFilters = () => {
+    let filteredCars = soldCars;
+
+    if (filters.carId) {
+      filteredCars = filteredCars.filter(car =>
+        car.car.name.includes(filters.carId)
+      );
+    }
+
+    if (filters.purchaserId) {
+      filteredCars = filteredCars.filter(car =>
+        car.purchaser._id.includes(filters.purchaserId)
+      );
+    }
+
+    setFilteredSoldCars(filteredCars);
+  };
+
   useEffect(() => {
     fetchSoldCars();
-  }, [filters, currentPage]);
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters, soldCars]);
 
   const handleRowClick = (id) => {
     router.push(`/en/CarsInventory/Cars/${id}`);
@@ -65,9 +83,18 @@ const SoldCarsPage = () => {
     });
   };
 
-  const handlePaginationChange = (pageNumber) => {
+  const handlePaginationChange = (event, pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  // Calculate the number of pages
+  const totalPages = Math.ceil(filteredSoldCars.length / perPage);
+
+  // Get the cars to display on the current page
+  const carsToDisplay = filteredSoldCars.slice(
+    (currentPage - 1) * perPage,
+    currentPage * perPage
+  );
 
   return (
     <PageContainer title="Sold Cars" description="Sold Cars Management">
@@ -78,14 +105,13 @@ const SoldCarsPage = () => {
           alignItems="center"
           justifyContent={"space-between"}
         >
-
           <Box flexGrow={1}>
             <TextField
-              name="carId"
-              label="Car ID"
+              name="car"
+              label="Car"
               variant="outlined"
               size="small"
-              value={filters.carId}
+              value={filters.car}
               onChange={handleFilterChange}
               style={{ marginRight: 10 }}
             />
@@ -111,10 +137,10 @@ const SoldCarsPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {soldCars?.map((soldCar) => (
+              {carsToDisplay.map((soldCar) => (
                 <TableRow
                   key={soldCar._id}
-                  onClick={() => handleRowClick(soldCar?.car?._id)}
+                  onClick={() => handleRowClick(soldCar.car._id)}
                   style={{ cursor: "pointer" }}
                   hover={true}
                 >
@@ -128,9 +154,9 @@ const SoldCarsPage = () => {
           </Table>
         </TableContainer>
         <Pagination
-          count={Math.ceil(soldCars?.length / perPage)}
+          count={totalPages}
           page={currentPage}
-          onChange={(event, page) => handlePaginationChange(page)}
+          onChange={handlePaginationChange}
           style={{ marginTop: 10 }}
         />
       </DashboardCard>
