@@ -11,13 +11,19 @@ import moment from "moment";
 
 export async function GET(req, { params }) {
   await connectDB();
-  
+
   let startDate, endDate;
   const month = req.nextUrl.searchParams.get("month");
 
   if (month) {
-    startDate = moment().month(month - 1).startOf("month").toDate();
-    endDate = moment().month(month - 1).endOf("month").toDate();
+    startDate = moment()
+      .month(month - 1)
+      .startOf("month")
+      .toDate();
+    endDate = moment()
+      .month(month - 1)
+      .endOf("month")
+      .toDate();
   } else {
     startDate = moment().startOf("month").toDate();
     endDate = moment().endOf("month").toDate();
@@ -40,8 +46,13 @@ export async function GET(req, { params }) {
       { $group: { _id: null, totalDebt: { $sum: "$debts" } } },
     ]);
     const carDetailsPromise = CarDetails.find(filter);
-    const recentTransactionsPromise = Transaction.find(filter).sort({ createdAt: -1 }).limit(5);
-
+    const recentTransactionsPromise = Transaction.find(filter)
+      .sort({ createdAt: -1 })
+      .limit(5);
+    const totalSellingPricesPromise = SoldCar.aggregate([
+      { $match: filter },
+      { $group: { _id: null, totalSellingPrices: { $sum: "$purchasePrice" } } },
+    ]);
     // Execute promises concurrently
     const [
       cars,
@@ -51,7 +62,8 @@ export async function GET(req, { params }) {
       totalMaintenanceCosts,
       totalCustomerDebt,
       carDetails,
-      recentTransactions
+      recentTransactions,
+      totalSellingPrices
     ] = await Promise.all([
       totalCarsPromise,
       totalTransactionsPromise,
@@ -60,17 +72,18 @@ export async function GET(req, { params }) {
       totalMaintenanceCostsPromise,
       totalCustomerDebtPromise,
       carDetailsPromise,
-      recentTransactionsPromise
+      recentTransactionsPromise,
+      totalSellingPricesPromise
     ]);
 
     // Calculate total received and total expenses
     let totalReceived = 0;
     let totalExpenses = 0;
-    const transactionAmounts = transactions.map(transaction => {
-      if (transaction.type === 'income') {
+    const transactionAmounts = transactions.map((transaction) => {
+      if (transaction.type === "income") {
         totalReceived += transaction.amount;
         return transaction.amount;
-      } else if (transaction.type === 'expense') {
+      } else if (transaction.type === "expense") {
         totalExpenses += transaction.amount;
         return transaction.amount;
       }
@@ -79,21 +92,34 @@ export async function GET(req, { params }) {
     // Fetch partners and calculate total percentages
     const partners = await Partner.find({});
     const totalPartners = partners.length;
-    const totalPartnerPercentage = partners.reduce((acc, partner) => acc + partner.partnershipPercentage, 0);
+    const totalPartnerPercentage = partners.reduce(
+      (acc, partner) => acc + partner.partnershipPercentage,
+      0
+    );
 
     // Extract car values for chart visualization
-    const carValues = carDetails.map(car => car.value);
-
+    const carValues = carDetails.map((car) => car.value);
+    // Extract car values for chart visualization
+    const carValuesAmount = carDetails
+      .map((car) => car.value)
+      .reduce((partialSum, a) => partialSum + a, 0);
     // Group transactions by month and calculate earnings and expenses
     const monthlyTransactions = await Transaction.aggregate([
       {
         $group: {
-          _id: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
-          earnings: { $sum: { $cond: [{ $eq: ["$type", "income"] }, "$amount", 0] } },
-          expenses: { $sum: { $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0] } }
-        }
+          _id: {
+            month: { $month: "$createdAt" },
+            year: { $year: "$createdAt" },
+          },
+          earnings: {
+            $sum: { $cond: [{ $eq: ["$type", "income"] }, "$amount", 0] },
+          },
+          expenses: {
+            $sum: { $cond: [{ $eq: ["$type", "expense"] }, "$amount", 0] },
+          },
+        },
       },
-      { $sort: { "_id.year": 1, "_id.month": 1 } }
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
     ]);
 
     const response = {
@@ -107,6 +133,7 @@ export async function GET(req, { params }) {
       totalCustomerDebt: totalCustomerDebt[0]?.totalDebt || 0,
       carDetails: carDetails[0] || {},
       carValues,
+      carValuesAmount,
       totalSoldCars: soldCars.length,
       soldCars,
       recentTransactions,
@@ -114,10 +141,14 @@ export async function GET(req, { params }) {
       totalExpenses,
       totalPartners,
       totalPartnerPercentage,
-      earnings: recentTransactions.filter(tr => tr.type === 'income').map(tr => tr.amount),
-      expenses: recentTransactions.filter(tr => tr.type === 'expense').map(tr => tr.amount),
+      earnings: recentTransactions
+        .filter((tr) => tr.type === "income")
+        .map((tr) => tr.amount),
+      expenses: recentTransactions
+        .filter((tr) => tr.type === "expense")
+        .map((tr) => tr.amount),
       transactionAmounts,
-      monthlyTransactions // Add monthly transactions data
+      monthlyTransactions, // Add monthly transactions data
     };
 
     return NextResponse.json(response);
