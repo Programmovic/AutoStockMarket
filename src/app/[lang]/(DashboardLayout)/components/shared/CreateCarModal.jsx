@@ -115,6 +115,9 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
           <Grid item xs={6}>
             <TextField
               fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
               label="First Installment"
               name="firstInstallment"
               value={carData?.firstInstallment || carData?.value}
@@ -556,22 +559,28 @@ const CreateCarModal = ({
     }
   };
   const [isNextDisabled, setIsNextDisabled] = useState(true);
+
   const validateStep = (step) => {
     let isValid = true;
+    let errorMsg = "";
     switch (step) {
       case 0:
         isValid = carData?.name && carData?.color && carData?.model && carData?.chassisNumber && carData?.value && carData?.firstInstallment;
+        if (!isValid) errorMsg = "All fields are required in Car Details.";
         break;
       case 1:
         isValid = carData?.owner && carData?.purchaseDetails && carData?.entryDate && carData?.maintenance && carData?.currentLocation;
+        if (!isValid) errorMsg = "All fields are required in Ownership.";
         break;
       case 2:
         isValid = partners.every(partner => partner.name && partner.type && partner.email && partner.phone && partner.percentage);
+        if (!isValid) errorMsg = "All fields are required in Partnership.";
         break;
       default:
         isValid = true;
     }
     setIsNextDisabled(!isValid);
+    setErrorMessage(!isValid ? errorMsg : "");
   };
   useEffect(() => {
     validateStep(activeStep);
@@ -614,6 +623,7 @@ const CreateCarModal = ({
               {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner)}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+              
               <input
                 accept=".xlsx,.xls"
                 style={{ display: "none" }}
@@ -641,7 +651,7 @@ const CreateCarModal = ({
               {activeStep === 2 && (
                 <Button variant="outlined" onClick={addPartner}>Add Partner</Button>
               )}
-              <Button onClick={handleNext} disabled={isNextDisabled}>
+              <Button onClick={handleNext} disabled={isNextDisabled} variant="outlined" sx={{fontWeight: "bold"}}>
                 {activeStep === steps.length - 1 ? "Finish" : errorMessage ? errorMessage : "Next"}
               </Button>
               {invoices.length > 0 && (
