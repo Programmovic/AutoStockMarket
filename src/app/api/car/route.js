@@ -218,7 +218,7 @@ export async function GET(req, res) {
     const skip = (page - 1) * perPage;
 
     // Query cars with pagination and filters
-    const cars = await Car.find(filter).skip(skip).limit(perPage);
+    const cars = await Car.find(filter).populate('owner').skip(skip).limit(perPage);
 
     // Get total count of cars (without pagination)
     const totalCount = await Car.countDocuments(filter);
