@@ -555,7 +555,27 @@ const CreateCarModal = ({
       setLoading(false); // Set loading state to false in case of error
     }
   };
-
+  const [isNextDisabled, setIsNextDisabled] = useState(true);
+  const validateStep = (step) => {
+    let isValid = true;
+    switch (step) {
+      case 0:
+        isValid = carData?.name && carData?.color && carData?.model && carData?.chassisNumber && carData?.value && carData?.firstInstallment;
+        break;
+      case 1:
+        isValid = carData?.owner && carData?.purchaseDetails && carData?.entryDate && carData?.maintenance && carData?.currentLocation;
+        break;
+      case 2:
+        isValid = partners.every(partner => partner.name && partner.type && partner.email && partner.phone && partner.percentage);
+        break;
+      default:
+        isValid = true;
+    }
+    setIsNextDisabled(!isValid);
+  };
+  useEffect(() => {
+    validateStep(activeStep);
+  }, [activeStep, carData, partners]);
 
   return (
     <>
@@ -621,7 +641,7 @@ const CreateCarModal = ({
               {activeStep === 2 && (
                 <Button variant="outlined" onClick={addPartner}>Add Partner</Button>
               )}
-              <Button onClick={handleNext}>
+              <Button onClick={handleNext} disabled={isNextDisabled}>
                 {activeStep === steps.length - 1 ? "Finish" : errorMessage ? errorMessage : "Next"}
               </Button>
               {invoices.length > 0 && (
