@@ -491,7 +491,10 @@ const CreateCarModal = ({
       });
     }
   };
+  
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async () => {
+    setLoading(true); // Set loading state to true
     try {
       const mergedData = { ...carData, partners };
       console.log(mergedData);
@@ -509,6 +512,7 @@ const CreateCarModal = ({
       } else {
         await sendCarToApi(mergedData)
       }
+      setLoading(false); // Set loading state to true
     } catch (error) {
       console.error("Error:", error);
       toast.error(error?.response?.data?.error, {
@@ -522,9 +526,9 @@ const CreateCarModal = ({
         theme: "colored",
         transition: "Flip",
       });
+      setLoading(false); // Set loading state to true
     }
   };
-  const [loading, setLoading] = useState(false);
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
