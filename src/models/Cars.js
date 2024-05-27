@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+import Customer from './Customer';
 
 const carSchema = new mongoose.Schema(
   {
@@ -6,7 +7,7 @@ const carSchema = new mongoose.Schema(
     color: String,
     model: String,
     chassisNumber: { type: String, unique: true, required: true },
-    owner: String,
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true },
     purchaseDetails: String,
     maintenance: String,
     currentLocation: String,

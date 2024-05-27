@@ -46,15 +46,15 @@ export async function POST(req, res) {
         { status: 400 }
       );
     }
-// Inside the try block of your POST method, after extracting request body variables
-let customer = await Customer.findOne({ name: owner }, null, { session });
-if (!customer) {
-    customer = new Customer({
+    // Inside the try block of your POST method, after extracting request body variables
+    let customer = await Customer.findOne({ name: owner }, null, { session });
+    if (!customer) {
+      customer = new Customer({
         name: owner,
         // Additional fields can be included based on the incoming request if needed
-    });
-    await customer.save({ session });
-}
+      });
+      await customer.save({ session });
+    }
     const car = new Car({
       name,
       color,
@@ -158,7 +158,6 @@ if (!customer) {
 
     await purchaseTransaction.save({ session });
 
-    
     const purchaseInvoice = new Invoice({
       transaction: purchaseTransaction._id,
       customerType: "Customer",
@@ -218,7 +217,10 @@ export async function GET(req, res) {
     const skip = (page - 1) * perPage;
 
     // Query cars with pagination and filters
-    const cars = await Car.find(filter).populate('owner').skip(skip).limit(perPage);
+    const cars = await Car.find(filter)
+      .populate("owner")
+      .skip(skip)
+      .limit(perPage);
 
     // Get total count of cars (without pagination)
     const totalCount = await Car.countDocuments(filter);

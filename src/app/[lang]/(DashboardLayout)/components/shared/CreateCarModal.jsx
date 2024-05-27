@@ -120,7 +120,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               }}
               label="First Installment"
               name="firstInstallment"
-              value={carData?.firstInstallment || carData?.value}
+              value={carData?.firstInstallment}
               onChange={(e) => {
                 const newValue = parseInt(e.target.value);
                 const price = parseInt(carData?.value);
@@ -191,7 +191,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
     case 2: // Partnership
       return (
         <Grid container spacing={2}>
-          {partners.map((partner, index) => (
+          {partners.length > 0 ? (partners.map((partner, index) => (
             <Grid item xs={12} key={index}>
               <Typography variant="subtitle1">
                 {index === 0 ? "First" : index === 1 ? "Second" : index === 2 ? "Third" : `${index + 1}th`} Partner
@@ -261,7 +261,12 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
                 </Button>
               )}
             </Grid>
-          ))}
+          ))) : (
+            <Grid item xs={12}>
+              <Typography variant="subtitle1">
+                Click Add Partner To Add Partners to this Car
+              </Typography>
+            </Grid>)}
 
         </Grid>
       );
@@ -380,7 +385,7 @@ const CreateCarModal = ({
 
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [partners, setPartners] = useState([{ name: "", type: "Partner", email: "", phone: "", percentage: 0 }]);
+  const [partners, setPartners] = useState([]);
   const [invoices, setInvoices] = useState([]); // State to store invoices
 
   // Function to add a new partner
@@ -439,9 +444,13 @@ const CreateCarModal = ({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCarData({ ...carData, [name]: value });
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setCarData((prevData) => ({
+      ...prevData,
+      [name]: value,
+      ...(name === "value" && { firstInstallment: value }), // Automatically set firstInstallment
+    }));
   };
   const sendCarToApi = async (data) => {
     // Make a POST request to create a new car
@@ -469,7 +478,7 @@ const CreateCarModal = ({
 
     } else {
       console.error("Error creating car:", response.data.error);
-      toast.error(response.data.error, {
+      toast.error(response?.data?.error, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -502,7 +511,7 @@ const CreateCarModal = ({
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error(error.response.data.error, {
+      toast.error(error?.response?.data?.error, {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -565,16 +574,12 @@ const CreateCarModal = ({
     let errorMsg = "";
     switch (step) {
       case 0:
-        isValid = carData?.name && carData?.color && carData?.model && carData?.chassisNumber && carData?.value && carData?.firstInstallment;
+        isValid = carData?.name && carData?.color && carData?.model && carData?.chassisNumber && carData?.value;
         if (!isValid) errorMsg = "All fields are required in Car Details.";
         break;
       case 1:
         isValid = carData?.owner && carData?.purchaseDetails && carData?.entryDate && carData?.maintenance && carData?.currentLocation;
         if (!isValid) errorMsg = "All fields are required in Ownership.";
-        break;
-      case 2:
-        isValid = partners.every(partner => partner.name && partner.type && partner.email && partner.phone && partner.percentage);
-        if (!isValid) errorMsg = "All fields are required in Partnership.";
         break;
       default:
         isValid = true;
@@ -623,7 +628,7 @@ const CreateCarModal = ({
               {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner)}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              
+
               <input
                 accept=".xlsx,.xls"
                 style={{ display: "none" }}
@@ -651,15 +656,9 @@ const CreateCarModal = ({
               {activeStep === 2 && (
                 <Button variant="outlined" onClick={addPartner}>Add Partner</Button>
               )}
-              <Button onClick={handleNext} disabled={isNextDisabled} variant="outlined" sx={{fontWeight: "bold"}}>
+              <Button onClick={handleNext} disabled={isNextDisabled} variant="outlined" sx={{ fontWeight: "bold" }}>
                 {activeStep === steps.length - 1 ? "Finish" : errorMessage ? errorMessage : "Next"}
               </Button>
-              {invoices.length > 0 && (
-                <Box sx={{ marginTop: 4 }}>
-                  <Typography variant="h6">Associated Invoices</Typography>
-                  <InvoiceTable invoices={invoices} />
-                </Box>
-              )}
 
             </Box>
           </div>

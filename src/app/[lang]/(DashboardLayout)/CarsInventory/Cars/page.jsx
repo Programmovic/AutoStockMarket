@@ -196,7 +196,7 @@ const CarsPage = () => {
                       <TableCell>{car.color}</TableCell>
                       <TableCell>{car.model}</TableCell>
                       <TableCell>{car.chassisNumber}</TableCell>
-                      <TableCell>{car.owner}</TableCell>
+                      <TableCell>{car?.owner?.name}</TableCell>
                       <TableCell>{car.purchaseDetails}</TableCell>
                       <TableCell>
                         {new Date(car.entryDate).toLocaleDateString()}

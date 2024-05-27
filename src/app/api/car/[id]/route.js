@@ -48,10 +48,10 @@ export async function POST(req, { params }) {
 // Retrieve car and customers details by their IDs
 export async function GET(req, { params }) {
   const { id } = params;
-
+// Connect to the database
+await connectDB();
   try {
-    // Connect to the database
-    await connectDB();
+    
 
     // Find the customers
     let customers;
