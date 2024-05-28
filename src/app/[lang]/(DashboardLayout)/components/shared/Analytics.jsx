@@ -27,7 +27,7 @@ const Analytics = ({ params, today = false }) => {
         queryParams.endDate = moment(endDate).format('YYYY-MM-DD');
       }
       const response = await axios.get(url, { params: queryParams });
-
+      console.log(response.data);
       setAnalytics(response.data);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
@@ -116,7 +116,7 @@ const Analytics = ({ params, today = false }) => {
         {!today && (
           <>
             <Grid item xs={12}>
-              <SalesOverview />
+              <SalesOverview monthlyTransactions={analytics?.monthlyTransactions} />
             </Grid>
           </>
         )}

@@ -5,49 +5,38 @@ import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCa
 import Chart from "react-apexcharts";
 import moment from "moment";
 
-const SalesOverview = () => {
+const SalesOverview = ({ monthlyTransactions }) => {
   const [month, setMonth] = useState("");
-  const [chartData, setChartData] = useState({ earnings: [], expenses: [] });
+  const [chartData, setChartData] = useState({
+    earnings: monthlyTransactions?.length > 0 ? [monthlyTransactions[0].earnings] : [],
+    expenses: monthlyTransactions?.length > 0 ? [monthlyTransactions[0].expenses] : [],
+  });
   const [monthlyData, setMonthlyData] = useState([]);
-
   const handleChange = (event) => {
     setMonth(event.target.value);
   };
-
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const secondary = theme.palette.secondary.main;
+  console.log(monthlyTransactions);
+  useEffect(() => {
+    const formattedMonthlyData = (monthlyTransactions ?? []).map((item) => ({
+      ...item,
+      monthName: moment().month(item._id.month - 1).format("MMMM YYYY"),
+    }));
+    setMonthlyData(formattedMonthlyData);
+
+    // Set the default month to the latest available month
+    if (formattedMonthlyData.length > 0 && !month) {
+      setMonth(formattedMonthlyData[formattedMonthlyData.length - 1]._id.month.toString());
+    }
+  }, [month, monthlyTransactions]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/api/analytics?month=${month}`);
-        const data = await response.json();
-        console.log(data);
-
-        setChartData({
-          earnings: data.earnings,
-          expenses: data.expenses,
-        });
-
-        const formattedMonthlyData = data.monthlyTransactions.map((item) => ({
-          ...item,
-          monthName: moment().month(item._id.month - 1).format("MMMM YYYY"),
-        }));
-
-        setMonthlyData(formattedMonthlyData);
-
-        // Set the default month to the latest available month
-        if (formattedMonthlyData.length > 0 && !month) {
-          setMonth(formattedMonthlyData[formattedMonthlyData.length - 1]._id.month);
-        }
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchData();
-  }, [month]);
+    const earnings = monthlyTransactions?.map((transaction) => transaction.earnings) ?? [];
+    const expenses = monthlyTransactions?.map((transaction) => transaction.expenses) ?? [];
+    setChartData({ earnings, expenses });
+  }, [monthlyTransactions]);
 
   const optionscolumnchart = {
     chart: {
@@ -77,7 +66,7 @@ const SalesOverview = () => {
       colors: ["transparent"],
     },
     dataLabels: {
-      enabled: false,
+      enabled: true,
     },
     legend: {
       show: false,
@@ -95,7 +84,7 @@ const SalesOverview = () => {
       tickAmount: 4,
     },
     xaxis: {
-      categories: monthlyData.map(data => data.monthName),
+      categories: monthlyData.map((data) => data.monthName),
       axisBorder: {
         show: false,
       },
@@ -116,30 +105,21 @@ const SalesOverview = () => {
       data: chartData.expenses,
     },
   ];
-
+  console.log(chartData);
   return (
     <DashboardCard
       title="Sales Overview"
       action={
-        <Select
-          labelId="month-dd"
-          id="month-dd"
-          value={month}
-          size="small"
-          onChange={handleChange}
-        >
+        <Select labelId="month-dd" id="month-dd" value={month} size="small" onChange={handleChange}>
           {monthlyData.map((data, index) => (
-            <MenuItem key={index} value={data._id.month}>{data.monthName}</MenuItem>
+            <MenuItem key={index} value={data._id.month.toString()}>
+              {data.monthName}
+            </MenuItem>
           ))}
         </Select>
       }
     >
-      <Chart
-        options={optionscolumnchart}
-        series={seriescolumnchart}
-        type="bar"
-        height="370px"
-      />
+      <Chart options={optionscolumnchart} series={seriescolumnchart} type="bar" height="370px" />
     </DashboardCard>
   );
 };
