@@ -46,7 +46,7 @@ const Analytics = ({ params, today = false }) => {
         <Grid container spacing={2} sx={{ marginBottom: 2 }}>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Start Date"
+              label="From Date"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
@@ -58,7 +58,7 @@ const Analytics = ({ params, today = false }) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="End Date"
+              label="To Date"
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
