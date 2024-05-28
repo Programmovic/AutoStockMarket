@@ -451,6 +451,7 @@ const CreateCarModal = ({
       [name]: value,
       ...(name === "value" && { firstInstallment: value }), // Automatically set firstInstallment
     }));
+    console.log(carData)
   };
   const sendCarToApi = async (data) => {
     // Make a POST request to create a new car
