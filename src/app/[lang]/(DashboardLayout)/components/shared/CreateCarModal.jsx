@@ -648,8 +648,10 @@ const CreateCarModal = ({
               </label>
               <Button
                 color="inherit"
+                variant="outlined"
                 disabled={activeStep === 0}
                 onClick={handleBack}
+                sx={{ marginLeft: 2 }}
               >
                 Back
               </Button>
@@ -658,10 +660,10 @@ const CreateCarModal = ({
 
               <Box sx={{ flex: "1 1 auto" }} />
               {activeStep === 2 && (
-                <Button variant="outlined" onClick={addPartner}>Add Partner</Button>
+                <Button variant="outlined" onClick={addPartner} sx={{ marginRight: 2 }}>Add Partner</Button>
               )}
               <Button onClick={handleNext} disabled={isNextDisabled} variant="outlined" sx={{ fontWeight: "bold" }}>
-                {activeStep === steps.length - 1 ? "Finish" : errorMessage ? errorMessage : "Next"}
+                {activeStep === steps.length - 1 ? "Finish" : errorMessage ? `Next - ${errorMessage}` : "Next"}
               </Button>
 
             </Box>
