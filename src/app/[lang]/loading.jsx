@@ -3,7 +3,7 @@ import React from "react";
 import { CircularProgress, Box, Skeleton } from "@mui/material";
 import './loading.scss'
 
-const Loading = () => {
+const Loading = (width = 500, height = 250) => {
   return (
     <Box
       display="flex"
@@ -15,8 +15,8 @@ const Loading = () => {
         component="img"
         src="/images/logos/asm_logo.png" // Replace with your logo image path
         alt="Logo"
-        width={500} // Adjust the size as needed
-        height={250} // Adjust the size as needed
+        width={width} // Adjust the size as needed
+        height={height} // Adjust the size as needed
         className="pulse"
       />
       <CircularProgress sx={{ mt: 2 }} /> {/* Circular progress indicator */}

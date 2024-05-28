@@ -1,10 +1,11 @@
 import Chart from "react-apexcharts";
 import { useTheme } from "@mui/material/styles";
-import { Stack, Typography, Avatar, Fab, Link, IconButton } from "@mui/material";
+import { Stack, Typography, Avatar, Fab, Link, IconButton, Box } from "@mui/material";
 import { IconArrowDownRight, IconCurrencyDollar, IconEye } from "@tabler/icons-react";
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
+import Loading from "@/app/loading";
 import { useState } from "react";
-const AnalyticsDashboard = ({ data, chartData, title, icon, iconLink }) => {
+const AnalyticsDashboard = ({ data, chartData, title, icon, iconLink, loading = true }) => {
   // chart color
   const theme = useTheme();
   const secondarylight = "#f5fcff";
@@ -15,7 +16,7 @@ const AnalyticsDashboard = ({ data, chartData, title, icon, iconLink }) => {
     return colors[randomIndex];
   };
 
-  const optionscolumnchart = {
+  const optionsColumnChart = {
     chart: {
       type: "area",
       fontFamily: "'Plus Jakarta Sans', sans-serif;",
@@ -46,7 +47,7 @@ const AnalyticsDashboard = ({ data, chartData, title, icon, iconLink }) => {
     },
   };
 
-  const seriescolumnchart = [
+  const seriesColumnChart = [
     {
       name: "",
       color: generateRandomColor(), // Random color for the chart series
@@ -63,39 +64,49 @@ const AnalyticsDashboard = ({ data, chartData, title, icon, iconLink }) => {
     setIsHovered(false);
   };
   return (
-    <DashboardCard
-      title={title}
-      action={
-        <Link href={iconLink} underline="none">
-          <Fab
-            color="secondary"
-            size="medium"
-            sx={{
-              color: "#ffffff",
-            }}
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-          >
-            {isHovered ? <IconEye /> : icon}
-          </Fab>
-        </Link>
-      }
-      footer={
-        <Chart
-          options={optionscolumnchart}
-          series={seriescolumnchart}
-          type="area"
-          height="60px"
-        />
-      }
-    >
-      <>
+    !loading ? (
+      <DashboardCard
+        title={title}
+        action={
+          <Link href={iconLink} underline="none">
+            <Fab
+              color="secondary"
+              size="medium"
+              sx={{
+                color: "#ffffff",
+              }}
+              onMouseOver={handleMouseOver}
+              onMouseOut={handleMouseOut}
+            >
+              {isHovered ? <IconEye /> : icon}
+            </Fab>
+          </Link>
+        }
+        footer={
+          <Chart
+            options={optionsColumnChart}
+            series={seriesColumnChart}
+            type="area"
+            height="60px"
+          />
+        }
+      >
         <Typography variant="h3" fontWeight="700" mt="-20px">
           {data}
         </Typography>
-      </>
-    </DashboardCard>
+      </DashboardCard>
+    ) : (
+      <DashboardCard>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center">
+          <Loading width={250} height={125} />
+        </Box>
+      </DashboardCard>
+    )
   );
+
 };
 
 export default AnalyticsDashboard;
