@@ -56,7 +56,7 @@ const DailyReportsPage = () => {
 
   return (
     <PageContainer title="Daily Reports" description="Summary of daily transactions and cash flows">
-      <DashboardCard title="Daily Transactions">
+      <DashboardCard title="Daily Reports">
         <Analytics today={true} />
         <DashboardCard title="Daily Transactions">
           <TableContainer component={Paper}>

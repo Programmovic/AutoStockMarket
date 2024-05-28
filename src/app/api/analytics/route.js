@@ -13,26 +13,26 @@ export async function GET(req, { params }) {
   await connectDB();
 
   let startDate, endDate;
-  const month = req.nextUrl.searchParams.get("month");
+  const startDateParam = req.nextUrl.searchParams.get("startDate");
+  const endDateParam = req.nextUrl.searchParams.get("endDate");
 
-  if (month) {
-    startDate = moment()
-      .month(month - 1)
-      .startOf("month")
-      .toDate();
-    endDate = moment()
-      .month(month - 1)
-      .endOf("month")
-      .toDate();
-  } else {
-    startDate = moment().startOf("month").toDate();
-    endDate = moment().endOf("month").toDate();
+  if (startDateParam) {
+    startDate = moment(startDateParam).startOf('day').toDate();
+  }
+  if (endDateParam) {
+    endDate = moment(endDateParam).endOf('day').toDate();
   }
 
-  const filter = { createdAt: { $gte: startDate, $lt: endDate } };
+  const filter = {};
+  if (startDate && endDate) {
+    filter.createdAt = { $gte: startDate, $lt: endDate };
+  } else if (startDate) {
+    filter.createdAt = { $gte: startDate };
+  } else if (endDate) {
+    filter.createdAt = { $lt: endDate };
+  }
 
   try {
-    // Define promises to fetch data asynchronously
     const totalCarsPromise = Car.find(filter);
     const totalTransactionsPromise = Transaction.find(filter);
     const totalCustomersPromise = Customer.find(filter);
@@ -53,7 +53,7 @@ export async function GET(req, { params }) {
       { $match: filter },
       { $group: { _id: null, totalSellingPrices: { $sum: "$purchasePrice" } } },
     ]);
-    // Execute promises concurrently
+
     const [
       cars,
       transactions,
@@ -76,7 +76,6 @@ export async function GET(req, { params }) {
       totalSellingPricesPromise
     ]);
 
-    // Calculate total received and total expenses
     let totalReceived = 0;
     let totalExpenses = 0;
     const transactionAmounts = transactions.map((transaction) => {
@@ -89,7 +88,6 @@ export async function GET(req, { params }) {
       }
     });
 
-    // Fetch partners and calculate total percentages
     const partners = await Partner.find({});
     const totalPartners = partners.length;
     const totalPartnerPercentage = partners.reduce(
@@ -97,13 +95,11 @@ export async function GET(req, { params }) {
       0
     );
 
-    // Extract car values for chart visualization
     const carValues = carDetails.map((car) => car.value);
-    // Extract car values for chart visualization
     const carValuesAmount = carDetails
       .map((car) => car.value)
       .reduce((partialSum, a) => partialSum + a, 0);
-    // Group transactions by month and calculate earnings and expenses
+
     const monthlyTransactions = await Transaction.aggregate([
       {
         $group: {
@@ -148,7 +144,7 @@ export async function GET(req, { params }) {
         .filter((tr) => tr.type === "expense")
         .map((tr) => tr.amount),
       transactionAmounts,
-      monthlyTransactions, // Add monthly transactions data
+      monthlyTransactions,
     };
 
     return NextResponse.json(response);

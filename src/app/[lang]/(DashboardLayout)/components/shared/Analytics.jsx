@@ -1,4 +1,4 @@
-import { Grid, Box } from '../../../../../lib/mui';
+import { Grid, Box, TextField } from '../../../../../lib/mui';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import SalesOverview from '@/app/(DashboardLayout)/components/dashboard/SalesOverview';
@@ -7,13 +7,26 @@ import RecentTransactions from '@/app/(DashboardLayout)/components/dashboard/Rec
 import TopEmployees from '../dashboard/ProductPerformance';
 import AnalyticsDashboard from '@/app/(DashboardLayout)/components/dashboard/AnalyticsDashboard';
 import { IconCurrencyDollar, IconCar, IconMan } from "@tabler/icons-react";
+import moment from 'moment';
 
 const Analytics = ({ params, today = false }) => {
   const [analytics, setAnalytics] = useState({})
   const [isLoading, setIsLoading] = useState(true);
+  const [startDate, setStartDate] = useState(today ? moment(new Date()).format('YYYY-MM-DD') : null);
+  const [endDate, setEndDate] = useState(null);
+
   const fetchData = async () => {
     try {
-      const response = await axios.get(`/api/analytics?today=${today}`);
+      const url = `/api/analytics`;
+      const queryParams = {};
+
+      if (startDate) {
+        queryParams.startDate = moment(startDate).format('YYYY-MM-DD');
+      }
+      if (endDate) {
+        queryParams.endDate = moment(endDate).format('YYYY-MM-DD');
+      }
+      const response = await axios.get(url, { params: queryParams });
 
       setAnalytics(response.data);
     } catch (error) {
@@ -24,11 +37,40 @@ const Analytics = ({ params, today = false }) => {
   };
 
   useEffect(() => {
-
     fetchData();
-  }, []);
+  }, [startDate, endDate]);
+
   return (
     <Box>
+      {!today && (
+        <Grid container spacing={2} sx={{ marginBottom: 2 }}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Start Date"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="End Date"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              fullWidth
+            />
+          </Grid>
+        </Grid>
+      )}
+
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} md={4}>
           <AnalyticsDashboard title={"Total Cars"} data={analytics?.totalCars} chartData={analytics?.carValues} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/Cars"} />
