@@ -101,6 +101,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               name="chassisNumber"
               value={carData?.chassisNumber}
               onChange={handleInputChange}
+              autoCapitalize="true"
             />
           </Grid>
           <Grid item xs={6}>
@@ -144,6 +145,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               value={carData?.owner}
               onChange={handleInputChange}
               defaultValue={"ASM"}
+              autoComplete="false"
             />
           </Grid>
           <Grid item xs={6}>

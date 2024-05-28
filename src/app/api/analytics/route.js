@@ -130,6 +130,7 @@ export async function GET(req, { params }) {
       carDetails: carDetails[0] || {},
       carValues,
       carValuesAmount,
+      totalSellingPrices,
       totalSoldCars: soldCars.length,
       soldCars,
       recentTransactions,

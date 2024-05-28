@@ -76,7 +76,7 @@ const Analytics = ({ params, today = false }) => {
           <AnalyticsDashboard title={"Total Cars"} data={analytics?.totalCars} chartData={analytics?.carValues} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/Cars"} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <AnalyticsDashboard title={"Total Sold Cars"} data={analytics?.totalSoldCars} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/SoldCars"} />
+          <AnalyticsDashboard title={"Total Sold Cars"} data={analytics?.totalSoldCars} chartData={analytics?.totalSellingPrices} icon={<IconCar width={24} />} iconLink={"/en/CarsInventory/SoldCars"} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <AnalyticsDashboard title={"Total Transactions"} data={analytics?.totalTransactions} chartData={analytics?.transactionAmounts} icon={<IconCurrencyDollar width={24} />} />
