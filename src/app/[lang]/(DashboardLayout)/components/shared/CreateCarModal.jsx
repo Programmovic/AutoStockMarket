@@ -469,11 +469,10 @@ const CreateCarModal = ({
         progress: undefined,
         theme: "colored",
         transition: "Flip"
-      }).then(() => {
-        handleReset();
-        handleClose();
-        fetchCars();
-      });
+      })
+      handleReset();
+      handleClose();
+      fetchCars();;
 
 
     } else {
@@ -491,7 +490,7 @@ const CreateCarModal = ({
       });
     }
   };
-  
+
   const [loading, setLoading] = useState(false);
   const handleSubmit = async () => {
     setLoading(true); // Set loading state to true
