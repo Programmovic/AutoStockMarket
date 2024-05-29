@@ -12,7 +12,7 @@ export async function POST(req, res) {
     if (carId) {
       const car = await Car.findById(carId);
       if (!car) {
-        throw new Error("Invalid partners or car");
+        throw new Error("Invalid car");
       }
     }
 
