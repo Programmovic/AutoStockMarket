@@ -201,7 +201,7 @@ const CreateTransactionModal = ({
 
   const sendTransactionToApi = async (data) => {
     // Make a POST request to create a new transaction
-    const response = await axios.post("/api/transaction", data);
+    const response = await axios.post("/api/transactions", data);
     if (response.data.message) {
       // Reset form and close modal if transaction creation is successful
       handleReset();
@@ -216,7 +216,7 @@ const CreateTransactionModal = ({
     try {
       if (isEditing) {
         // Make a PUT request to update the transaction data
-        const response = await axios.put(`/api/transaction/${transactionData?._id}`, transactionData);
+        const response = await axios.put(`/api/transactions/${transactionData?._id}`, transactionData);
         if (response.data.message) {
           // Reset form and close modal if transaction update is successful
           handleReset();

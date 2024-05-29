@@ -9,15 +9,11 @@ export async function POST(req, res) {
   await connectDB();
   const { type, date, amount, description, partners, carId } = await req.json();
   try {
-    // Validate existence of partners and car in the database
-    const existingPartners = await Partner.find({ _id: { $in: partners } });
-    const car = await Car.findById(carId);
-    if (
-      !existingPartners ||
-      existingPartners.length !== partners.length ||
-      !car
-    ) {
-      throw new Error("Invalid partners or car");
+    if (carId) {
+      const car = await Car.findById(carId);
+      if (!car) {
+        throw new Error("Invalid partners or car");
+      }
     }
 
     // Create a new transaction instance
