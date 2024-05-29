@@ -1,4 +1,3 @@
-// BonusRecords.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -11,8 +10,10 @@ import {
   Box,
   TableHead,
   TableContainer,
+  Button,
 } from "@mui/material";
 import Loading from "../../loading";
+import * as XLSX from "xlsx";
 
 const BonusRecords = ({ employeeId, deductions = false }) => {
   const [bonuses, setBonuses] = useState([]);
@@ -31,11 +32,29 @@ const BonusRecords = ({ employeeId, deductions = false }) => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching employee bonuses:", error);
+        setLoading(false); // Ensure loading is set to false even on error
       }
     };
 
     fetchBonuses();
-  }, [employeeId]);
+  }, [employeeId, deductions]);
+
+  // Function to export data to XLSX
+  const exportToXLSX = () => {
+    const headers = [
+      { dateReceived: "Date Received", amount: "Amount", reason: "Reason" },
+    ];
+
+    const data = bonuses.length > 0 ? bonuses : headers;
+
+    const worksheet = XLSX.utils.json_to_sheet(data, {
+      header: ["dateReceived", "amount", "reason"],
+    });
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Bonus Records");
+    XLSX.writeFile(workbook, "EmployeeBonusRecords.xlsx");
+  };
 
   return (
     <Box marginTop={5}>
@@ -43,10 +62,13 @@ const BonusRecords = ({ employeeId, deductions = false }) => {
         <Loading />
       ) : (
         <>
-          <Box marginBottom={5}>
+          <Box display="flex" justifyContent="space-between" marginBottom={5}>
             <Typography variant="h6" gutterBottom>
               Employee {deductions ? "Deduction" : "Bonus"} Records
             </Typography>
+            <Button variant="contained" color="primary" onClick={exportToXLSX}>
+              Export to XLSX
+            </Button>
           </Box>
 
           <TableContainer component={Paper}>
@@ -59,13 +81,21 @@ const BonusRecords = ({ employeeId, deductions = false }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {bonuses.map((bonus) => (
-                  <TableRow key={bonus._id}>
-                    <TableCell>{bonus.dateReceived}</TableCell>
-                    <TableCell>{bonus.amount}</TableCell>
-                    <TableCell>{bonus.reason}</TableCell>
+                {bonuses.length > 0 ? (
+                  bonuses.map((bonus) => (
+                    <TableRow key={bonus._id}>
+                      <TableCell>{bonus.dateReceived}</TableCell>
+                      <TableCell>{bonus.amount}</TableCell>
+                      <TableCell>{bonus.reason}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center">
+                      No records available
+                    </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>

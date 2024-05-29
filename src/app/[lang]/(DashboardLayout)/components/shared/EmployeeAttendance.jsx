@@ -1,4 +1,3 @@
-// EmployeeAttendance.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -11,8 +10,10 @@ import {
   Box,
   TableHead,
   TableContainer,
+  Button,
 } from "@mui/material";
 import Loading from "../../loading";
+import * as XLSX from "xlsx";
 
 const EmployeeAttendance = ({ employeeId }) => {
   const [attendances, setAttendances] = useState([]);
@@ -29,11 +30,29 @@ const EmployeeAttendance = ({ employeeId }) => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching employee attendance:", error);
+        setLoading(false); // Ensure loading is set to false even on error
       }
     };
 
     fetchAttendance();
   }, [employeeId]);
+
+  // Function to export data to XLSX
+  const exportToXLSX = () => {
+    const headers = [
+      { date: "Date", attendanceStatus: "Attendance Status", shift: "Shift", location: "Location", notes: "Notes" },
+    ];
+
+    const data = attendances.length > 0 ? attendances : headers;
+
+    const worksheet = XLSX.utils.json_to_sheet(data, {
+      header: ["date", "attendanceStatus", "shift", "location", "notes"],
+    });
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
+    XLSX.writeFile(workbook, "EmployeeAttendance.xlsx");
+  };
 
   return (
     <Box marginTop={5}>
@@ -41,10 +60,13 @@ const EmployeeAttendance = ({ employeeId }) => {
         <Loading />
       ) : (
         <>
-          <Box marginBottom={5}>
+          <Box display="flex" justifyContent="space-between" marginBottom={5}>
             <Typography variant="h6" gutterBottom>
               Employee Attendance
             </Typography>
+            <Button variant="contained" color="primary" onClick={exportToXLSX}>
+              Export to XLSX
+            </Button>
           </Box>
 
           <TableContainer component={Paper}>
@@ -59,15 +81,23 @@ const EmployeeAttendance = ({ employeeId }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {attendances.map((attendance) => (
-                  <TableRow key={attendance._id}>
-                    <TableCell>{attendance.date}</TableCell>
-                    <TableCell>{attendance.attendanceStatus}</TableCell>
-                    <TableCell>{attendance.shift}</TableCell>
-                    <TableCell>{attendance.location}</TableCell>
-                    <TableCell>{attendance.notes}</TableCell>
+                {attendances.length > 0 ? (
+                  attendances.map((attendance) => (
+                    <TableRow key={attendance._id}>
+                      <TableCell>{attendance.date}</TableCell>
+                      <TableCell>{attendance.attendanceStatus}</TableCell>
+                      <TableCell>{attendance.shift}</TableCell>
+                      <TableCell>{attendance.location}</TableCell>
+                      <TableCell>{attendance.notes}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      No attendance records available
+                    </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>

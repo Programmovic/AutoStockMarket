@@ -18,7 +18,8 @@ import {
   Paper,
   MenuItem,
   InputAdornment,
-  Autocomplete // Import Autocomplete
+  Autocomplete, // Import Autocomplete
+  Select,
 } from "@mui/material";
 import axios from "axios";
 
@@ -45,11 +46,15 @@ function getStepContent(step, transactionData, handleInputChange, carOptions, ca
           <Grid item xs={6}>
             <TextField
               fullWidth
+              select
               label="Transaction Type"
               name="type"
               value={transactionData?.type}
               onChange={handleInputChange}
-            />
+            >
+              <MenuItem value="Income">Income</MenuItem>
+              <MenuItem value="Expense">Expense</MenuItem>
+            </TextField>
           </Grid>
           <Grid item xs={6}>
             <TextField
