@@ -188,7 +188,7 @@ const CarDetailsPage = ({ params }) => {
       const totalTransactionsAmount = transactions.reduce((acc, transaction) => {
         return transaction.type === "expense" && acc + transaction.amount;
       }, 0);
-
+      console.log(totalTransactionsAmount);
       // Parse input values to floats, defaulting to 0 if parsing fails
       const parsedValue = parseFloat(carDetails.value) || 0;
       const parsedSellingPrice = parseFloat(carDetails.sellingPrice) || 0;
@@ -197,7 +197,7 @@ const CarDetailsPage = ({ params }) => {
 
       // Calculate net profit using only the current input value
       const netProfit =
-        parsedSellingPrice - (parsedValue + totalTransactionsAmount);
+        parsedSellingPrice - (totalTransactionsAmount);
 
       // Log calculation process
       console.log("--- Calculation Process ---");

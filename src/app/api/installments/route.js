@@ -1,16 +1,25 @@
 import connectDB from "../../../lib/db";
 import Installment from "../../../models/Installment";
 import CarDetails from "../../../models/CarDetails";
+import Transaction from "../../../models/Transaction";
+import Invoice from "../../../models/Invoice";
 import { NextResponse } from "next/server";
+import mongoose from 'mongoose';
 
 export async function POST(req, res) {
   await connectDB();
-  const { installmentDate, amount, description, paid, car } = await req.json();
+  const { installmentDate, amount, description, paid, car, customerType, customerId } = await req.json();
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     // Fetch car details including selling price
-    const carDetails = await CarDetails.findOne({ car: car._id });
+    const carDetails = await CarDetails.findOne({ car: car._id }).session(session);
 
     if (!carDetails) {
+      await session.abortTransaction();
+      session.endSession();
       return NextResponse.json(
         { error: "Car details not found" },
         { status: 404 }
@@ -21,7 +30,7 @@ export async function POST(req, res) {
     console.log("Car ID:", car._id);
 
     // Fetch installments for the specified car
-    const installments = await Installment.find({ car: car._id });
+    const installments = await Installment.find({ car: car._id }).session(session);
 
     // Calculate total installment amount for the car
     const totalAmount = installments.reduce(
@@ -31,11 +40,14 @@ export async function POST(req, res) {
 
     console.log("Total Installments:", totalAmount);
 
-    
     // Ensure that the sum of installments does not exceed the selling price
-    if (totalAmount + amount > carDetails.value) {
+    if (+totalAmount + +amount > +carDetails.value) {
+      await session.abortTransaction();
+      session.endSession();
       return NextResponse.json(
-        { error: "Total installments exceed the selling price of the car" },
+        {
+          error: `Total installments exceed the selling price of the car.`,
+        },
         { status: 400 }
       );
     }
@@ -49,16 +61,48 @@ export async function POST(req, res) {
       car: car._id,
     });
 
+    // Save the installment to the database
+    await installment.save({ session });
+
+    // Create a new transaction instance
+    const transaction = new Transaction({
+      type: "Installment Payment",
+      date: installmentDate,
+      amount,
+      description,
+      car: car._id,
+    });
+
     // Save the transaction to the database
-    await installment.save();
+    await transaction.save({ session });
+
+    // Create a new invoice instance
+    const invoice = new Invoice({
+      transaction: transaction._id,
+      customerType,
+      customer: customerId,
+      invoiceDate: new Date(),
+      totalAmount: amount,
+    });
+
+    // Save the invoice to the database
+    await invoice.save({ session });
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
 
     // Return a success message
     return NextResponse.json({
-      message: "Installment record created successfully",
+      message: "Installment record, transaction, and invoice created successfully",
       installment,
+      transaction,
+      invoice,
     });
   } catch (error) {
     // Handle any errors
+    await session.abortTransaction();
+    session.endSession();
     console.error(error);
     return NextResponse.json(
       { error: "Could not create transaction record: " + error.message },
