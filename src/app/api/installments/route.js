@@ -1,6 +1,7 @@
 import connectDB from "../../../lib/db";
 import Installment from "../../../models/Installment";
 import CarDetails from "../../../models/CarDetails";
+import Car from '../../../models/Cars'
 import Transaction from "../../../models/Transaction";
 import Invoice from "../../../models/Invoice";
 import { NextResponse } from "next/server";
@@ -31,6 +32,7 @@ export async function POST(req, res) {
 
     // Fetch installments for the specified car
     const installments = await Installment.find({ car: car._id }).session(session);
+    const carData = await Car.find({ _id: car._id }).session(session);
 
     // Calculate total installment amount for the car
     const totalAmount = installments.reduce(
@@ -75,12 +77,12 @@ export async function POST(req, res) {
 
     // Save the transaction to the database
     await transaction.save({ session });
-
+console.log(carData)
     // Create a new invoice instance
     const invoice = new Invoice({
       transaction: transaction._id,
-      customerType,
-      customer: customerId,
+      customerType: "Customer",
+      customer: carData[0].owner,
       invoiceDate: new Date(),
       totalAmount: amount,
     });
