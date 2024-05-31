@@ -3,14 +3,14 @@ import SoldCar from "../../../models/SoldCars";
 import Car from "../../../models/Cars";
 import Customer from "../../../models/Customer";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 // Connect to the database
 
 // POST: Create a new sold car record
 export async function POST(req, res) {
   await connectDB();
-  const { carId, previousOwner, purchaserId, purchaseDate, purchasePrice } =
-    await req.json();
+  const { carId, previousOwner, purchaserId, purchaseDate, purchasePrice } = await req.json();
   try {
     // Validate existence of car and purchaser in the database
     const car = await Car.findById(carId);
@@ -55,8 +55,8 @@ export async function GET(req, res) {
     let {
       page = 1,
       perPage = 10,
-      purchaserId,
-      carId,
+      purchaserName,
+      carName,
       previousOwner,
       minPrice,
       maxPrice,
@@ -70,24 +70,38 @@ export async function GET(req, res) {
 
     // Define the filter object
     const filter = {};
-    if (purchaserId) filter.purchaser = mongoose.Types.ObjectId(purchaserId);
-    if (carId) filter.car = mongoose.Types.ObjectId(carId);
-    if (previousOwner)
+    if (purchaserName) {
+      const purchaser = await Customer.findOne({ name: { $regex: purchaserName, $options: "i" } });
+      if (purchaser) {
+        filter.purchaser = purchaser._id;
+      } else {
+        return NextResponse.json({ soldCars: [], totalCount: 0 });
+      }
+    }
+    if (carName) {
+      const car = await Car.findOne({ name: { $regex: carName, $options: "i" } });
+      if (car) {
+        filter.car = car._id;
+      } else {
+        return NextResponse.json({ soldCars: [], totalCount: 0 });
+      }
+    }
+    if (previousOwner) {
       filter.previousOwner = { $regex: previousOwner, $options: "i" }; // Case-insensitive regex search
-    if (minPrice)
-      filter.purchasePrice = {
-        ...filter.purchasePrice,
-        $gte: parseFloat(minPrice),
-      };
-    if (maxPrice)
-      filter.purchasePrice = {
-        ...filter.purchasePrice,
-        $lte: parseFloat(maxPrice),
-      };
-    if (startDate) filter.purchaseDate = { $gte: new Date(startDate) };
-    if (endDate)
+    }
+    if (minPrice) {
+      filter.purchasePrice = { ...filter.purchasePrice, $gte: parseFloat(minPrice) };
+    }
+    if (maxPrice) {
+      filter.purchasePrice = { ...filter.purchasePrice, $lte: parseFloat(maxPrice) };
+    }
+    if (startDate) {
+      filter.purchaseDate = { ...filter.purchaseDate, $gte: new Date(startDate) };
+    }
+    if (endDate) {
       filter.purchaseDate = { ...filter.purchaseDate, $lte: new Date(endDate) };
-
+    }
+console.log(filter)
     // Calculate skip value for pagination
     const skip = (page - 1) * perPage;
 

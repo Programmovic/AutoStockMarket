@@ -15,18 +15,13 @@ import {
   TextField,
   Box,
   Pagination,
-  IconButton,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
 
 const SoldCarsPage = () => {
   const router = useRouter();
   const [soldCars, setSoldCars] = useState([]);
   const [filteredSoldCars, setFilteredSoldCars] = useState([]); // State for filtered sold cars
-  const [filters, setFilters] = useState({
-    carId: "",
-    purchaserId: "",
-  });
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10); // Number of items per page
   const [error, setError] = useState(""); // Define error state
@@ -49,15 +44,13 @@ const SoldCarsPage = () => {
   const applyFilters = () => {
     let filteredCars = soldCars;
 
-    if (filters.carId) {
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
       filteredCars = filteredCars.filter(car =>
-        car.car.name.includes(filters.carId)
-      );
-    }
-
-    if (filters.purchaserId) {
-      filteredCars = filteredCars.filter(car =>
-        car.purchaser._id.includes(filters.purchaserId)
+        car.car.name.toLowerCase().includes(query) ||
+        car.purchaser.name.toLowerCase().includes(query) ||
+        new Date(car.purchaseDate).toLocaleDateString().includes(query) ||
+        car.purchasePrice.toString().includes(query)
       );
     }
 
@@ -70,17 +63,14 @@ const SoldCarsPage = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [filters, soldCars]);
+  }, [searchQuery, soldCars]);
 
   const handleRowClick = (id) => {
     router.push(`/en/CarsInventory/Cars/${id}`);
   };
 
-  const handleFilterChange = (e) => {
-    setFilters({
-      ...filters,
-      [e.target.name]: e.target.value,
-    });
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   const handlePaginationChange = (event, pageNumber) => {
@@ -107,21 +97,13 @@ const SoldCarsPage = () => {
         >
           <Box flexGrow={1}>
             <TextField
-              name="car"
-              label="Car"
+              name="search"
+              label="Search"
               variant="outlined"
               size="small"
-              value={filters.car}
-              onChange={handleFilterChange}
-              style={{ marginRight: 10 }}
-            />
-            <TextField
-              name="purchaserId"
-              label="Purchaser ID"
-              variant="outlined"
-              size="small"
-              value={filters.purchaserId}
-              onChange={handleFilterChange}
+              value={searchQuery}
+              onChange={handleSearchChange}
+              fullWidth
             />
           </Box>
         </Box>

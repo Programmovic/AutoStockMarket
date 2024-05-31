@@ -61,8 +61,8 @@ export async function POST(req, { params }) {
       purchaser: carDetailsData.purchaser, // Set the purchaser to the buyer provided in the request
       purchaseDate: new Date(), // Set the purchaseDate to the current date
       purchasePrice: updatedCarDetails.sellingPrice, // Set the purchasePrice to the selling price of the car
-      salesMember: salesMember,
-      source: source,
+      salesMember: carDetailsData.salesMember,
+      source: carDetailsData.source,
     });
     await soldCar.save();
 
