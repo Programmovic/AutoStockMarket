@@ -74,7 +74,7 @@ await connectDB();
 
     if (!params.CustomersOnly) {
       // Find the car by ID
-      const car = await Car.findById(id);
+      const car = await Car.findById(id).populate('owner');
       if (!car) {
         return NextResponse.json({ error: "Car not found" }, { status: 404 });
       }

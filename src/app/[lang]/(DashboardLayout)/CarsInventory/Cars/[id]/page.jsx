@@ -478,7 +478,7 @@ const CarDetailsPage = ({ params }) => {
                       <TableCell>
                         <strong>Owner:</strong>
                       </TableCell>
-                      <TableCell>{car?.owner}</TableCell>
+                      <TableCell>{car?.owner?.name}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
