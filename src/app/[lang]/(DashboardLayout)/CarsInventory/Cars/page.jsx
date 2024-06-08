@@ -159,8 +159,17 @@ const CarsPage = () => {
                 size="small"
                 value={filters.chassisNumber}
                 onChange={handleFilterChange}
+                style={{ marginRight: 10 }}
               />
-
+              <TextField
+                name="entryDate"
+                label="Entry Date"
+                variant="outlined"
+                size="small"
+                type="date"
+                value={filters.entryDate}
+                onChange={handleFilterChange}
+              />
             </Box>
           </Box>
           {loading ? (<Loading />) :
@@ -191,8 +200,8 @@ const CarsPage = () => {
                       style={{ cursor: "pointer" }}
                       hover={true}
                     >
-                      <TableCell 
-                      onClick={() => handleRowClick(car._id)}>{car.name}</TableCell>
+                      <TableCell
+                        onClick={() => handleRowClick(car._id)}>{car.name}</TableCell>
                       <TableCell>{car.color}</TableCell>
                       <TableCell>{car.model}</TableCell>
                       <TableCell>{car.chassisNumber}</TableCell>

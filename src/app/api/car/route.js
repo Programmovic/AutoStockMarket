@@ -22,6 +22,9 @@ export async function POST(req, res) {
       color,
       model,
       chassisNumber,
+      engineNumber,
+      plateNumber,
+      odometerNumber,
       owner,
       purchaseDetails,
       entryDate,
@@ -30,6 +33,7 @@ export async function POST(req, res) {
       value,
       partners,
       firstInstallment,
+      ownerID
     } = await req.json();
 
     const carExists = await Car.findOne(
@@ -51,6 +55,8 @@ export async function POST(req, res) {
     if (!customer) {
       customer = new Customer({
         name: owner,
+        nationalID: ownerID,
+        drivingLicense: ownerDrivingLicense,
         // Additional fields can be included based on the incoming request if needed
       });
       await customer.save({ session });
@@ -60,6 +66,9 @@ export async function POST(req, res) {
       color,
       model,
       chassisNumber,
+      engineNumber,
+      plateNumber,
+      odometerNumber,
       owner: customer._id,
       purchaseDetails,
       entryDate,
@@ -200,6 +209,7 @@ export async function GET(req, res) {
     const color = searchParams.get("color");
     const model = searchParams.get("model");
     const chassisNumber = searchParams.get("chassisNumber");
+    const entryDate = searchParams.get("entryDate");
 
     // Convert to integers
     page = parseInt(page);
@@ -212,7 +222,11 @@ export async function GET(req, res) {
     if (model) filter.model = { $regex: new RegExp(model, "i") };
     if (chassisNumber)
       filter.chassisNumber = { $regex: new RegExp(chassisNumber, "i") };
-
+    if (entryDate) {
+      // Assuming entryDate is in a valid date format
+      filter.entryDate = { $gte: new Date(entryDate)};
+  }
+  
     // Calculate skip value for pagination
     const skip = (page - 1) * perPage;
 

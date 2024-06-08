@@ -13,7 +13,7 @@ import {
   IconCoinMonero,
   IconReport,
   IconFileInvoice,
-  IconVector,
+  IconSettings,
   IconCoinEuro,
   IconMessageChatbot,
   IconExchange,
@@ -104,7 +104,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Maintenance",
-    icon: IconMessageChatbot,
+    icon: IconSettings,
     href: "/SalesManagment/Maintenance",
     translatedTitle: "ملف 2 - الصيانة",
   },

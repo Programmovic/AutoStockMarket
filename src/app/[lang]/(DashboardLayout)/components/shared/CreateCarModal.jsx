@@ -67,7 +67,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
     case 0: // Car Details
       return (
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Car Name"
@@ -76,7 +76,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Color"
@@ -85,7 +85,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Model"
@@ -94,7 +94,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Chassis Number"
@@ -104,7 +104,37 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               autoCapitalize="true"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Engine Number"
+              name="engineNumber"
+              value={carData?.engineNumber}
+              onChange={handleInputChange}
+              autoCapitalize="true"
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Plate Number"
+              name="plateNumber"
+              value={carData?.plateNumber}
+              onChange={handleInputChange}
+              autoCapitalize="true"
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Odometer Number"
+              name="odometerNumber"
+              value={carData?.odometerNumber}
+              onChange={handleInputChange}
+              autoCapitalize="true"
+            />
+          </Grid>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Price"
@@ -113,7 +143,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               InputLabelProps={{
@@ -137,7 +167,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
     case 1: // Ownership
       return (
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Owner"
@@ -148,16 +178,30 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               autoComplete="false"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
-              label="Purchase Details"
-              name="purchaseDetails"
-              value={carData?.purchaseDetails}
+              label="Owner National Identification Number"
+              name="ownerID"
+              value={carData?.ownerID}
               onChange={handleInputChange}
+              defaultValue={"ASM"}
+              autoComplete="false"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Driving License"
+              name="ownerDrivingLicense"
+              value={carData?.ownerDrivingLicense}
+              onChange={handleInputChange}
+              defaultValue={"ASM"}
+              autoComplete="false"
+            />
+          </Grid>
+          
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Entry Date"
@@ -170,7 +214,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               }}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Maintenance"
@@ -179,12 +223,21 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={4}>
             <TextField
               fullWidth
               label="Current Location"
               name="currentLocation"
               value={carData?.currentLocation}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Purchase Details"
+              name="purchaseDetails"
+              value={carData?.purchaseDetails}
               onChange={handleInputChange}
             />
           </Grid>

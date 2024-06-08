@@ -55,8 +55,7 @@ export async function GET(req, res) {
     let {
       page = 1,
       perPage = 10,
-      purchaserName,
-      carName,
+      searchQuery,
       previousOwner,
       minPrice,
       maxPrice,
@@ -70,22 +69,22 @@ export async function GET(req, res) {
 
     // Define the filter object
     const filter = {};
-    if (purchaserName) {
-      const purchaser = await Customer.findOne({ name: { $regex: purchaserName, $options: "i" } });
-      if (purchaser) {
-        filter.purchaser = purchaser._id;
-      } else {
-        return NextResponse.json({ soldCars: [], totalCount: 0 });
-      }
+
+    // Handle search query for multiple fields
+    if (searchQuery) {
+      const purchaser = await Customer.find({ name: { $regex: searchQuery, $options: "i" } }).select('_id');
+      const purchaserIds = purchaser.map(p => p._id);
+      
+      const car = await Car.find({ name: { $regex: searchQuery, $options: "i" } }).select('_id');
+      const carIds = car.map(c => c._id);
+      
+      filter.$or = [
+        { car: { $in: carIds } },
+        { purchaser: { $in: purchaserIds } },
+        { previousOwner: { $regex: searchQuery, $options: "i" } }
+      ];
     }
-    if (carName) {
-      const car = await Car.findOne({ name: { $regex: carName, $options: "i" } });
-      if (car) {
-        filter.car = car._id;
-      } else {
-        return NextResponse.json({ soldCars: [], totalCount: 0 });
-      }
-    }
+console.log(searchQuery);
     if (previousOwner) {
       filter.previousOwner = { $regex: previousOwner, $options: "i" }; // Case-insensitive regex search
     }
@@ -101,7 +100,7 @@ export async function GET(req, res) {
     if (endDate) {
       filter.purchaseDate = { ...filter.purchaseDate, $lte: new Date(endDate) };
     }
-console.log(filter)
+
     // Calculate skip value for pagination
     const skip = (page - 1) * perPage;
 

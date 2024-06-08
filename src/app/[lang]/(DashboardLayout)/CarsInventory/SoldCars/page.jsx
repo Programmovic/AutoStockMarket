@@ -30,7 +30,7 @@ const SoldCarsPage = () => {
   const fetchSoldCars = async () => {
     try {
       console.log("fetching sold cars");
-      const response = await axios.get("/api/sold-cars");
+      const response = await axios.get(`/api/sold-cars?searchQuery=${searchQuery}`);
       setSoldCars(response.data.soldCars);
       setError(""); // Clear error on successful fetch
     } catch (error) {
@@ -40,30 +40,9 @@ const SoldCarsPage = () => {
     }
   };
 
-  // Apply filters client-side
-  const applyFilters = () => {
-    let filteredCars = soldCars;
-
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filteredCars = filteredCars.filter(car =>
-        car.car.name.toLowerCase().includes(query) ||
-        car.purchaser.name.toLowerCase().includes(query) ||
-        new Date(car.purchaseDate).toLocaleDateString().includes(query) ||
-        car.purchasePrice.toString().includes(query)
-      );
-    }
-
-    setFilteredSoldCars(filteredCars);
-  };
-
   useEffect(() => {
     fetchSoldCars();
   }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [searchQuery, soldCars]);
 
   const handleRowClick = (id) => {
     router.push(`/en/CarsInventory/Cars/${id}`);
@@ -81,7 +60,7 @@ const SoldCarsPage = () => {
   const totalPages = Math.ceil(filteredSoldCars.length / perPage);
 
   // Get the cars to display on the current page
-  const carsToDisplay = filteredSoldCars.slice(
+  const carsToDisplay = soldCars.slice(
     (currentPage - 1) * perPage,
     currentPage * perPage
   );

@@ -93,17 +93,7 @@ function getStepContent(step, customerData, handleInputChange, nationalities) {
               name="phone"
               value={customerData?.contactDetails?.phone}
               onChange={handleInputChange}
-              disabled={!customerData?.contactDetails?.nationality} // Disable the phone field if nationality is not selected
-              InputProps={{
-                startAdornment: customerData?.contactDetails?.nationality ? (
-                  <InputAdornment position="start">
-                    <>
-                      <img src={nationalities.find((country) => country.name.common === customerData?.contactDetails?.nationality)?.flags?.png} alt={customerData?.contactDetails?.nationality} style={{ width: '20px', marginRight: '10px' }} />
-                      {getCountryCode(customerData.contactDetails.nationality)}
-                    </>
-                  </InputAdornment>
-                ) : null,
-              }}
+              disabled={!customerData?.contactDetails?.nationality}
             />
           </Grid>
 

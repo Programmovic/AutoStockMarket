@@ -44,7 +44,6 @@ export async function POST(req) {
     admin.lastLogin = new Date();
     await admin.save();
     cookies().set("token", token, { secure: true });
-    console.log(cookies().getAll());
     return NextResponse.json({ message: "Login successful", token });
   } catch (error) {
     console.error(error);
