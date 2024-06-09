@@ -24,7 +24,8 @@ import * as XLSX from "xlsx"; // Import xlsx library
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const steps = ["Car Details", "Ownership", "Partnership", "Review"];
+const steps = ["Car Details", "Ownership", "Partnership", "Finance", "Review"];
+
 
 const modalStyle = {
   position: "absolute",
@@ -61,7 +62,7 @@ const InvoiceTable = ({ invoices }) => (
   </TableContainer>
 );
 
-function getStepContent(step, carData, partners, handleInputChange, handlePartnerInputChange, removePartner) {
+function getStepContent(step, carData, partners, handleInputChange, handlePartnerInputChange, removePartner, financeData, handleFinanceInputChange) {
   console.log(carData)
   switch (step) {
     case 0: // Car Details
@@ -137,6 +138,19 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
           <Grid item xs={4}>
             <TextField
               fullWidth
+              label="Entry Date"
+              type="date"
+              name="entryDate"
+              value={carData?.entryDate}
+              onChange={handleInputChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          {/* <Grid item xs={4}>
+            <TextField
+              fullWidth
               label="Price"
               name="value"
               value={carData?.value}
@@ -160,7 +174,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
                 }
               }}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       );
 
@@ -200,20 +214,8 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               autoComplete="false"
             />
           </Grid>
-          
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="Entry Date"
-              type="date"
-              name="entryDate"
-              value={carData?.entryDate}
-              onChange={handleInputChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
+
+
           <Grid item xs={4}>
             <TextField
               fullWidth
@@ -325,8 +327,105 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
 
         </Grid>
       );
-
-    case 3: // Finalize
+    case 3: // Finance
+      return (
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Date"
+              type="date"
+              name="date"
+              value={financeData.date}
+              onChange={handleFinanceInputChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Price"
+              type="number"
+              name="price"
+              value={financeData.price}
+              onChange={handleFinanceInputChange}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Currency"
+              name="currency"
+              value={financeData.currency}
+              onChange={handleFinanceInputChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Amount in Words"
+              name="amountInWords"
+              value={financeData.amountInWords}
+              onChange={handleFinanceInputChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="First Installment"
+              type="number"
+              name="firstInstallment"
+              value={financeData.firstInstallment}
+              onChange={handleFinanceInputChange}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Remaining Amount"
+              name="remainingAmount"
+              value={financeData.remainingAmount}
+              onChange={handleFinanceInputChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Paid Cash/Cheque Number"
+              name="paidCashOrChequeNumber"
+              value={financeData.paidCashOrChequeNumber}
+              onChange={handleFinanceInputChange}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Bank"
+              name="bank"
+              value={financeData.bank}
+              onChange={handleFinanceInputChange}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              select
+              label="Payment Method"
+              name="paymentMethod"
+              value={financeData.paymentMethod}
+              onChange={handleFinanceInputChange}
+            >
+              <MenuItem value="Cash">Cash</MenuItem>
+              <MenuItem value="Installment">Installment</MenuItem>
+            </TextField>
+          </Grid>
+        </Grid>
+      );
+    case 4: // Finalize
       return (
         <>
           <TableContainer component={Paper}>
@@ -437,11 +536,76 @@ const CreateCarModal = ({
   const [activeStep, setActiveStep] = useState(0);
   console.log(initialCarData)
   const [carData, setCarData] = useState(initialCarData);
+  const [financeData, setFinanceData] = useState({
+    date: '',
+    price: '',
+    currency: 'USD', // Default currency
+    amountInWords: '',
+    paidCashOrChequeNumber: '',
+    bank: '',
+    paymentMethod: 'Cash',
+    firstInstallment: '',
+    remainingAmount: '',
+  });
+
 
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [partners, setPartners] = useState([]);
   const [invoices, setInvoices] = useState([]); // State to store invoices
+  function convertNumberToWords(amount) {
+    // This is a basic implementation. You may need a more complex one for production use.
+    const a = [
+      '',
+      'one',
+      'two',
+      'three',
+      'four',
+      'five',
+      'six',
+      'seven',
+      'eight',
+      'nine',
+      'ten',
+      'eleven',
+      'twelve',
+      'thirteen',
+      'fourteen',
+      'fifteen',
+      'sixteen',
+      'seventeen',
+      'eighteen',
+      'nineteen',
+    ];
+    const b = [
+      '',
+      '',
+      'twenty',
+      'thirty',
+      'forty',
+      'fifty',
+      'sixty',
+      'seventy',
+      'eighty',
+      'ninety',
+    ];
+    const numToString = (n) => {
+      if (n < 20) return a[n];
+      if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
+      if (n < 1000)
+        return (
+          a[Math.floor(n / 100)] +
+          ' hundred' +
+          (n % 100 ? ' ' + numToString(n % 100) : '')
+        );
+      return (
+        numToString(Math.floor(n / 1000)) +
+        ' thousand' +
+        (n % 1000 ? ' ' + numToString(n % 1000) : '')
+      );
+    };
+    return numToString(amount);
+  }
 
   // Function to add a new partner
   const addPartner = () => {
@@ -475,6 +639,30 @@ const CreateCarModal = ({
     }
   };
 
+  const handleFinanceInputChange = (event) => {
+    const { name, value } = event.target;
+    let newValue = value;
+
+    if (name === 'price' || name === 'firstInstallment') {
+      const newPrice = name === 'price' ? parseFloat(value) : parseFloat(financeData.price);
+      const newFirstInstallment = name === 'firstInstallment' ? parseFloat(value) : parseFloat(financeData.firstInstallment);
+
+      const remainingAmount = isNaN(newPrice - newFirstInstallment) ? '' : (newPrice - newFirstInstallment).toFixed(2);
+      const amountInWords = convertNumberToWords(newPrice);
+
+      setFinanceData((prevData) => ({
+        ...prevData,
+        [name]: value,
+        remainingAmount,
+        amountInWords,
+      }));
+    } else {
+      setFinanceData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
 
 
   useEffect(() => {
@@ -551,7 +739,7 @@ const CreateCarModal = ({
   const handleSubmit = async () => {
     setLoading(true); // Set loading state to true
     try {
-      const mergedData = { ...carData, partners };
+      const mergedData = { ...carData, partners, finance: financeData };
       console.log(mergedData);
       if (isEditing) {
         // Make a PUT request to update the car data
@@ -633,7 +821,7 @@ const CreateCarModal = ({
     let errorMsg = "";
     switch (step) {
       case 0:
-        isValid = carData?.name && carData?.color && carData?.model && carData?.chassisNumber && carData?.value;
+        isValid = carData?.name && carData?.color && carData?.model && carData?.chassisNumber;
         if (!isValid) errorMsg = "All fields are required in Car Details.";
         break;
       case 1:
@@ -684,7 +872,7 @@ const CreateCarModal = ({
           <div style={{ paddingTop: 20, paddingBottom: 20 }}>
 
             <Box sx={{ maxHeight: '300px', overflowY: 'auto' }}>
-              {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner)}
+              {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner, financeData, handleFinanceInputChange)}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
 

@@ -33,7 +33,8 @@ export async function POST(req, res) {
       value,
       partners,
       firstInstallment,
-      ownerID
+      ownerID,
+      ownerDrivingLicense
     } = await req.json();
 
     const carExists = await Car.findOne(
