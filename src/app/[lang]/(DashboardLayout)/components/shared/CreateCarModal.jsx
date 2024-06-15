@@ -554,57 +554,99 @@ const CreateCarModal = ({
   const [partners, setPartners] = useState([]);
 
   const [invoices, setInvoices] = useState([]); // State to store invoices
-  function convertNumberToWords(amount) {
-    // This is a basic implementation. You may need a more complex one for production use.
-    const a = [
-      '',
-      'one',
-      'two',
-      'three',
-      'four',
-      'five',
-      'six',
-      'seven',
-      'eight',
-      'nine',
-      'ten',
-      'eleven',
-      'twelve',
-      'thirteen',
-      'fourteen',
-      'fifteen',
-      'sixteen',
-      'seventeen',
-      'eighteen',
-      'nineteen',
-    ];
-    const b = [
-      '',
-      '',
-      'twenty',
-      'thirty',
-      'forty',
-      'fifty',
-      'sixty',
-      'seventy',
-      'eighty',
-      'ninety',
-    ];
+  function convertNumberToWords(amount, language = 'en') {
+    const englishWords = {
+      a: [
+        '',
+        'one',
+        'two',
+        'three',
+        'four',
+        'five',
+        'six',
+        'seven',
+        'eight',
+        'nine',
+        'ten',
+        'eleven',
+        'twelve',
+        'thirteen',
+        'fourteen',
+        'fifteen',
+        'sixteen',
+        'seventeen',
+        'eighteen',
+        'nineteen',
+      ],
+      b: [
+        '',
+        '',
+        'twenty',
+        'thirty',
+        'forty',
+        'fifty',
+        'sixty',
+        'seventy',
+        'eighty',
+        'ninety',
+      ],
+    };
+
+    const arabicWords = {
+      a: [
+        '',
+        'واحد',
+        'اثنان',
+        'ثلاثة',
+        'أربعة',
+        'خمسة',
+        'ستة',
+        'سبعة',
+        'ثمانية',
+        'تسعة',
+        'عشرة',
+        'أحد عشر',
+        'اثنا عشر',
+        'ثلاثة عشر',
+        'أربعة عشر',
+        'خمسة عشر',
+        'ستة عشر',
+        'سبعة عشر',
+        'ثمانية عشر',
+        'تسعة عشر',
+      ],
+      b: [
+        '',
+        '',
+        'عشرون',
+        'ثلاثون',
+        'أربعون',
+        'خمسون',
+        'ستون',
+        'سبعون',
+        'ثمانون',
+        'تسعون',
+      ],
+    };
+
+    const words = language === 'ar' ? arabicWords : englishWords;
+
     const numToString = (n) => {
-      if (n < 20) return a[n];
-      if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
+      if (n < 20) return words.a[n];
+      if (n < 100) return words.b[Math.floor(n / 10)] + (n % 10 ? '-' + words.a[n % 10] : '');
       if (n < 1000)
         return (
-          a[Math.floor(n / 100)] +
-          ' hundred' +
+          words.a[Math.floor(n / 100)] +
+          (language === 'ar' ? ' مائة' : ' hundred') +
           (n % 100 ? ' ' + numToString(n % 100) : '')
         );
       return (
         numToString(Math.floor(n / 1000)) +
-        ' thousand' +
+        (language === 'ar' ? ' ألف' : ' thousand') +
         (n % 1000 ? ' ' + numToString(n % 1000) : '')
       );
     };
+
     return numToString(amount);
   }
 
@@ -649,7 +691,7 @@ const CreateCarModal = ({
       const newFirstInstallment = name === 'firstInstallment' ? parseFloat(value) : parseFloat(financeData.firstInstallment);
 
       const remainingAmount = isNaN(newPrice - newFirstInstallment) ? '' : (newPrice - newFirstInstallment).toFixed(2);
-      const amountInWords = convertNumberToWords(newPrice);
+      const amountInWords = convertNumberToWords(newPrice, 'en') + ' | ' + convertNumberToWords(newPrice, 'ar');
 
       setFinanceData((prevData) => ({
         ...prevData,
@@ -906,7 +948,7 @@ const CreateCarModal = ({
               {activeStep === 2 && (
                 <Button variant="outlined" onClick={addPartner} sx={{ marginRight: 2 }}>Add Partner</Button>
               )}
-              <Button onClick={handleNext} disabled={isNextDisabled} variant="outlined" sx={{ fontWeight: "bold" }}>
+              <Button onClick={handleNext} variant="outlined" sx={{ fontWeight: "bold" }}>
                 {activeStep === steps.length - 1 ? "Finish" : errorMessage ? `Next - ${errorMessage}` : "Next"}
               </Button>
 
