@@ -15,7 +15,7 @@ import {
   Button,
   Divider,
   TextField,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
 import { usePDF, Resolution } from "react-to-pdf";
 import Image from "next/image";
@@ -23,6 +23,8 @@ import Loading from "../../../loading";
 
 const InvoicePage = ({ params }) => {
   const [invoice, setInvoice] = useState(null);
+  const [editableTransactionAmount, setEditableTransactionAmount] = useState("");
+  const [editableTotalAmount, setEditableTotalAmount] = useState("");
 
   const router = useRouter();
   const { id } = params;
@@ -35,6 +37,7 @@ const InvoicePage = ({ params }) => {
       orientation: "portrait",
     },
   });
+
   const fetchInvoice = async () => {
     if (id) {
       try {
@@ -56,11 +59,8 @@ const InvoicePage = ({ params }) => {
       }
     }
   };
-  const [editableTransactionAmount, setEditableTransactionAmount] = useState(invoice?.transaction.amount);
-  const [editableTotalAmount, setEditableTotalAmount] = useState(invoice?.totalAmount);
+
   useEffect(() => {
-
-
     fetchInvoice();
   }, [id]);
 
@@ -82,8 +82,8 @@ const InvoicePage = ({ params }) => {
           InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
           variant="outlined"
           sx={{
-            maxWidth: '200px', // Limits the width of the input
-            marginRight: 2, // Adds spacing to the right
+            maxWidth: '200px',
+            marginRight: 2,
           }}
         />
 
@@ -113,11 +113,52 @@ const InvoicePage = ({ params }) => {
                   height={150}
                 />
               </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 3,
+                }}
+              >
+                <TableContainer component={Paper} sx={{ px: 5 }}>
+                  <Table aria-label="invoice details table">
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>
+                          <strong>Tel:</strong>
+                        </TableCell>
+                        <TableCell>
 
+                        </TableCell>
+                        <TableCell>
+                          <strong>Email:</strong>
+                        </TableCell>
+                        <TableCell>
+
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>
+                          <strong>P.O Box:</strong>
+                        </TableCell>
+                        <TableCell>
+
+                        </TableCell>
+                        <TableCell>
+                          <strong>Mobile:</strong>
+                        </TableCell>
+                        <TableCell>
+
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
               <TableContainer component={Paper} sx={{ p: 5 }}>
                 <Table aria-label="invoice details table">
                   <TableBody>
-                    {/* Editable Transaction Amount */}
                     <TableRow>
                       <TableCell>
                         <strong>Transaction Amount:</strong>
@@ -143,18 +184,44 @@ const InvoicePage = ({ params }) => {
                         <strong>Transaction Date:</strong>
                       </TableCell>
                       <TableCell>
-                        {new Date(
-                          invoice?.transaction.date
-                        ).toLocaleDateString()}
+                        {new Date(invoice?.transaction.date).toLocaleDateString()}
                       </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
-                        <strong>Transaction Amount:</strong>
+                        <strong>Remaining Amount:</strong>
                       </TableCell>
+                      <TableCell>{invoice?.transaction?.remainingAmount}</TableCell>
+                    </TableRow>
+                    <TableRow>
                       <TableCell>
-                        ${invoice?.transaction.amount.toFixed(2)}
+                        <strong>Bank:</strong>
                       </TableCell>
+                      <TableCell>{invoice?.transaction?.bank}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Payment Method:</strong>
+                      </TableCell>
+                      <TableCell>{invoice?.transaction?.paymentMethod}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Paid Cash/Cheque Number:</strong>
+                      </TableCell>
+                      <TableCell>{invoice?.transaction?.paidCashOrChequeNumber}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Currency:</strong>
+                      </TableCell>
+                      <TableCell>{invoice?.transaction?.currency}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Amount in Words:</strong>
+                      </TableCell>
+                      <TableCell>{invoice?.transaction?.amountInWords}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>
@@ -186,7 +253,7 @@ const InvoicePage = ({ params }) => {
                       <TableCell>
                         <strong>Total Amount:</strong>
                       </TableCell>
-                      <TableCell>${invoice.totalAmount.toFixed(2)}</TableCell>
+                      <TableCell>${editableTotalAmount}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell colSpan={2}>
@@ -213,8 +280,6 @@ const InvoicePage = ({ params }) => {
                         </Typography>
                       </TableCell>
                     </TableRow>
-
-                    {/* Other rows remain unchanged */}
                   </TableBody>
                 </Table>
               </TableContainer>

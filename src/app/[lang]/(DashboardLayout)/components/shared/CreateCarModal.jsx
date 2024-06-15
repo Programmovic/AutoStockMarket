@@ -23,6 +23,7 @@ import axios from "axios";
 import * as XLSX from "xlsx"; // Import xlsx library
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { currencies } from './currencies'
 
 const steps = ["Car Details", "Ownership", "Partnership", "Finance", "Review"];
 
@@ -135,46 +136,6 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               autoCapitalize="true"
             />
           </Grid>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="Entry Date"
-              type="date"
-              name="entryDate"
-              value={carData?.entryDate}
-              onChange={handleInputChange}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          {/* <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="Price"
-              name="value"
-              value={carData?.value}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-              label="First Installment"
-              name="firstInstallment"
-              value={carData?.firstInstallment}
-              onChange={(e) => {
-                const newValue = parseInt(e.target.value);
-                const price = parseInt(carData?.value);
-                if (!isNaN(newValue) && newValue <= price) {
-                  handleInputChange(e);
-                }
-              }}
-            />
-          </Grid> */}
         </Grid>
       );
 
@@ -188,7 +149,6 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               name="owner"
               value={carData?.owner}
               onChange={handleInputChange}
-              defaultValue={"ASM"}
               autoComplete="false"
             />
           </Grid>
@@ -199,7 +159,6 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               name="ownerID"
               value={carData?.ownerID}
               onChange={handleInputChange}
-              defaultValue={"ASM"}
               autoComplete="false"
             />
           </Grid>
@@ -210,12 +169,9 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               name="ownerDrivingLicense"
               value={carData?.ownerDrivingLicense}
               onChange={handleInputChange}
-              defaultValue={"ASM"}
               autoComplete="false"
             />
           </Grid>
-
-
           <Grid item xs={4}>
             <TextField
               fullWidth
@@ -245,6 +201,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
           </Grid>
         </Grid>
       );
+
     case 2: // Partnership
       return (
         <Grid container spacing={2}>
@@ -324,20 +281,20 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
                 Click Add Partner To Add Partners to this Car
               </Typography>
             </Grid>)}
-
         </Grid>
       );
+
     case 3: // Finance
       return (
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <TextField
               fullWidth
-              label="Date"
+              label="Entry Date"
               type="date"
-              name="date"
-              value={financeData.date}
-              onChange={handleFinanceInputChange}
+              name="entryDate"
+              value={carData?.entryDate}
+              onChange={handleInputChange}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -360,8 +317,16 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               name="currency"
               value={financeData.currency}
               onChange={handleFinanceInputChange}
-            />
+              select // Add select attribute to render a select list
+            >
+              {currencies?.map((currency) => ( // Assuming you have an array named currencies containing all currencies
+                <MenuItem key={currency.symbol} value={currency.code}>
+                  {currency.symbol} - {currency.code} - {currency.name}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
+
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -372,26 +337,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               disabled
             />
           </Grid>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="First Installment"
-              type="number"
-              name="firstInstallment"
-              value={financeData.firstInstallment}
-              onChange={handleFinanceInputChange}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="Remaining Amount"
-              name="remainingAmount"
-              value={financeData.remainingAmount}
-              onChange={handleFinanceInputChange}
-              disabled
-            />
-          </Grid>
+
           <Grid item xs={4}>
             <TextField
               fullWidth
@@ -423,8 +369,33 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               <MenuItem value="Installment">Installment</MenuItem>
             </TextField>
           </Grid>
+          {financeData.paymentMethod === "Installment" && (
+            <>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  label="First Installment"
+                  type="number"
+                  name="firstInstallment"
+                  value={financeData.firstInstallment}
+                  onChange={handleFinanceInputChange}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth
+                  label="Remaining Amount"
+                  name="remainingAmount"
+                  value={financeData.remainingAmount}
+                  onChange={handleFinanceInputChange}
+                  disabled
+                />
+              </Grid>
+            </>
+          )}
         </Grid>
       );
+
     case 4: // Finalize
       return (
         <>
@@ -433,60 +404,93 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               <TableBody>
                 {/* Render car data */}
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Car Name
-                  </TableCell>
+                  <TableCell component="th" scope="row">Car Name</TableCell>
                   <TableCell>{carData?.name}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Color
-                  </TableCell>
+                  <TableCell component="th" scope="row">Color</TableCell>
                   <TableCell>{carData?.color}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Model
-                  </TableCell>
+                  <TableCell component="th" scope="row">Model</TableCell>
                   <TableCell>{carData?.model}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Chassis Number
-                  </TableCell>
+                  <TableCell component="th" scope="row">Chassis Number</TableCell>
                   <TableCell>{carData?.chassisNumber}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Owner
-                  </TableCell>
+                  <TableCell component="th" scope="row">Engine Number</TableCell>
+                  <TableCell>{carData?.engineNumber}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Plate Number</TableCell>
+                  <TableCell>{carData?.plateNumber}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Odometer Number</TableCell>
+                  <TableCell>{carData?.odometerNumber}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Owner</TableCell>
                   <TableCell>{carData?.owner}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Purchase Details
-                  </TableCell>
-                  <TableCell>{carData?.purchaseDetails}</TableCell>
+                  <TableCell component="th" scope="row">Owner National Identification Number</TableCell>
+                  <TableCell>{carData?.ownerID}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Entry Date
-                  </TableCell>
-                  <TableCell>{carData?.entryDate}</TableCell>
+                  <TableCell component="th" scope="row">Driving License</TableCell>
+                  <TableCell>{carData?.ownerDrivingLicense}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Maintenance
-                  </TableCell>
+                  <TableCell component="th" scope="row">Maintenance</TableCell>
                   <TableCell>{carData?.maintenance}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell component="th" scope="row">
-                    Current Location
-                  </TableCell>
+                  <TableCell component="th" scope="row">Current Location</TableCell>
                   <TableCell>{carData?.currentLocation}</TableCell>
                 </TableRow>
-
+                <TableRow>
+                  <TableCell component="th" scope="row">Purchase Details</TableCell>
+                  <TableCell>{carData?.purchaseDetails}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Entry Date</TableCell>
+                  <TableCell>{carData?.entryDate}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Price</TableCell>
+                  <TableCell>{financeData?.price}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Currency</TableCell>
+                  <TableCell>{financeData?.currency}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Paid Cash/Cheque Number</TableCell>
+                  <TableCell>{financeData?.paidCashOrChequeNumber}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Bank</TableCell>
+                  <TableCell>{financeData?.bank}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Payment Method</TableCell>
+                  <TableCell>{financeData?.paymentMethod}</TableCell>
+                </TableRow>
+                {financeData?.paymentMethod === "Installment" && (
+                  <>
+                    <TableRow>
+                      <TableCell component="th" scope="row">First Installment</TableCell>
+                      <TableCell>{financeData?.firstInstallment}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell component="th" scope="row">Remaining Amount</TableCell>
+                      <TableCell>{financeData?.remainingAmount}</TableCell>
+                    </TableRow>
+                  </>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -510,21 +514,20 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
                     <TableCell>{partner.type}</TableCell>
                     <TableCell>{partner.email}</TableCell>
                     <TableCell>{partner.phone}</TableCell>
-                    <TableCell>{partner.percentage}</TableCell>
+                    <TableCell>{partner.percentage}%</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-
         </>
-
       );
 
     default:
       return "Unknown step";
   }
 }
+
 
 const CreateCarModal = ({
   open,
@@ -533,13 +536,13 @@ const CreateCarModal = ({
   initialCarData,
   isEditing,
 }) => {
+
+  console.log(currencies)
   const [activeStep, setActiveStep] = useState(0);
-  console.log(initialCarData)
   const [carData, setCarData] = useState(initialCarData);
   const [financeData, setFinanceData] = useState({
-    date: '',
     price: '',
-    currency: 'USD', // Default currency
+    currency: 'USD',
     amountInWords: '',
     paidCashOrChequeNumber: '',
     bank: '',
@@ -547,11 +550,9 @@ const CreateCarModal = ({
     firstInstallment: '',
     remainingAmount: '',
   });
-
-
   const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [partners, setPartners] = useState([]);
+
   const [invoices, setInvoices] = useState([]); // State to store invoices
   function convertNumberToWords(amount) {
     // This is a basic implementation. You may need a more complex one for production use.
@@ -825,7 +826,7 @@ const CreateCarModal = ({
         if (!isValid) errorMsg = "All fields are required in Car Details.";
         break;
       case 1:
-        isValid = carData?.owner && carData?.purchaseDetails && carData?.entryDate && carData?.maintenance && carData?.currentLocation;
+        isValid = carData?.owner && carData?.purchaseDetails && carData?.maintenance && carData?.currentLocation;
         if (!isValid) errorMsg = "All fields are required in Ownership.";
         break;
       default:

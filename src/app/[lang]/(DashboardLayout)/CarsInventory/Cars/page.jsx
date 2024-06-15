@@ -169,6 +169,9 @@ const CarsPage = () => {
                 type="date"
                 value={filters.entryDate}
                 onChange={handleFilterChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
             </Box>
           </Box>

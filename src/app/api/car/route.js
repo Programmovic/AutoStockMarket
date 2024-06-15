@@ -17,6 +17,7 @@ export async function POST(req, res) {
   session.startTransaction(); // Start the transaction
 
   try {
+    const carData = await req.json();
     const {
       name,
       color,
@@ -30,13 +31,12 @@ export async function POST(req, res) {
       entryDate,
       maintenance,
       currentLocation,
-      value,
       partners,
-      firstInstallment,
       ownerID,
-      ownerDrivingLicense
-    } = await req.json();
-
+      ownerDrivingLicense,
+      finance
+    } = carData;
+    console.log(carData);
     const carExists = await Car.findOne(
       { chassisNumber, location: { $ne: "Sold" } },
       null,
@@ -81,17 +81,19 @@ export async function POST(req, res) {
 
     const carDetails = new CarDetails({
       car: car._id,
-      value: value,
+      value: finance.price,
       sellingPrice: 0,
       capital: 0,
       maintenanceCosts: 0,
       netProfit: 0,
+      currency: finance.currency,
+      amountInWords: finance.amountInWords,
     });
 
     await carDetails.save({ session });
 
     const firstInstallmentRecord = new Installment({
-      amount: firstInstallment,
+      amount: finance.firstInstallment || finance.price,
       description: "First Installment",
       car: car._id,
     });
@@ -100,7 +102,7 @@ export async function POST(req, res) {
 
     const invoices = [];
 
-    const totalAmount = value;
+    const totalAmount = finance.price;
 
     for (const partner of partners) {
       let existingPartner = await Partner.findOne(
@@ -158,12 +160,18 @@ export async function POST(req, res) {
       }
     }
 
-    const purchaseAmount = Math.min(firstInstallment, value);
+    const purchaseAmount = finance.firstInstallment ? Math.min(finance.firstInstallment, finance.price) : finance.price;
     const purchaseTransaction = new Transaction({
       type: "expense",
       amount: purchaseAmount,
       description: `Purchase of car with chassis number ${chassisNumber}`,
       car: car._id,
+      remainingAmount: finance.remainingAmount,
+      bank: finance.bank,
+      paymentMethod: finance.paymentMethod,
+      paidCashOrChequeNumber: finance.paidCashOrChequeNumber,
+      currency: finance.currency,
+      amountInWords: finance.amountInWords,
     });
 
     await purchaseTransaction.save({ session });
@@ -225,9 +233,9 @@ export async function GET(req, res) {
       filter.chassisNumber = { $regex: new RegExp(chassisNumber, "i") };
     if (entryDate) {
       // Assuming entryDate is in a valid date format
-      filter.entryDate = { $gte: new Date(entryDate)};
-  }
-  
+      filter.entryDate = { $gte: new Date(entryDate) };
+    }
+
     // Calculate skip value for pagination
     const skip = (page - 1) * perPage;
 
