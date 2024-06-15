@@ -338,6 +338,20 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
             />
           </Grid>
 
+          
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              select
+              label="Payment Method"
+              name="paymentMethod"
+              value={financeData.paymentMethod}
+              onChange={handleFinanceInputChange}
+            >
+              <MenuItem value="Cash">Cash</MenuItem>
+              <MenuItem value="Installment">Installment</MenuItem>
+            </TextField>
+          </Grid>
           <Grid item xs={4}>
             <TextField
               fullWidth
@@ -355,19 +369,6 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               value={financeData.bank}
               onChange={handleFinanceInputChange}
             />
-          </Grid>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              select
-              label="Payment Method"
-              name="paymentMethod"
-              value={financeData.paymentMethod}
-              onChange={handleFinanceInputChange}
-            >
-              <MenuItem value="Cash">Cash</MenuItem>
-              <MenuItem value="Installment">Installment</MenuItem>
-            </TextField>
           </Grid>
           {financeData.paymentMethod === "Installment" && (
             <>
@@ -948,7 +949,7 @@ const CreateCarModal = ({
               {activeStep === 2 && (
                 <Button variant="outlined" onClick={addPartner} sx={{ marginRight: 2 }}>Add Partner</Button>
               )}
-              <Button onClick={handleNext} variant="outlined" sx={{ fontWeight: "bold" }}>
+              <Button onClick={handleNext} disabled={isNextDisabled} variant="outlined" sx={{ fontWeight: "bold" }}>
                 {activeStep === steps.length - 1 ? "Finish" : errorMessage ? `Next - ${errorMessage}` : "Next"}
               </Button>
 
