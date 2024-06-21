@@ -10,9 +10,10 @@ export async function POST(req, res) {
 
   try {
     // Extract employee data from the request body
-    const empData =
-      await req.json();
-
+    const empData = await req.json();
+    if (empData.admin === "") {
+      empData.admin = null;
+    }
     // Create a new employee instance with admin association
     const employee = new Employee(empData);
 
