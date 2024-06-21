@@ -6,14 +6,11 @@ import { useRouter } from 'next/navigation';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import axios from 'axios';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import { CircularProgress } from '@mui/material';
@@ -32,8 +29,6 @@ function Copyright(props) {
     </Typography>
   );
 }
-
-// TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
@@ -61,9 +56,7 @@ export default function SignInSide() {
     try {
       const response = await axios.post("/api/admin/sign-in", formData);
       if (response.data.token) {
-        // Save token in cookies
-        Cookies.set("token", response.data.token, { expires: 7 }); // Token expires in 7 days
-        // Login successful, navigate to /en
+        Cookies.set("token", response.data.token, { expires: 7 });
         router.push("/en");
       }
     } catch (err) {
@@ -76,33 +69,55 @@ export default function SignInSide() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
+      <Grid container component="main" sx={{ height: '100vh', position: 'relative' }}>
         <CssBaseline />
         <Grid
           item
-          xs={false}
-          sm={4}
-          md={7}
+          xs={12}
           sx={{
             backgroundImage: 'url("/images/backgrounds/login-bg.jpg")',
             backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: -1,
           }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Grid
+          item
+          xs={12}
+          component={Paper}
+          elevation={6}
+          square
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            backgroundColor: 'rgb(10 9 9 / 11%)', // Slightly transparent white background
+            backdropFilter: 'blur(10px)', // Blur effect for background
+            zIndex: 1,
+            minHeight: '100vh',
+          }}
+        >
           <Box
             sx={{
-              my: 8,
-              mx: 4,
+              padding: 5,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              backgroundColor: "rgba(255, 255, 255, 0.8)", // Semi-transparent white
+              backdropFilter: "blur(10px)", // Blur effect
+              borderRadius: 5,
+              boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)", // Shadow effect
+              border: "1px solid rgba(255, 255, 255, 0.3)", // Border to enhance glass effect
             }}
           >
-            <Image src="/images/logos/asm_logo.png" alt="Company Logo" width={200} height={100}  />
+            <Image src="/images/logos/asm_logo.png" alt="Company Logo" width={200} height={100} />
             <Box sx={{ mt: 3 }}>
               <TextField
                 name="username"
@@ -129,23 +144,22 @@ export default function SignInSide() {
                 </Typography>
               )}
               <Button
+                sx={{ borderRadius: 10, backgroundColor: "#522e8d" }}
                 fullWidth
                 variant="contained"
-                color="primary"
                 disabled={loading}
                 onClick={handleSubmit}
               >
                 {loading ? <CircularProgress size={24} color="inherit" /> : "Sign In"}
               </Button>
-              <Grid container 
-                sx={{ mt: 1 }}>
+              <Grid container sx={{ mt: 1 }}>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="#" variant="body2" sx={{color: "#522e8d"}}>
                     Forgot password?
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="#" variant="body2" sx={{color: "#522e8d"}}>
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>

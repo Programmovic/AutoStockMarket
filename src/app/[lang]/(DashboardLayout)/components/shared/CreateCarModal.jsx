@@ -915,7 +915,7 @@ const CreateCarModal = ({
           </Stepper>
           <div style={{ paddingTop: 20, paddingBottom: 20 }}>
 
-            <Box sx={{ maxHeight: '300px', overflowY: 'auto' }}>
+            <Box sx={{ maxHeight: '300px', overflowY: 'auto', paddingY: 3 }}>
               {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner, financeData, handleFinanceInputChange)}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>

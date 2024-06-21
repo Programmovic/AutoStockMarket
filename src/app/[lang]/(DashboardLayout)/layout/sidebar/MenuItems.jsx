@@ -22,7 +22,16 @@ import {
   IconWaterpolo,
   IconDashboard
 } from "@tabler/icons-react";
-
+import { TfiDashboard } from "react-icons/tfi";
+import { FaExchangeAlt } from "react-icons/fa";
+import { GiMoneyStack, GiMechanicGarage, GiTakeMyMoney   } from "react-icons/gi";
+import { FaCalendarDays, FaCoins,FaUsers   } from "react-icons/fa6";
+import { HiMiniIdentification } from "react-icons/hi2";
+import { BiSolidCarMechanic } from "react-icons/bi";
+import { IoCalendar } from "react-icons/io5";
+import { BsBank2 } from "react-icons/bs";
+import { RiTodoLine } from "react-icons/ri";
+import { RiExternalLinkLine } from "react-icons/ri";
 import { uniqueId } from "lodash";
 
 const Menuitems = [
@@ -33,7 +42,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Dashboard",
-    icon: IconDashboard,
+    icon: TfiDashboard,
     href: "/",
     translatedTitle: "ملف 2 - السيارات",
   },
@@ -62,21 +71,21 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Transactions",
-    icon: IconMoneybag,
+    icon: FaExchangeAlt,
     href: "/SalesManagment/Transactions",
     translatedTitle: "ملف 1 - يومية",
   },
   {
     id: uniqueId(),
     title: "Daily Transactions",
-    icon: IconMoneybag,
+    icon: FaCalendarDays,
     href: "/SalesManagment/DailyTransactions",
     translatedTitle: "ملف 1 - يومية",
   },
   {
     id: uniqueId(),
     title: "Income",
-    icon: IconCoinMonero,
+    icon: FaCoins,
     href: "/SalesManagment/Income",
     translatedTitle: "ملف 1 - المدخول",
   },
@@ -97,21 +106,21 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Expenses",
-    icon: IconCoinEuro,
+    icon: GiMoneyStack,
     href: "/SalesManagment/Expenses",
     translatedTitle: "ملف 2 - المصروفات",
   },
   {
     id: uniqueId(),
     title: "Maintenance",
-    icon: IconSettings,
+    icon: GiMechanicGarage,
     href: "/SalesManagment/Maintenance",
     translatedTitle: "ملف 2 - الصيانة",
   },
   {
     id: uniqueId(),
     title: "External Car Maintenance",
-    icon: IconExchange,
+    icon: BiSolidCarMechanic,
     href: "/SalesManagment/ExternalCarMaintenance",
     translatedTitle: "ملف 2 - صيانة السيارات في المعرض",
   },
@@ -122,14 +131,14 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Customers",
-    icon: IconUser,
+    icon: FaUsers,
     href: "/CustomerManagement/Customers",
     translatedTitle: "ملف 1 - ديون المعرض",
   },
   {
     id: uniqueId(),
     title: "Exhibition Debts",
-    icon: IconMoneybag,
+    icon: GiTakeMyMoney,
     href: "/CustomerManagement/ExhibitionDebts",
     translatedTitle: "ملف 1 - ديون المعرض",
   },
@@ -140,21 +149,21 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "All Employees",
-    icon: IconUser,
+    icon: HiMiniIdentification,
     href: "/EmployeeManagement/Employees",
     translatedTitle: "ملف 1 - حضور وغياب الموظفين",
   },
   {
     id: uniqueId(),
     title: "Employee Attendance",
-    icon: IconUser,
+    icon: IoCalendar,
     href: "/EmployeeManagement/EmployeeAttendance",
     translatedTitle: "ملف 1 - حضور وغياب الموظفين",
   },
   {
     id: uniqueId(),
     title: "Employee Salaries",
-    icon: IconMoneybag,
+    icon: BsBank2,
     href: "/EmployeeManagement/EmployeeSalary",
     translatedTitle: "ملف 1 - رواتب الموظفين",
   },
@@ -165,21 +174,21 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Fixed Expenses",
-    icon: IconMoneybag,
+    icon: RiTodoLine,
     href: "/ReportsAndAnalytics/FixedExpenses",
     translatedTitle: "ملف 1 - المصروفات الثابتة",
   },
   {
     id: uniqueId(),
     title: "Exhibition Expenses",
-    icon: IconMoneybag,
+    icon: RiExternalLinkLine,
     href: "/ReportsAndAnalytics/ExhibitionExpenses",
     translatedTitle: "ملف 2 - مصروف المعرض",
   },
   {
     id: uniqueId(),
     title: "Recoveries",
-    icon: IconMoneybag,
+    icon: RiTodoLine,
     href: "/ReportsAndAnalytics/Recoveries",
     translatedTitle: "ملف 2 - مصروف المعرض",
   },
