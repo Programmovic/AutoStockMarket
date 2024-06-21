@@ -338,7 +338,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
             />
           </Grid>
 
-          
+
           <Grid item xs={4}>
             <TextField
               fullWidth
@@ -881,6 +881,45 @@ const CreateCarModal = ({
   useEffect(() => {
     validateStep(activeStep);
   }, [activeStep, carData, partners]);
+  const handleExportTemplate = () => {
+    const templateData = [
+      {
+        name: "",
+        color: "",
+        model: "",
+        chassisNumber: "",
+        engineNumber: "",
+        plateNumber: "",
+        odometerNumber: "",
+        owner: "",
+        ownerID: "",
+        ownerDrivingLicense: "",
+        maintenance: "",
+        currentLocation: "",
+        purchaseDetails: "",
+        entryDate: "",
+        partners: [
+          {
+            name: "",
+            type: "",
+            email: "",
+            phone: "",
+            percentage: "",
+          },
+        ],
+        finance: {
+          price: "",
+          currency: "",
+          expenses: "",
+        },
+      },
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(templateData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Template");
+    XLSX.writeFile(wb, "CarDataTemplate.xlsx");
+  };
 
   return (
     <>
@@ -933,6 +972,9 @@ const CreateCarModal = ({
                   {loading ? "Loading" : "Upload Excel"}
                 </Button>
               </label>
+              <Button variant="contained" color="primary" sx={{marginLeft: 1}} onClick={handleExportTemplate}>
+                Download Template
+              </Button>
               <Button
                 color="inherit"
                 variant="outlined"
