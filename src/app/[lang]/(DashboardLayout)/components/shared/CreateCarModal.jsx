@@ -980,7 +980,7 @@ const CreateCarModal = ({
                 variant="outlined"
                 disabled={activeStep === 0}
                 onClick={handleBack}
-                sx={{ marginLeft: 2 }}
+                sx={{ marginLeft: 1 }}
               >
                 Back
               </Button>
