@@ -172,7 +172,7 @@ const InvoicePage = ({ params }) => {
                 <Table aria-label="invoice details table">
                   <TableBody>
                     {[
-                      { label1: 'Transaction Type', value1: invoice?.transaction?.type, arabicLabel1: 'نوع المعاملة', label2: 'Customer Name', value2: invoice?.customer.name, arabicLabel2: 'استلمت انا من السيد' },
+                      { label1: 'Transaction Type', value1: invoice?.transaction?.type, arabicLabel1: 'نوع المعاملة', label2: 'Customer Name', value2: invoice?.customer.name, arabicLabel2: 'اسم العميل' },
                       { label1: 'Transaction Amount', value1: editableTransactionAmount, arabicLabel1: 'مبلغ وقدره', label2: 'Transaction Date', value2: new Date(invoice?.transaction.date).toLocaleDateString(), arabicLabel2: 'تاريخ المعاملة' },
                       { label1: 'Bank', value1: invoice?.transaction?.bank, arabicLabel1: 'البنك', label2: 'Paid Cash/Cheque Number', value2: invoice?.transaction?.paidCashOrChequeNumber, arabicLabel2: 'رقم الدفع نقداً/شيك' },
                       { label1: 'Transaction Description', value1: invoice?.transaction.description, arabicLabel1: 'وذلك عن', label2: 'Engine No.', value2: invoice?.transaction.car.engineNumber, arabicLabel2: 'رقم المحرك' },
