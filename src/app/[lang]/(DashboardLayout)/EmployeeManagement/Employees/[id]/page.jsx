@@ -170,16 +170,22 @@ const EmployeeDetailsPage = ({ params }) => {
                       </TableCell>
                       <TableCell>{employee.hireDate}</TableCell>
                     </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        <strong>Status:</strong>
+                      </TableCell>
+                      <TableCell>{employee.status} - {employee.statusReason}</TableCell>
+                    </TableRow>
                     {/* Add more rows for additional employee details */}
                   </TableBody>
                 </Table>
               </TableContainer>
             </Box>
           )}
-          <EmployeeAttendance employeeId={id}/>
-          <BonusRecords employeeId={id} deductions={false}/>
-          <BonusRecords employeeId={id} deductions={true}/>
-          <SalesRecords employeeId={id}/>
+          <EmployeeAttendance employeeId={id} />
+          <BonusRecords employeeId={id} deductions={false} />
+          <BonusRecords employeeId={id} deductions={true} />
+          <SalesRecords employeeId={id} />
         </>
       </DashboardCard>
 

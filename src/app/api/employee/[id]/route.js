@@ -33,7 +33,7 @@ export async function GET(req, { params }) {
 }
 
 // POST: Update a single employee record by ID
-export async function POST(req, { params }) {
+export async function PUT(req, { params }) {
   await connectDB();
 
   try {

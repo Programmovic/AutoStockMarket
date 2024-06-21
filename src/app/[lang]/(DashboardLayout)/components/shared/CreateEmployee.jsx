@@ -136,6 +136,33 @@ function getStepContent(step, employeeData, handleInputChange, admins) {
               onChange={handleInputChange}
             />
           </Grid>
+          <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="status-select">Status</InputLabel>
+              <Select
+                fullWidth
+                labelId="status-select"
+                id="status-select"
+                name="status"
+                value={employeeData?.status}
+                onChange={handleInputChange}
+              >
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="inactive">Inactive</MenuItem>
+                <MenuItem value="hold">Hold</MenuItem>
+                <MenuItem value="trainee">Trainee</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Status Reason"
+              name="statusReason"
+              value={employeeData?.statusReason}
+              onChange={handleInputChange}
+            />
+          </Grid>
           <Grid item xs={12}>
             <FormControl fullWidth>
               <InputLabel htmlFor="admin-select">Admin</InputLabel>
@@ -207,6 +234,14 @@ function getStepContent(step, employeeData, handleInputChange, admins) {
                   <TableCell>{employeeData?.contactInfo?.nationality}</TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell component="th" scope="row">Status</TableCell>
+                  <TableCell>{employeeData?.status}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell component="th" scope="row">Status Reason</TableCell>
+                  <TableCell>{employeeData?.statusReason}</TableCell>
+                </TableRow>
+                <TableRow>
                   <TableCell component="th" scope="row">Admin</TableCell>
                   <TableCell>{employeeData?.admin}</TableCell>
                 </TableRow>
@@ -276,7 +311,7 @@ const CreateEmployeeModal = ({ open, handleClose, fetchEmployees, initialEmploye
   const handleSubmit = async () => {
     try {
       if (isEditing) {
-        const response = await axios.put(`/api/employees/${employeeData?._id}`, employeeData);
+        const response = await axios.put(`/api/employee/${employeeData?._id}`, employeeData);
         if (response.data.message) {
           handleReset();
           handleClose();
@@ -314,22 +349,23 @@ const CreateEmployeeModal = ({ open, handleClose, fetchEmployees, initialEmploye
             </Step>
           ))}
         </Stepper>
-        <div style={{ paddingTop: 20, paddingBottom: 20 }}>
+        <div style={{ marginTop: 10, paddingTop: 20, paddingBottom: 20, maxHeight: "300px", overflowY: 'auto' }}>
           {getStepContent(activeStep, employeeData, handleInputChange, admins)}
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-            >
-              Back
-            </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
-          </Box>
+
         </div>
+        <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+          <Button
+            color="inherit"
+            disabled={activeStep === 0}
+            onClick={handleBack}
+          >
+            Back
+          </Button>
+          <Box sx={{ flex: "1 1 auto" }} />
+          <Button onClick={handleNext}>
+            {activeStep === steps.length - 1 ? "Finish" : "Next"}
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );

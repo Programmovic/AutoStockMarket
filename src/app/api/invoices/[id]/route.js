@@ -20,7 +20,13 @@ export async function GET(req, { params }) {
 
     // Fetch the invoice by ID
     const invoice = await Invoice.findById(invoiceId)
-      .populate("transaction") // Populate transaction details
+      .populate({
+        path: "transaction",
+        populate: {
+          path: "car",
+          model: "Car"
+        }
+      }) // Populate transaction details and car data
       .populate("customer"); // Populate customer details
 
     // Check if the invoice exists

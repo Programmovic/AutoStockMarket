@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Admin = require("./Admin")
+const Admin = require("./Admin");
 
 const employeeSchema = new mongoose.Schema(
   {
@@ -13,13 +13,23 @@ const employeeSchema = new mongoose.Schema(
       phone: String,
       address: String,
       nationalID: String, // Add nationalID field
-      nationality: String 
+      nationality: String,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "hold", "trainee"],
+      default: "active", // Default status
+    },
+    statusReason: {
+      type: String,
+      default: "", // Default to an empty string
     },
     admin: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin"
-    }
+      ref: "Admin",
+    },
   },
   { timestamps: true }
 );
+
 module.exports = mongoose.models.Employee || mongoose.model("Employee", employeeSchema);

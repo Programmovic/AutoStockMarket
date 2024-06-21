@@ -68,22 +68,30 @@ const IncomePage = () => {
   return (
     <PageContainer title="Income" description="Total Income and Car Details">
       <DashboardCard title="Income">
-        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-          <TextField
-            label="From"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-          />
-          <TextField
-            label="To"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-          />
-        </Box>
+        <Grid container spacing={2} sx={{ marginBottom: 2 }}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="From"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="To"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              fullWidth
+            />
+          </Grid>
+        </Grid>
+
+
         {loading ? (
           <Loading />
         ) : error ? (
