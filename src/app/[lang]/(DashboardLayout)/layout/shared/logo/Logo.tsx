@@ -12,7 +12,7 @@ const LinkStyled = styled(Link)(() => ({
 
 const Logo = () => {
   return (
-    <LinkStyled href="/">
+    <LinkStyled href="/en">
       <Image src="/images/logos/asm_logo.png" alt="Company Logo" width={200} height={100} />
       {/* Use Typography here */}
     </LinkStyled>
