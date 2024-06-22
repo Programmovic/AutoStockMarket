@@ -44,6 +44,7 @@ const EmployeeDetailsPage = ({ params }) => {
   const fetchEmployeeDetails = async () => {
     try {
       const response = await axios.get(`/api/employee/${id}`);
+      console.log("refetching employee", response.data.employee);
       setEmployee(response.data.employee);
       setLoading(false);
     } catch (error) {

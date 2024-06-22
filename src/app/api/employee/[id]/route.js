@@ -38,7 +38,7 @@ export async function PUT(req, { params }) {
 
   try {
     const { id } = params; // Extract employee ID from request parameters
-    const updatedEmployeeData = req.body; // Extract updated employee data from request body
+    const updatedEmployeeData = await req.json(); // Extract updated employee data from request body
 
     // Find the employee by ID and update its data
     const updatedEmployee = await Employee.findByIdAndUpdate(
