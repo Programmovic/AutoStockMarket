@@ -16,7 +16,6 @@ export async function POST(req, res) {
     }
     // Create a new employee instance with admin association
     const employee = new Employee(empData);
-
     // Save the employee to the database
     await employee.save();
 
