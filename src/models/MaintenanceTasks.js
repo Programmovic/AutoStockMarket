@@ -15,7 +15,7 @@ const maintenanceTaskSchema = new mongoose.Schema(
         color: String,
         model: String,
         chassisNumber: String,
-        Owner: {
+        owner: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Customer" // Reference to Customer model
         },

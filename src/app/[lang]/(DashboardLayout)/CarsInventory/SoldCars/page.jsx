@@ -98,15 +98,15 @@ const SoldCarsPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {carsToDisplay.map((soldCar) => (
+              {carsToDisplay?.map((soldCar) => (
                 <TableRow
                   key={soldCar._id}
                   onClick={() => handleRowClick(soldCar.car._id)}
                   style={{ cursor: "pointer" }}
                   hover={true}
                 >
-                  <TableCell>{soldCar.car.name}</TableCell>
-                  <TableCell>{soldCar.purchaser.name}</TableCell>
+                  <TableCell>{soldCar?.car?.name}</TableCell>
+                  <TableCell>{soldCar?.purchaser?.name}</TableCell>
                   <TableCell>{new Date(soldCar.purchaseDate).toLocaleDateString()}</TableCell>
                   <TableCell>${soldCar.purchasePrice}</TableCell>
                 </TableRow>
