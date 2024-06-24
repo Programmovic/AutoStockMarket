@@ -8,9 +8,21 @@ export async function POST(req, res) {
   try {
     // Connect to the database
     await connectDB();
-
+    console.log(maintenanceTaskData);
     // Create maintenance task using received data
-    const maintenanceTask = new MaintenanceTask(maintenanceTaskData);
+    const maintenanceTask = new MaintenanceTask({
+      externalCarDetails: {
+        owner: maintenanceTaskData.externalCarDetails.owner,
+        Car: maintenanceTaskData.externalCarDetails.Car,
+        RegistrationNumber:
+          maintenanceTaskData.externalCarDetails.RegistrationNumber,
+        ChassisNumber: maintenanceTaskData.externalCarDetails.ChassisNumber,
+        EngineNumber: maintenanceTaskData.externalCarDetails.EngineNumber,
+      },
+      taskCost: maintenanceTaskData.taskCost,
+      taskDescription: maintenanceTaskData.taskDescription,
+      taskDate: maintenanceTaskData.taskDate,
+    });
     await maintenanceTask.save();
 
     // Send success response
@@ -33,8 +45,9 @@ export async function GET(req, res) {
   await connectDB();
   try {
     // Find all maintenance tasks for external cars and populate the owner field
-    const maintenanceTasks = await MaintenanceTask.find({})
-      .populate("externalCarDetails.Owner");
+    const maintenanceTasks = await MaintenanceTask.find({}).populate(
+      "externalCarDetails.owner"
+    );
 
     // Filter out maintenance tasks for external cars
     const externalCarMaintenanceTasks = maintenanceTasks.filter(
@@ -64,4 +77,3 @@ export async function GET(req, res) {
     );
   }
 }
-
