@@ -31,7 +31,7 @@ const CustomersPage = () => {
     // Add more filter fields as needed
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(10); // Number of items per page
+  const [perPage] = useState(50); // Number of items per page
   const [error, setError] = useState(""); // Define error state
 
   // Define fetchCustomers function

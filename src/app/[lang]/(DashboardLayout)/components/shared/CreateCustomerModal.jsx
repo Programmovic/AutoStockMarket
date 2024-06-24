@@ -37,7 +37,7 @@ const modalStyle = {
   borderRadius: "16px",
 };
 
-function getStepContent(step, customerData, handleInputChange, nationalities) {
+function getStepContent(step, customerData, handleInputChange, nationalities, uploadedCustomers) {
   switch (step) {
     case 0:
       return (
@@ -119,44 +119,60 @@ function getStepContent(step, customerData, handleInputChange, nationalities) {
     case 1:
       return (
         <div>
-          <TableContainer component={Paper}>
-            <Table aria-label="customer details">
-              <TableBody>
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    Customer Name
-                  </TableCell>
-                  <TableCell>{customerData?.name}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    Email
-                  </TableCell>
-                  <TableCell>{customerData?.contactDetails?.email}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    Phone
-                  </TableCell>
-                  <TableCell>{customerData?.contactDetails?.phone}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    Nationality
-                  </TableCell>
-                  <TableCell>
-                    {customerData?.contactDetails?.nationality}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    National ID
-                  </TableCell>
-                  <TableCell>{customerData?.nationalID}</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
+          {uploadedCustomers.length > 0 ? (
+            <TableContainer component={Paper}>
+              <Table aria-label="uploaded customers">
+                <TableBody>
+                  {uploadedCustomers.map((customer, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{customer.name}</TableCell>
+                      <TableCell>{customer.contactDetails.email}</TableCell>
+                      <TableCell>{customer.contactDetails.phone}</TableCell>
+                      <TableCell>{customer.contactDetails.nationality}</TableCell>
+                      <TableCell>{customer.nationalID}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table aria-label="customer details">
+                <TableBody>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      Customer Name
+                    </TableCell>
+                    <TableCell>{customerData?.name}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      Email
+                    </TableCell>
+                    <TableCell>{customerData?.contactDetails?.email}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      Phone
+                    </TableCell>
+                    <TableCell>{customerData?.contactDetails?.phone}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      Nationality
+                    </TableCell>
+                    <TableCell>{customerData?.contactDetails?.nationality}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      National ID
+                    </TableCell>
+                    <TableCell>{customerData?.nationalID}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </div>
       );
     default:
@@ -174,9 +190,11 @@ const CreateCustomerModal = ({
   const [activeStep, setActiveStep] = useState(0);
   const [customerData, setCustomerData] = useState(initialCustomerData);
   const [nationalities, setNationalities] = useState([]);
+  const [uploadedCustomers, setUploadedCustomers] = useState([]);
 
   useEffect(() => {
     setCustomerData(initialCustomerData);
+    setUploadedCustomers([]);
     setActiveStep(0);
     fetchNationalities();
   }, [open, initialCustomerData]);
@@ -193,6 +211,7 @@ const CreateCustomerModal = ({
   const handleReset = () => {
     setActiveStep(0);
     setCustomerData(initialCustomerData);
+    setUploadedCustomers([]);
   };
 
   const handleNext = () => {
@@ -220,7 +239,6 @@ const CreateCustomerModal = ({
     } else {
       setCustomerData({ ...customerData, [name]: value });
     }
-    console.log(customerData);
   };
 
   const handleFileUpload = (event) => {
@@ -229,25 +247,28 @@ const CreateCustomerModal = ({
 
     reader.onload = (e) => {
       const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
+      const workbook = XLSX.read(data, { type: 'array' });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
       // Assuming the first row is the header
-      const firstCustomer = jsonData[0];
-      setCustomerData({
-        name: firstCustomer["Customer Name"],
+      const customers = jsonData.map((row) => ({
+        name: row['Customer Name'],
         contactDetails: {
-          email: firstCustomer.Email,
-          phone: firstCustomer.Phone,
-          nationality: firstCustomer.Nationality,
+          email: row.Email,
+          phone: row.Phone,
+          nationality: row.Nationality,
         },
-        nationalID: firstCustomer["National ID"],
-      });
+        nationalID: row['National ID'],
+      }));
+
+      setUploadedCustomers(customers);
+      setActiveStep(1)
     };
 
     reader.readAsArrayBuffer(file);
-  };
+  }
 
   const handleTemplateDownload = () => {
     const template = [
@@ -262,30 +283,30 @@ const CreateCustomerModal = ({
 
   const handleSubmit = async () => {
     try {
-      if (isEditing) {
+      if (uploadedCustomers.length > 0) {
+        // Submit each uploaded customer
+        for (const customer of uploadedCustomers) {
+          await axios.post("/api/customers", customer);
+        }
+      } else if (isEditing) {
         const response = await axios.put(
           `/api/customers/${customerData?._id}`,
           customerData
         );
-        if (response.data.message) {
-          handleReset();
-          handleClose();
-          fetchCustomers();
-        } else {
+        if (!response.data.message) {
           console.error("Error updating customer:", response.data.error);
         }
       } else {
         const response = await axios.post("/api/customers", customerData);
-        if (response.data.message) {
-          handleReset();
-          handleClose();
-          fetchCustomers();
-        } else {
+        if (!response.data.message) {
           console.error("Error creating customer:", response.data.error);
         }
       }
+      handleReset();
+      handleClose();
+      fetchCustomers();
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error submitting data:", error);
     }
   };
 
@@ -305,7 +326,7 @@ const CreateCustomerModal = ({
           ))}
         </Stepper>
         <div style={{ paddingTop: 20, paddingBottom: 20 }}>
-          {getStepContent(activeStep, customerData, handleInputChange, nationalities)}
+          {getStepContent(activeStep, customerData, handleInputChange, nationalities, uploadedCustomers)}
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Box>
               <Button variant="contained" component="label">
@@ -334,7 +355,6 @@ const CreateCustomerModal = ({
             </Button>
           </Box>
         </div>
-
       </Box>
     </Modal>
   );
