@@ -541,7 +541,7 @@ const CreateCarModal = ({
   console.log(currencies)
   const [activeStep, setActiveStep] = useState(0);
   const [carData, setCarData] = useState(initialCarData);
-  const [financeData, setFinanceData] = useState({
+  const initialFinanceData = {
     price: '',
     currency: 'USD',
     amountInWords: '',
@@ -550,9 +550,11 @@ const CreateCarModal = ({
     paymentMethod: 'Cash',
     firstInstallment: '',
     remainingAmount: '',
-  });
+  }
+  const initialPartnersData = []
+  const [financeData, setFinanceData] = useState(initialFinanceData);
   const [errorMessage, setErrorMessage] = useState('');
-  const [partners, setPartners] = useState([]);
+  const [partners, setPartners] = useState(initialPartnersData);
 
   const [invoices, setInvoices] = useState([]); // State to store invoices
   function convertNumberToWords(amount, language = 'en') {
@@ -717,6 +719,8 @@ const CreateCarModal = ({
   const handleReset = () => {
     setActiveStep(0);
     setCarData(initialCarData);
+    setFinanceData(initialFinanceData);
+    setPartners(initialPartnersData);
   };
 
   const handleNext = () => {
