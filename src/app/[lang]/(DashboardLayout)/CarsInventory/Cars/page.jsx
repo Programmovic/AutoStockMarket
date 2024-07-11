@@ -247,7 +247,7 @@ const CarsPage = () => {
       </DashboardCard>
       <CreateCarModal
         open={modalOpen}
-        handleClose={() => setModalOpen(false)}
+        handleClose={() => { confirm("Are you sure you want to close?"); setModalOpen(false) }}
         fetchCars={fetchCars}
       />
     </PageContainer>

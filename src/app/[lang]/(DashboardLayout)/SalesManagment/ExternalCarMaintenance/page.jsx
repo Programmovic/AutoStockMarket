@@ -108,7 +108,7 @@ const CarMaintenanceExhibitionPage = () => {
             {/* Modal for adding new maintenance task */}
             <CreateMaintenanceTaskModal
             open={openModal}
-            handleClose={() => setOpenModal(false)}
+            handleClose={() => {confirm("Are you sure you want to close?");setOpenModal(false)}}
             fetchMaintenanceTasks={fetchMaintenanceData}
             initialTaskData={newTask}
             isEditing={false}

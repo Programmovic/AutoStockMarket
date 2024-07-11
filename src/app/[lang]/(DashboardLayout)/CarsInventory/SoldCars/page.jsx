@@ -20,18 +20,25 @@ import {
 const SoldCarsPage = () => {
   const router = useRouter();
   const [soldCars, setSoldCars] = useState([]);
-  const [filteredSoldCars, setFilteredSoldCars] = useState([]); // State for filtered sold cars
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10); // Number of items per page
+  const [totalPages, setTotalPages] = useState(0);
   const [error, setError] = useState(""); // Define error state
 
   // Define fetchSoldCars function
   const fetchSoldCars = async () => {
     try {
       console.log("fetching sold cars");
-      const response = await axios.get(`/api/sold-cars?searchQuery=${searchQuery}`);
+      const response = await axios.get(`/api/sold-cars`, {
+        params: {
+          searchQuery,
+          page: currentPage,
+          perPage,
+        },
+      });
       setSoldCars(response.data.soldCars);
+      setTotalPages(Math.ceil(response.data.totalCount / perPage));
       setError(""); // Clear error on successful fetch
     } catch (error) {
       console.error("Error fetching sold cars:", error);
@@ -42,7 +49,7 @@ const SoldCarsPage = () => {
 
   useEffect(() => {
     fetchSoldCars();
-  }, []);
+  }, [searchQuery, currentPage]);
 
   const handleRowClick = (id) => {
     router.push(`/en/CarsInventory/Cars/${id}`);
@@ -50,20 +57,12 @@ const SoldCarsPage = () => {
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page on new search
   };
 
   const handlePaginationChange = (event, pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
-  // Calculate the number of pages
-  const totalPages = Math.ceil(filteredSoldCars.length / perPage);
-
-  // Get the cars to display on the current page
-  const carsToDisplay = soldCars.slice(
-    (currentPage - 1) * perPage,
-    currentPage * perPage
-  );
 
   return (
     <PageContainer title="Sold Cars" description="Sold Cars Management">
@@ -87,6 +86,8 @@ const SoldCarsPage = () => {
           </Box>
         </Box>
 
+        {error && <div style={{ color: "red" }}>{error}</div>}
+
         <TableContainer component={Paper} sx={{ maxWidth: "100%", overflowX: "auto" }}>
           <Table aria-label="sold cars table">
             <TableHead>
@@ -98,7 +99,7 @@ const SoldCarsPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {carsToDisplay?.map((soldCar) => (
+              {soldCars?.map((soldCar) => (
                 <TableRow
                   key={soldCar._id}
                   onClick={() => handleRowClick(soldCar.car._id)}

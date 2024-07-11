@@ -61,6 +61,7 @@ const EmployeeDetailsPage = ({ params }) => {
   };
 
   const handleCloseEditModal = () => {
+    confirm("Are you sure you want to close?");
     setEditModalOpen(false);
   };
 

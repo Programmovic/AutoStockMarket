@@ -77,14 +77,18 @@ export async function GET(req, res) {
       
       const car = await Car.find({ name: { $regex: searchQuery, $options: "i" } }).select('_id');
       const carIds = car.map(c => c._id);
+
+      const dateQuery = new Date(searchQuery);
       
       filter.$or = [
         { car: { $in: carIds } },
         { purchaser: { $in: purchaserIds } },
-        { previousOwner: { $regex: searchQuery, $options: "i" } }
+        { previousOwner: { $regex: searchQuery, $options: "i" } },
+        { purchaseDate: !isNaN(dateQuery) ? dateQuery : null }, // If searchQuery is a valid date
+        { purchasePrice: !isNaN(parseFloat(searchQuery)) ? parseFloat(searchQuery) : null } // If searchQuery is a valid number
       ];
     }
-console.log(searchQuery);
+
     if (previousOwner) {
       filter.previousOwner = { $regex: previousOwner, $options: "i" }; // Case-insensitive regex search
     }

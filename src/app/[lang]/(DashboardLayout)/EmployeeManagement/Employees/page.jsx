@@ -166,7 +166,7 @@ const EmployeesPage = () => {
       </DashboardCard>
       <CreateEmployeeModal // Render CreateEmployeeModal component
         open={modalOpen}
-        handleClose={() => setModalOpen(false)}
+        handleClose={() => {confirm("Are you sure you want to close?");setModalOpen(false)}}
         fetchEmployees={fetchEmployees}
         initialEmployeeData={initialEmployeeData}
       />

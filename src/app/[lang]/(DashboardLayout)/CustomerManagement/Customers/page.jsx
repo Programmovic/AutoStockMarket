@@ -160,7 +160,10 @@ const CustomersPage = () => {
       </DashboardCard>
       <CreateCustomerModal // Render CreateCustomerModal component
         open={modalOpen}
-        handleClose={() => setModalOpen(false)}
+        handleClose={() => {
+          confirm("Are you sure you want to close?");
+          setModalOpen(false)
+        }}
         fetchCustomers={fetchCustomers}
       />
     </PageContainer>

@@ -12,13 +12,15 @@ const SalesOverview = ({ monthlyTransactions }) => {
     expenses: monthlyTransactions?.length > 0 ? [monthlyTransactions[0].expenses] : [],
   });
   const [monthlyData, setMonthlyData] = useState([]);
+
   const handleChange = (event) => {
     setMonth(event.target.value);
   };
+
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const secondary = theme.palette.secondary.main;
-  console.log(monthlyTransactions);
+  
   useEffect(() => {
     const formattedMonthlyData = (monthlyTransactions ?? []).map((item) => ({
       ...item,
@@ -82,11 +84,23 @@ const SalesOverview = ({ monthlyTransactions }) => {
     },
     yaxis: {
       tickAmount: 4,
+      labels: {
+        show: true,
+      },
+      title: {
+        text: "Amount ($)",
+      },
     },
     xaxis: {
       categories: monthlyData.map((data) => data.monthName),
       axisBorder: {
         show: false,
+      },
+      labels: {
+        show: true,
+      },
+      title: {
+        text: "Months",
       },
     },
     tooltip: {
@@ -105,7 +119,7 @@ const SalesOverview = ({ monthlyTransactions }) => {
       data: chartData.expenses,
     },
   ];
-  console.log(chartData);
+
   return (
     <DashboardCard
       title="Sales Overview"

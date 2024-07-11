@@ -79,7 +79,7 @@ const TransactionsPage = () => {
   return (
     <PageContainer title="Transactions" description="Transactions History">
       <DashboardCard title="Transactions">
-        <CreateTransactionModal open={modalOpen} fetchTransactions={fetchTransactions} handleClose={() => setModalOpen(false)} />
+        <CreateTransactionModal open={modalOpen} fetchTransactions={fetchTransactions} handleClose={() => { confirm("Are you sure you want to close?"); setModalOpen(false) }} />
         <>
           <Box
             mb={2}

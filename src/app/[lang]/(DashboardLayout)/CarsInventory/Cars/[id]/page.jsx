@@ -324,7 +324,7 @@ const CarDetailsPage = ({ params }) => {
             <Box>
               <CreateCustomerModal // Render CreateCustomerModal component
                 open={customerModalOpen}
-                handleClose={() => setCustomerModalOpen(false)}
+                handleClose={() => {confirm("Are you sure you want to close?");setCustomerModalOpen(false)}}
                 fetchCustomers={() => {
                   fetchCustomers();
                   setSelectedPurchaser(customers[0]._id);
@@ -877,7 +877,7 @@ const CarDetailsPage = ({ params }) => {
         <div ref={tasksRef}>
           <CreateCarModal
             open={modalOpen}
-            handleClose={() => setModalOpen(false)}
+            handleClose={() => {confirm("Are you sure you want to close?");setModalOpen(false)}}
             fetchCars={fetchCarDetails}
             initialCarData={car}
             isEditing={true}

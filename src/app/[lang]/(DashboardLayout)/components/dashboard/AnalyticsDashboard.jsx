@@ -1,112 +1,101 @@
-import Chart from "react-apexcharts";
-import { useTheme } from "@mui/material/styles";
-import { Stack, Typography, Avatar, Fab, Link, IconButton, Box } from "@mui/material";
-import { IconArrowDownRight, IconCurrencyDollar, IconEye } from "@tabler/icons-react";
-import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
-import Loading from "@/app/loading";
-import { useState } from "react";
-const AnalyticsDashboard = ({ data, chartData, title, icon, iconLink, loading = true }) => {
-  // chart color
+import React from 'react';
+import Chart from 'react-apexcharts';
+import { useTheme, Typography, Stack, Card, CardContent, Box, CircularProgress } from "@mui/material";
+
+const AnalyticsDashboard = ({ title, data, chartData, chartType, icon, iconLink, loading }) => {
   const theme = useTheme();
-  const secondarylight = "#f5fcff";
+  const primary = theme.palette.primary.main;
+  const primarylight = '#ecf2ff';
+  const successlight = theme.palette.success.light;
+  // Debug: Log chartData and chartType
+  console.log("Chart Data:", chartData);
+  console.log("Chart Type:", chartType);
 
-  const generateRandomColor = () => {
-    const colors = ["red", "orange", "green", "blue", "purple", "pink"];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
-  };
-
-  const optionsColumnChart = {
+  const chartOptions = {
     chart: {
-      type: "area",
-      fontFamily: "'Plus Jakarta Sans', sans-serif;",
-      foreColor: "#adb0bb",
-      toolbar: {
-        show: false,
+      type: chartType,
+      background: 'transparent',
+    },
+    labels: chartData?.labels || [],
+    colors: [theme.palette.primary.main, theme.palette.secondary.main],
+    dataLabels: {
+      enabled: true,
+      style: {
+        colors: ['#fff'],
       },
-      height: 60,
-      sparkline: {
-        enabled: true,
+    },
+    colors: [primary, primarylight, '#F9F9FD'],
+    plotOptions: {
+      pie: {
+        startAngle: 0,
+        endAngle: 360,
+        donut: {
+          size: '75%',
+          background: 'black',
+        },
       },
-      group: "sparklines",
-    },
-    stroke: {
-      curve: "smooth",
-      width: 2,
-    },
-    fill: {
-      colors: [secondarylight],
-      type: "solid",
-      opacity: 0.05,
-    },
-    markers: {
-      size: 0,
     },
     tooltip: {
-      theme: theme.palette.mode === "dark" ? "dark" : "light",
+      enabled: true,
+      fillSeriesColor: false,
+    },
+    stroke: {
+      show: true,
+    },
+    dataLabels: {
+      enabled: true,
+    },
+    legend: {
+      show: true,
+      position: 'bottom',
+    },
+    ...chartType !== 'pie' && {
+      xaxis: {
+        categories: chartData?.categories,
+      },
+      yaxis: {
+        title: {
+          text: "Value",
+        },
+      },
     },
   };
 
-  const seriesColumnChart = [
-    {
-      name: "",
-      color: generateRandomColor(), // Random color for the chart series
-      data: chartData,
-    },
-  ];
-  const [isHovered, setIsHovered] = useState(false);
+  const chartSeries = chartData?.series || [];
 
-  const handleMouseOver = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseOut = () => {
-    setIsHovered(false);
-  };
   return (
-    !loading ? (
-      <DashboardCard
-        title={title}
-        action={
-          <Link href={iconLink} underline="none">
-            <Fab
-              color="secondary"
-              size="medium"
-              sx={{
-                color: "#ffffff",
-              }}
-              onMouseOver={handleMouseOver}
-              onMouseOut={handleMouseOut}
-            >
-              {isHovered ? <IconEye /> : icon}
-            </Fab>
-          </Link>
-        }
-        footer={
-          <Chart
-            options={optionsColumnChart}
-            series={seriesColumnChart}
-            type="area"
-            height="60px"
-          />
-        }
-      >
-        <Typography variant="h3" fontWeight="700" mt="-20px">
-          {data}
-        </Typography>
-      </DashboardCard>
-    ) : (
-      <DashboardCard>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center">
-          <Loading width={250} height={125} />
-        </Box>
-      </DashboardCard>
-    )
+    <Card>
+      <CardContent>
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="150px">
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Box component="a" href={iconLink}>
+                {icon}
+              </Box>
+              <Box>
+                <Typography variant="h6" color="textSecondary">
+                  {title}
+                </Typography>
+                <Typography variant="h4">{data}</Typography>
+              </Box>
+            </Stack>
+            {chartType && (
+              <Chart
+                options={chartOptions}
+                series={chartSeries}
+                type={chartType}
+                height={300}
+              />
+            )}
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
-
 };
 
 export default AnalyticsDashboard;

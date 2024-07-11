@@ -32,11 +32,31 @@ export async function GET(req, { params }) {
     filter.createdAt = { $lt: endDate };
   }
 
+  // Additional category filters
+  const carCategory = req.nextUrl.searchParams.get("carCategory");
+  const transactionCategory = req.nextUrl.searchParams.get("transactionCategory");
+  const customerCategory = req.nextUrl.searchParams.get("customerCategory");
+
+  const carFilter = { ...filter };
+  if (carCategory) {
+    carFilter.category = carCategory;
+  }
+
+  const transactionFilter = { ...filter };
+  if (transactionCategory) {
+    transactionFilter.category = transactionCategory;
+  }
+
+  const customerFilter = { ...filter };
+  if (customerCategory) {
+    customerFilter.category = customerCategory;
+  }
+
   try {
-    const totalCarsPromise = Car.find(filter);
-    const totalTransactionsPromise = Transaction.find(filter);
-    const totalCustomersPromise = Customer.find(filter);
-    const totalSoldCarsPromise = SoldCar.find(filter);
+    const totalCarsPromise = Car.find(carFilter);
+    const totalTransactionsPromise = Transaction.find(transactionFilter);
+    const totalCustomersPromise = Customer.find(customerFilter);
+    const totalSoldCarsPromise = SoldCar.find(carFilter);
     const totalMaintenanceCostsPromise = MaintenanceTask.aggregate([
       { $match: filter },
       { $group: { _id: null, totalCost: { $sum: "$taskCost" } } },
@@ -45,8 +65,8 @@ export async function GET(req, { params }) {
       { $match: filter },
       { $group: { _id: null, totalDebt: { $sum: "$debts" } } },
     ]);
-    const carDetailsPromise = CarDetails.find(filter);
-    const recentTransactionsPromise = Transaction.find(filter)
+    const carDetailsPromise = CarDetails.find(carFilter);
+    const recentTransactionsPromise = Transaction.find(transactionFilter)
       .sort({ createdAt: -1 })
       .limit(5);
     const totalSellingPricesPromise = SoldCar.aggregate([
@@ -101,6 +121,7 @@ export async function GET(req, { params }) {
       .reduce((partialSum, a) => partialSum + a, 0);
 
     const monthlyTransactions = await Transaction.aggregate([
+      { $match: filter },
       {
         $group: {
           _id: {
@@ -117,6 +138,46 @@ export async function GET(req, { params }) {
       },
       { $sort: { "_id.year": 1, "_id.month": 1 } },
     ]);
+
+    // Format data for charts
+    const formatChartData = (data, type) => {
+      if (type === 'pie') {
+        return {
+          labels: data.map(item => item.label),
+          series: data.map(item => item.value),
+        };
+      } else if (type === 'column' || type === 'line') {
+        return {
+          categories: data.map(item => item.category),
+          series: [{
+            name: 'Data',
+            data: data.map(item => item.value),
+          }],
+        };
+      }
+      return {};
+    };
+
+    const carValueChartData = formatChartData(
+      carDetails.map(car => ({
+        category: new Date(car.createdAt).toLocaleDateString(),
+        value: car.value,
+      })),
+      'line'
+    );
+
+    const totalSellingPricesChartData = formatChartData(
+      soldCars.map(car => ({ category: car.name, value: car.purchasePrice })),
+      'column'
+    );
+
+    const transactionAmountsChartData = formatChartData(
+      transactions.map(transaction => ({
+        category: new Date(transaction.createdAt).toLocaleDateString(),
+        value: transaction.amount,
+      })),
+      'line'
+    );
 
     const response = {
       totalCars: cars.length,
@@ -146,6 +207,9 @@ export async function GET(req, { params }) {
         .map((tr) => tr.amount),
       transactionAmounts,
       monthlyTransactions,
+      carValueChartData,
+      totalSellingPricesChartData,
+      transactionAmountsChartData,
     };
 
     return NextResponse.json(response);
