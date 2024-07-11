@@ -8,12 +8,14 @@ interface ItemType {
   isMobileSidebarOpen: boolean;
   onSidebarClose: (event: React.MouseEvent<HTMLElement>) => void;
   isSidebarOpen: boolean;
+  toggleMobileSidebar: () => void; // Added toggleMobileSidebar prop
 }
 
 const Sidebar = ({
   isMobileSidebarOpen,
   onSidebarClose,
   isSidebarOpen,
+  toggleMobileSidebar,
 }: ItemType) => {
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
 
@@ -66,7 +68,7 @@ const Sidebar = ({
 
             {/* Sidebar Content */}
             <Box sx={{ flex: 1, overflowY: "auto" }}>
-              <SidebarItems />
+              <SidebarItems toggleMobileSidebar={toggleMobileSidebar} />
             </Box>
           </Box>
         </Drawer>
@@ -96,7 +98,7 @@ const Sidebar = ({
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}
       {/* ------------------------------------------- */}
-      <SidebarItems />
+      <SidebarItems toggleMobileSidebar={toggleMobileSidebar} />
     </Drawer>
   );
 };

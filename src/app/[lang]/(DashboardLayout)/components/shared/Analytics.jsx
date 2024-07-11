@@ -153,7 +153,7 @@ const Analytics = ({ params, today = false }) => {
             title={"Total Expenses"}
             data={filteredData?.totalExpenses}
             chartData={{ labels: ['Total Recieved', "Total Expenses"], series: [filteredData?.totalReceived, filteredData?.totalExpenses] }}
-            chartType="column"
+            chartType="pie"
             icon={<IconCurrencyDollar width={24} />}
             loading={isLoading}
           />

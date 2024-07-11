@@ -23,7 +23,7 @@ const CustomScrollbarBox = styled(Box)`
   }
 `;
 
-const SidebarItems = ({ toggleMobileSidebar }) => {
+const SidebarItems = ({ toggleMobileSidebar }: any) => {
   const pathname = usePathname();
   const pathDirect = pathname;
   const { params } = useParams();
