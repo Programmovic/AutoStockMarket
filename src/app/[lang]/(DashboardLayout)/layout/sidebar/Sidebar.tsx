@@ -9,6 +9,7 @@ interface ItemType {
   onSidebarClose: (event: React.MouseEvent<HTMLElement>) => void;
   isSidebarOpen: boolean;
   toggleMobileSidebar: () => void; // Added toggleMobileSidebar prop
+  lang?: string;
 }
 
 const Sidebar = ({

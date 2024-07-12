@@ -22,8 +22,7 @@ const CustomScrollbarBox = styled(Box)`
     background-color: #f1f1f1; /* Scrollbar track color */
   }
 `;
-
-const SidebarItems = ({ toggleMobileSidebar }: any) => {
+const SidebarItems = ({ toggleMobileSidebar }) => {
   const pathname = usePathname();
   const pathDirect = pathname;
   const { params } = useParams();
