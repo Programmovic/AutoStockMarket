@@ -66,6 +66,7 @@ export async function GET(req, { params }) {
       { $group: { _id: null, totalDebt: { $sum: "$debts" } } },
     ]);
     const carDetailsPromise = CarDetails.find(carFilter);
+    const maintenanceTasksPromise = MaintenanceTask.find();
     const recentTransactionsPromise = Transaction.find(transactionFilter)
       .sort({ createdAt: -1 })
       .limit(5);
@@ -82,6 +83,7 @@ export async function GET(req, { params }) {
       totalMaintenanceCosts,
       totalCustomerDebt,
       carDetails,
+      maintenanceTasks,
       recentTransactions,
       totalSellingPrices
     ] = await Promise.all([
@@ -92,6 +94,7 @@ export async function GET(req, { params }) {
       totalMaintenanceCostsPromise,
       totalCustomerDebtPromise,
       carDetailsPromise,
+      maintenanceTasksPromise,
       recentTransactionsPromise,
       totalSellingPricesPromise
     ]);
@@ -165,7 +168,13 @@ export async function GET(req, { params }) {
       })),
       'line'
     );
-
+    const maintenanceAmountsChartData = formatChartData(
+      maintenanceTasks.map(task => ({
+        category: new Date(task.createdAt).toLocaleDateString(),
+        value: task.taskCost,
+      })),
+      'line'
+    );
     const totalSellingPricesChartData = formatChartData(
       soldCars.map(car => ({ category: car.name, value: car.purchasePrice })),
       'column'
@@ -191,7 +200,8 @@ export async function GET(req, { params }) {
       carDetails: carDetails[0] || {},
       carValues,
       carValuesAmount,
-      totalSellingPrices,
+      totalSellingPrices: totalSellingPrices[0]?.totalSellingPrices,
+      maintenanceAmountsChartData,
       totalSoldCars: soldCars.length,
       soldCars,
       recentTransactions,

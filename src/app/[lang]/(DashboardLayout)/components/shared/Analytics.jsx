@@ -168,12 +168,12 @@ const Analytics = ({ params, today = false }) => {
             loading={isLoading}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={12} md={8}>
           <AnalyticsDashboard
             title={"Total Maintenance Costs"}
             data={filteredData?.totalMaintenanceCosts}
             chartData={filteredData?.maintenanceAmountsChartData}
-            chartType="pie"
+            chartType="line"
             icon={<IconCurrencyDollar width={24} />}
             loading={isLoading}
           />
@@ -191,9 +191,9 @@ const Analytics = ({ params, today = false }) => {
         <Grid item xs={12} sm={6} md={4}>
           <AnalyticsDashboard
             title={"Total Cars Prices"}
-            data={filteredData?.carDetails?.value}
-            chartData={filteredData?.carValueBreakdownChartData}
-            chartType="line"
+            data={filteredData?.totalSellingPrices}
+            chartData={{ labels: ['Car Values', "Sold Cars Prices"], series: [filteredData?.carValuesAmount, filteredData?.totalSellingPrices] }}
+            chartType="pie"
             icon={<IconCurrencyDollar width={24} />}
             loading={isLoading}
           />
