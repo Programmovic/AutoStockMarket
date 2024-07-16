@@ -17,7 +17,10 @@ import {
   TableRow,
   Paper,
   MenuItem, // Import MenuItem for select list
-  InputAdornment
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select
 } from "@mui/material";
 import axios from "axios";
 import * as XLSX from "xlsx"; // Import xlsx library
@@ -63,7 +66,8 @@ const InvoiceTable = ({ invoices }) => (
   </TableContainer>
 );
 
-function getStepContent(step, carData, partners, handleInputChange, handlePartnerInputChange, removePartner, financeData, handleFinanceInputChange) {
+function getStepContent(step, carData, partners, handleInputChange, handlePartnerInputChange, removePartner, financeData, handleFinanceInputChange, idType, setIdType, handleIdTypeChange) {
+
   console.log(carData)
   switch (step) {
     case 0: // Car Details
@@ -152,26 +156,47 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               autoComplete="false"
             />
           </Grid>
+
           <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="Owner National Identification Number"
-              name="ownerID"
-              value={carData?.ownerID}
-              onChange={handleInputChange}
-              autoComplete="false"
-            />
+            <FormControl fullWidth>
+              <InputLabel id="id-type-label">ID Type</InputLabel>
+              <Select
+                labelId="id-type-label"
+                id="id-type"
+                value={idType}
+                label="ID Type"
+                onChange={handleIdTypeChange}
+              >
+                <MenuItem value="ownerID">Owner National Identification Number</MenuItem>
+                <MenuItem value="ownerDrivingLicense">Driving License</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="Driving License"
-              name="ownerDrivingLicense"
-              value={carData?.ownerDrivingLicense}
-              onChange={handleInputChange}
-              autoComplete="false"
-            />
-          </Grid>
+
+          {idType === "ownerID" ? (
+            <Grid item xs={4}>
+              <TextField
+                fullWidth
+                label="Owner National Identification Number"
+                name="ownerID"
+                value={carData?.ownerID}
+                onChange={handleInputChange}
+                autoComplete="false"
+              />
+            </Grid>
+          ) : (
+            <Grid item xs={4}>
+              <TextField
+                fullWidth
+                label="Driving License"
+                name="ownerDrivingLicense"
+                value={carData?.ownerDrivingLicense}
+                onChange={handleInputChange}
+                autoComplete="false"
+              />
+            </Grid>
+          )}
+
           <Grid item xs={4}>
             <TextField
               fullWidth
@@ -181,6 +206,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
+
           <Grid item xs={4}>
             <TextField
               fullWidth
@@ -190,6 +216,7 @@ function getStepContent(step, carData, partners, handleInputChange, handlePartne
               onChange={handleInputChange}
             />
           </Grid>
+
           <Grid item xs={12}>
             <TextField
               fullWidth
@@ -537,7 +564,11 @@ const CreateCarModal = ({
   initialCarData,
   isEditing,
 }) => {
+  const [idType, setIdType] = useState("ownerID");
 
+  const handleIdTypeChange = (event) => {
+    setIdType(event.target.value);
+  };
   console.log(currencies)
   const [activeStep, setActiveStep] = useState(0);
   const [carData, setCarData] = useState(initialCarData);
@@ -959,7 +990,7 @@ const CreateCarModal = ({
           <div style={{ paddingTop: 20, paddingBottom: 20 }}>
 
             <Box sx={{ maxHeight: '300px', overflowY: 'auto', paddingY: 3 }}>
-              {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner, financeData, handleFinanceInputChange)}
+              {getStepContent(activeStep, carData, partners, handleInputChange, handlePartnerInputChange, removePartner, financeData, handleFinanceInputChange, idType, setIdType, handleIdTypeChange)}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
 
@@ -976,7 +1007,7 @@ const CreateCarModal = ({
                   {loading ? "Loading" : "Upload Excel"}
                 </Button>
               </label>
-              <Button variant="contained" color="primary" sx={{marginLeft: 1}} onClick={handleExportTemplate}>
+              <Button variant="contained" color="primary" sx={{ marginLeft: 1 }} onClick={handleExportTemplate}>
                 Download Template
               </Button>
               <Button
