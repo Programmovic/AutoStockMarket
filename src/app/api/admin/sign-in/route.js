@@ -12,7 +12,7 @@ export async function POST(req) {
 
   try {
     // Attempt to find the admin with the provided username
-    const admin = await Admin.findOne({ username });
+    const admin = await Admin.findOne({ username }).sort({ createdAt: -1 });
 
     if (!admin) {
       return NextResponse.json({ error: "Admin not found" }, { status: 404 });

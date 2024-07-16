@@ -10,7 +10,7 @@ export async function POST(req, res) {
 
   try {
     // Check if an admin with the given email or username already exists
-    const adminExists = await Admin.findOne({ $or: [{ email }, { username }] });
+    const adminExists = await Admin.findOne({ $or: [{ email }, { username }] }).sort({ createdAt: -1 });
 
     if (adminExists) {
       return NextResponse.json(

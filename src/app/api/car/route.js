@@ -34,14 +34,14 @@ export async function POST(req, res) {
       partners,
       ownerID,
       ownerDrivingLicense,
-      finance
+      finance,
     } = carData;
     console.log(carData);
     const carExists = await Car.findOne(
       { chassisNumber, location: { $ne: "Sold" } },
       null,
       { session }
-    );
+    ).sort({ createdAt: -1 });
 
     if (carExists) {
       await session.abortTransaction();
@@ -52,7 +52,9 @@ export async function POST(req, res) {
       );
     }
     // Inside the try block of your POST method, after extracting request body variables
-    let customer = await Customer.findOne({ name: owner }, null, { session });
+    let customer = await Customer.findOne({ name: owner }, null, {
+      session,
+    }).sort({ createdAt: -1 });
     if (!customer) {
       customer = new Customer({
         name: owner,
@@ -111,7 +113,7 @@ export async function POST(req, res) {
         },
         null,
         { session }
-      );
+      ).sort({ createdAt: -1 });
 
       if (!existingPartner) {
         const newPartner = new Partner({
@@ -160,7 +162,9 @@ export async function POST(req, res) {
       }
     }
 
-    const purchaseAmount = finance.firstInstallment ? Math.min(finance.firstInstallment, finance.price) : finance.price;
+    const purchaseAmount = finance.firstInstallment
+      ? Math.min(finance.firstInstallment, finance.price)
+      : finance.price;
     const purchaseTransaction = new Transaction({
       type: "expense",
       amount: purchaseAmount,
@@ -241,6 +245,7 @@ export async function GET(req, res) {
 
     // Query cars with pagination and filters
     const cars = await Car.find(filter)
+      .sort({ createdAt: -1 })
       .populate("owner")
       .skip(skip)
       .limit(perPage);

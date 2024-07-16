@@ -9,7 +9,7 @@ export async function GET(req, res) {
 
   try {
     // Query all admins from the database
-    const admins = await Admin.find();
+    const admins = await Admin.find().sort({ createdAt: -1 });
 
     // Return the list of admins
     return NextResponse.json({ admins });

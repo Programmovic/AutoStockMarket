@@ -18,7 +18,7 @@ export async function POST(req, { params }) {
 
   try {
     // Check if the car exists
-    const car = await Car.findById(id);
+    const car = await Car.findById(id).sort({ createdAt: -1 });
     if (!car) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
@@ -56,12 +56,12 @@ await connectDB();
     // Find the customers
     let customers;
     if (!params.CustomersOnly) {
-      customers = await Customer.find({});
+      customers = await Customer.find({}).sort({ createdAt: -1 });
       
     }
     if (!params.TransactionsOnly) {
       try {
-        const transactions = await Transaction.find({});
+        const transactions = await Transaction.find({}).sort({ createdAt: -1 });
         
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -74,26 +74,26 @@ await connectDB();
 
     if (!params.CustomersOnly) {
       // Find the car by ID
-      const car = await Car.findById(id).populate('owner');
+      const car = await Car.findById(id).populate('owner').sort({ createdAt: -1 });
       if (!car) {
         return NextResponse.json({ error: "Car not found" }, { status: 404 });
       }
 
       // Find the car details associated with the car
-      const carDetails = await CarDetails.findOne({ car: car._id });
+      const carDetails = await CarDetails.findOne({ car: car._id }).sort({ createdAt: -1 });
       
 
       // Find the employees
-      const employees = await Employee.find({});
+      const employees = await Employee.find({}).sort({ createdAt: -1 });
       
 
       // Find the partners associated with the car
-      const partners = await Partner.find({ cars: car._id });
+      const partners = await Partner.find({ cars: car._id }).sort({ createdAt: -1 });
       // Fetch the transactions related to the car
       const transactions = await Transaction.find({ car: car._id }).populate(
         "partners"
-      );
-      const installments = await Installment.find({ car: car._id });
+      ).sort({ createdAt: -1 });
+      const installments = await Installment.find({ car: car._id }).sort({ createdAt: -1 });
       // Prepare the response with car, car details, and customers
       const responseData = {
         message: "Car and customers details retrieved successfully",

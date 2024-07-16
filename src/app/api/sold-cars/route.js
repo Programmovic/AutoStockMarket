@@ -109,7 +109,7 @@ export async function GET(req, res) {
     const skip = (page - 1) * perPage;
 
     // Query sold cars with pagination and filters
-    const soldCars = await SoldCar.find(filter)
+    const soldCars = await SoldCar.find(filter).sort({ createdAt: -1 })
       .populate("car") // Populate car details
       .populate("purchaser") // Populate purchaser details
       .skip(skip)

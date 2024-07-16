@@ -11,7 +11,7 @@ export async function GET(req, { params }) {
     const { id } = params; // Extract employee ID from request parameters
 
     // Find the bonuses for the employee by ID
-    const employeeBonuses = await Bonus.find({ employee: id });
+    const employeeBonuses = await Bonus.find({ employee: id }).sort({ createdAt: -1 });
 
     // Return the employee's bonuses
     return NextResponse.json({ bonuses: employeeBonuses });

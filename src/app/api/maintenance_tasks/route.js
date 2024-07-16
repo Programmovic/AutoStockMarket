@@ -8,7 +8,7 @@ export async function GET(req, res) {
   await connectDB();
   try {
     // Find all maintenance tasks
-    const maintenanceTasks = await MaintenanceTask.find({});
+    const maintenanceTasks = await MaintenanceTask.find({}).sort({ createdAt: -1 });
 
     // Calculate total maintenance cost
     let totalMaintenanceCost = 0;

@@ -3,7 +3,7 @@ import Transaction from "../../../models/Transaction";
 import Partner from "../../../models/Partner";
 import Car from "../../../models/Cars";
 import Invoice from "../../../models/Invoice";
-import { Types as mongooseTypes } from 'mongoose';
+import { Types as mongooseTypes } from "mongoose";
 import { NextResponse } from "next/server";
 
 // POST: Create a new transaction record
@@ -12,7 +12,9 @@ export async function POST(req, res) {
   const { type, date, amount, description, partners, carId } = await req.json();
   try {
     // Validate existence of partners and car in the database
-    const existingPartners = await Partner.find({ _id: { $in: partners } });
+    const existingPartners = await Partner.find({
+      _id: { $in: partners },
+    }).sort({ createdAt: -1 });
     const car = await Car.findById(carId);
     if (
       !existingPartners ||
@@ -86,16 +88,17 @@ export async function GET(req, res) {
         ...filter.totalAmount,
         $lte: parseFloat(maxAmount),
       };
-      if (transactionId && mongooseTypes.ObjectId.isValid(transactionId)) {
-        transactionId = mongooseTypes.ObjectId(transactionId);
-        filter.transaction = transactionId;
-      }
-      
+    if (transactionId && mongooseTypes.ObjectId.isValid(transactionId)) {
+      transactionId = mongooseTypes.ObjectId(transactionId);
+      filter.transaction = transactionId;
+    }
+
     // Calculate skip value for pagination
     const skip = (page - 1) * perPage;
 
     // Query invoices with pagination and filters
     const invoices = await Invoice.find(filter)
+      .sort({ createdAt: -1 })
       .populate("transaction") // Populate transaction details
       .populate("customer") // Populate customer details
       .skip(skip)

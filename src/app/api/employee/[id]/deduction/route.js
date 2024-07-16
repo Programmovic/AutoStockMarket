@@ -11,7 +11,7 @@ export async function GET(req, { params }) {
     const { id } = params; // Extract employee ID from request parameters
 
     // Find the deductions for the employee by ID
-    const employeeDeductions = await Deduction.find({ employee: id });
+    const employeeDeductions = await Deduction.find({ employee: id }).sort({ createdAt: -1 });
 
     // Return the employee's deductions
     return NextResponse.json({ deductions: employeeDeductions });

@@ -7,7 +7,7 @@ export async function GET(req, res) {
   await connectDB();
   try {
     // Find all maintenance tasks with non-null externalCarDetails
-    const maintenanceTasks = await MaintenanceTask.find({ "externalCarDetails": { $ne: null } });
+    const maintenanceTasks = await MaintenanceTask.find({ "externalCarDetails": { $ne: null } }).sort({ createdAt: -1 });
 
     // Extract unique chassis numbers
     const chassisNumbers = maintenanceTasks.reduce((uniqueChassisNumbers, task) => {

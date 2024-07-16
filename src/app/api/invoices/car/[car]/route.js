@@ -34,7 +34,7 @@ export async function GET(req, res) {
     const skip = (page - 1) * perPage;
 
     // Query invoices with pagination and based on filter
-    const invoices = await Invoice.find(filter)
+    const invoices = await Invoice.find(filter).sort({ createdAt: -1 })
       .populate('transaction') // Optionally populate transaction details
       .populate('customer', 'name') // Populate customer details, like name
       .skip(skip)

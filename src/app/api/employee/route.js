@@ -39,7 +39,7 @@ export async function GET(req, res) {
   await connectDB();
 
   try {
-    const employees = await Employee.find();
+    const employees = await Employee.find().sort({ createdAt: -1 });
     return NextResponse.json({ employees });
   } catch (error) {
     console.error(error);

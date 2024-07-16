@@ -31,7 +31,7 @@ export async function POST(req, res) {
     console.log("Car ID:", car._id);
 
     // Fetch installments for the specified car
-    const installments = await Installment.find({ car: car._id }).session(session);
+    const installments = await Installment.find({ car: car._id }).sort({ createdAt: -1 }).session(session);
     const carData = await Car.find({ _id: car._id }).session(session);
 
     // Calculate total installment amount for the car

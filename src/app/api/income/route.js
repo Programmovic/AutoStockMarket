@@ -14,7 +14,7 @@ export async function GET(req, res) {
         { capital: { $ne: 0 } },
         { maintenanceCosts: { $ne: 0 } }
       ]
-    }).populate('car'); // Populate the 'car' field with actual car details
+    }).sort({ createdAt: -1 }).populate('car'); // Populate the 'car' field with actual car details
 
     // Calculate total income
     let totalIncome = 0;

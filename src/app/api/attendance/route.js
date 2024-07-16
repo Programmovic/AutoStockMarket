@@ -8,7 +8,7 @@ export async function POST(req, res) {
 
   try {
     // Get all employees
-    const employees = await Employee.find({}, "_id");
+    const employees = await Employee.find({}, "_id").sort({ createdAt: -1 });
 
     // Get the current date
     const currentDate = new Date().toISOString().split("T")[0]; // Extracting the date part only
@@ -19,7 +19,7 @@ export async function POST(req, res) {
       const existingAttendance = await Attendance.findOne({
         employee: employee._id,
         date: currentDate,
-      });
+      }).sort({ createdAt: -1 });
 
       if (!existingAttendance) {
         // Create a new unsigned attendance instance
@@ -85,7 +85,7 @@ export async function GET(req, res) {
 
   try {
     // Get all employees
-    const employees = await Employee.find({});
+    const employees = await Employee.find({}).sort({ createdAt: -1 });
 
     // Get all attendance records for the current month
     const currentDate = new Date();
@@ -102,7 +102,7 @@ export async function GET(req, res) {
 
     const attendanceRecords = await Attendance.find({
       date: { $gte: firstDayOfMonth, $lte: lastDayOfMonth },
-    }).populate("employee");
+    }).populate("employee").sort({ createdAt: -1 });
 
     // Compute analytics for each employee
     const analytics = employees.map((employee) => {

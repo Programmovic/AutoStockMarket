@@ -54,7 +54,7 @@ export async function GET(req, res) {
     const skip = (page - 1) * perPage;
 
     // Query customers with pagination and filters
-    const customers = await Customer.find(filter).skip(skip).limit(perPage);
+    const customers = await Customer.find(filter).sort({ createdAt: -1 }).skip(skip).limit(perPage);
 
     // Get total count of customers (without pagination)
     const totalCount = await Customer.countDocuments(filter);

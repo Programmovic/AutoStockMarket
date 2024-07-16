@@ -68,7 +68,7 @@ export async function GET(req, { params }) {
     await connectDB();
 
     // Find maintenance tasks for the car by ID
-    const maintenanceTasks = await MaintenanceTask.find({ car: id });
+    const maintenanceTasks = await MaintenanceTask.find({ car: id }).sort({ createdAt: -1 });
 
     // Send success response with maintenance tasks
     return NextResponse.json({ maintenanceTasks });

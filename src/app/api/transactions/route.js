@@ -79,7 +79,7 @@ export async function GET(req, res) {
     const skip = (page - 1) * perPage;
     console.log(filter);
     // Query transactions with pagination and filters
-    const transactions = await Transaction.find(filter)
+    const transactions = await Transaction.find(filter).sort({ createdAt: -1 })
       .populate("partners") // Populate partner details
       .populate("car") // Populate car details
       .skip(skip)

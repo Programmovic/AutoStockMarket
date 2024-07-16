@@ -12,14 +12,14 @@ export async function GET(req, { params }) {
 
     try {
         // Find the admin by ID
-        const admin = await Admin.findById(id);
+        const admin = await Admin.findById(id).sort({ createdAt: -1 });
 
         if (!admin) {
             return NextResponse.json({ error: "Admin not found" }, { status: 404 });
         }
 
         // Find associated employee by admin ID
-        const employee = await Employee.findOne({ admin: id });
+        const employee = await Employee.findOne({ admin: id }).sort({ createdAt: -1 });
         // Merge admin and employee data into a single object
         const mergedData = { ...admin.toObject(), employee: employee ? employee.toObject() : null };
 

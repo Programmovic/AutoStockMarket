@@ -53,10 +53,10 @@ export async function GET(req, { params }) {
   }
 
   try {
-    const totalCarsPromise = Car.find(carFilter);
-    const totalTransactionsPromise = Transaction.find(transactionFilter);
-    const totalCustomersPromise = Customer.find(customerFilter);
-    const totalSoldCarsPromise = SoldCar.find(carFilter);
+    const totalCarsPromise = Car.find(carFilter).sort({ createdAt: -1 });
+    const totalTransactionsPromise = Transaction.find(transactionFilter).sort({ createdAt: -1 });
+    const totalCustomersPromise = Customer.find(customerFilter).sort({ createdAt: -1 });
+    const totalSoldCarsPromise = SoldCar.find(carFilter).sort({ createdAt: -1 });
     const totalMaintenanceCostsPromise = MaintenanceTask.aggregate([
       { $match: filter },
       { $group: { _id: null, totalCost: { $sum: "$taskCost" } } },
@@ -65,9 +65,9 @@ export async function GET(req, { params }) {
       { $match: filter },
       { $group: { _id: null, totalDebt: { $sum: "$debts" } } },
     ]);
-    const carDetailsPromise = CarDetails.find(carFilter);
-    const maintenanceTasksPromise = MaintenanceTask.find();
-    const recentTransactionsPromise = Transaction.find(transactionFilter)
+    const carDetailsPromise = CarDetails.find(carFilter).sort({ createdAt: -1 });
+    const maintenanceTasksPromise = MaintenanceTask.find().sort({ createdAt: -1 });
+    const recentTransactionsPromise = Transaction.find(transactionFilter).sort({ createdAt: -1 })
       .sort({ createdAt: -1 })
       .limit(5);
     const totalSellingPricesPromise = SoldCar.aggregate([
@@ -111,7 +111,7 @@ export async function GET(req, { params }) {
       }
     });
 
-    const partners = await Partner.find({});
+    const partners = await Partner.find({}).sort({ createdAt: -1 });
     const totalPartners = partners.length;
     const totalPartnerPercentage = partners.reduce(
       (acc, partner) => acc + partner.partnershipPercentage,
