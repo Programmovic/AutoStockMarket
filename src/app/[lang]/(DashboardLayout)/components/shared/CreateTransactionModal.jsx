@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Button,
   Modal,
@@ -232,7 +232,22 @@ const CreateTransactionModal = ({
       console.error("Error:", error);
     }
   };
+  const preventClose = useCallback((e) => {
+    e.preventDefault();
+    e.returnValue = ""; // Chrome requires returnValue to be set
+  }, []);
 
+  useEffect(() => {
+    if (open) {
+      window.addEventListener("beforeunload", preventClose);
+    } else {
+      window.removeEventListener("beforeunload", preventClose);
+    }
+
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+    };
+  }, [open, preventClose]);
   return (
     <Modal
       open={open}
