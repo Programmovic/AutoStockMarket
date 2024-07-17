@@ -35,6 +35,7 @@ const CarsPage = () => {
     color: "",
     model: "",
   });
+  const [totalCars, setTotalCars] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10); // Define rowsPerPage state
   const [error, setError] = useState("");
@@ -53,6 +54,7 @@ const CarsPage = () => {
       const filteredCars = response.data.cars.filter(
         (car) => car.currentLocation !== "Sold"
       );
+      setTotalCars(response.data.totalCount)
       setCars(filteredCars);
       setError("");
     } catch (error) {
@@ -236,7 +238,7 @@ const CarsPage = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={cars.length}
+            count={totalCars}
             rowsPerPage={rowsPerPage}
             page={currentPage}
             onPageChange={handleChangePage}
