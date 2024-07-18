@@ -2,7 +2,6 @@
 
 // Import necessary libraries and components
 import { useRouter } from 'next/navigation';
-
 import { usePathname } from 'next/navigation';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -30,12 +29,12 @@ const GlobalStyle = createGlobalStyle`
 const RootLayout = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const lang = pathname?.split("/")[1];
+  const lang = pathname?.split('/')[1] || 'en';  // Default to 'en' if no language in pathname
 
   useEffect(() => {
     const googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement(
-        { pageLanguage: lang || 'en', includedLanguages: 'ar,en,fr,de,es,it,zh-CN' },
+        { pageLanguage: 'en', includedLanguages: 'ar,en,fr,de,es,it,zh-CN' },
         'google_translate_element'
       );
     };
@@ -50,11 +49,26 @@ const RootLayout = ({ children }) => {
       window.googleTranslateElementInit = googleTranslateElementInit;
     };
 
+    // Clean up previous script if it exists
+    const existingScript = document.querySelector('script[src*="translate.google.com"]');
+    if (existingScript) {
+      document.body.removeChild(existingScript);
+    }
+
     addGoogleTranslateScript();
-  }, []);
+
+    // Reinitialize Google Translate on language change
+    if (window.google && window.google.translate) {
+      window.google.translate.TranslateElement(
+        { pageLanguage: 'en', includedLanguages: 'ar,en,fr,de,es,it,zh-CN' },
+        'google_translate_element'
+      );
+    }
+
+  }, [lang]);
 
   return (
-    <html lang={lang || 'en'} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <body>
         <ThemeProvider theme={baselightTheme}>
           <CssBaseline />
