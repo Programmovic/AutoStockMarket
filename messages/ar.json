@@ -1,0 +1,31 @@
+{
+  "default": {
+    "sidebar": {
+      "allEmployees": "جميع الموظفين",
+      "cars": "السيارات",
+      "carsInventory": "مخزون السيارات",
+      "customerManagement": "إدارة العملاء",
+      "customers": "العملاء",
+      "dailyReports": "التقارير اليومية",
+      "dailyTransactions": "المعاملات اليومية",
+      "dashboard": "لوحة القيادة",
+      "employeeAttendance": "حضور الموظفين",
+      "employeeManagement": "إدارة الموظفين",
+      "employeeSalaries": "رواتب الموظفين",
+      "exhibitionDebts": "ديون المعرض",
+      "exhibitionExpenses": "مصروف المعرض",
+      "expenses": "المصروفات",
+      "externalCarMaintenance": "صيانة السيارات الخارجية",
+      "fixedExpenses": "المصروفات الثابتة",
+      "home": "الرئيسية",
+      "income": "الدخل",
+      "invoices": "الفواتير",
+      "maintenance": "الصيانة",
+      "recoveries": "الاستردادات",
+      "reportsAndAnalytics": "التقارير والتحليلات",
+      "salesManagement": "إدارة المبيعات",
+      "soldCars": "السيارات المباعة",
+      "transactions": "المعاملات"
+    }
+  }
+}

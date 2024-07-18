@@ -1,3 +1,4 @@
+'use client'
 import { useMediaQuery, Box, Drawer } from "@mui/material";
 import Logo from "../shared/logo/Logo";
 import SidebarItems from "./SidebarItems";
@@ -9,7 +10,7 @@ interface ItemType {
   onSidebarClose: (event: React.MouseEvent<HTMLElement>) => void;
   isSidebarOpen: boolean;
   toggleMobileSidebar: () => void; // Added toggleMobileSidebar prop
-  lang?: string;
+  locale?: string;
 }
 
 const Sidebar = ({
@@ -17,6 +18,7 @@ const Sidebar = ({
   onSidebarClose,
   isSidebarOpen,
   toggleMobileSidebar,
+  locale,
 }: ItemType) => {
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
 
@@ -69,7 +71,7 @@ const Sidebar = ({
 
             {/* Sidebar Content */}
             <Box sx={{ flex: 1, overflowY: "auto" }}>
-              <SidebarItems toggleMobileSidebar={toggleMobileSidebar} />
+              <SidebarItems toggleMobileSidebar={toggleMobileSidebar} locale={locale}/>
             </Box>
           </Box>
         </Drawer>
@@ -99,7 +101,7 @@ const Sidebar = ({
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}
       {/* ------------------------------------------- */}
-      <SidebarItems toggleMobileSidebar={toggleMobileSidebar} />
+      <SidebarItems toggleMobileSidebar={toggleMobileSidebar} locale={locale} />
     </Drawer>
   );
 };

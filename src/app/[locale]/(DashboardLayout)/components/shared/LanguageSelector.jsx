@@ -1,4 +1,4 @@
-// components/LanguageSelector.js
+'use client'
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
@@ -13,7 +13,7 @@ const LanguageSelector = () => {
   };
 
   return (
-    <div style={{ textAlign: 'right', padding: '10px' }} id='google_translate_element'>
+    <div style={{ textAlign: 'right', padding: '10px' }}>
       <select value={lang || 'en'} onChange={changeLanguage}>
         <option value="en">English</option>
         <option value="ar">العربية</option>

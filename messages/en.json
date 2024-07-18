@@ -1,0 +1,31 @@
+{
+  "default": {
+    "sidebar": {
+      "allEmployees": "All Employees",
+      "cars": "Cars",
+      "carsInventory": "Cars Inventory",
+      "customerManagement": "Customer Management",
+      "customers": "Customers",
+      "dailyReports": "Daily Reports",
+      "dailyTransactions": "Daily Transactions",
+      "dashboard": "Dashboard",
+      "employeeAttendance": "Employee Attendance",
+      "employeeManagement": "Employee Management",
+      "employeeSalaries": "Employee Salaries",
+      "exhibitionDebts": "Exhibition Debts",
+      "exhibitionExpenses": "Exhibition Expenses",
+      "expenses": "Expenses",
+      "externalCarMaintenance": "External Car Maintenance",
+      "fixedExpenses": "Fixed Expenses",
+      "home": "Home",
+      "income": "Income",
+      "invoices": "Invoices",
+      "maintenance": "Maintenance",
+      "recoveries": "Recoveries",
+      "reportsAndAnalytics": "Reports and Analytics",
+      "salesManagement": "Sales Management",
+      "soldCars": "Sold Cars",
+      "transactions": "Transactions"
+    }
+  }
+}

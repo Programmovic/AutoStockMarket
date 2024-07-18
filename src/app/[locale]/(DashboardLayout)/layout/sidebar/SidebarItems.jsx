@@ -6,6 +6,7 @@ import NavItem from "./NavItem";
 import NavGroup from "./NavGroup/NavGroup";
 import { useParams } from "next/navigation";
 import styled from "styled-components";
+import { useTranslations } from "next-intl";
 
 const CustomScrollbarBox = styled(Box)`
   &::-webkit-scrollbar {
@@ -22,18 +23,20 @@ const CustomScrollbarBox = styled(Box)`
     background-color: #f1f1f1; /* Scrollbar track color */
   }
 `;
-const SidebarItems = ({ toggleMobileSidebar }) => {
+const SidebarItems = ({ toggleMobileSidebar, locale }) => {
   const pathname = usePathname();
   const pathDirect = pathname;
-  const { params } = useParams();
-  console.log("params", params);
+  const t = useTranslations('default.sidebar');
+  console.log(t)
   return (
     <CustomScrollbarBox sx={{ px: 3, height: '100%', overflowY: 'auto' }}>
       <List sx={{ pt: 0 }} className="sidebarNav" component="div">
-        {localizeMenuItems(params?.lang || "en").map((item) => {
+        {localizeMenuItems(locale || "en").map((item) => {
+
           if (item.subheader) {
             return <NavGroup item={item} key={item.subheader} />;
           } else {
+            item.title = t(item.title.toLowerCase());
             return (
               <NavItem
                 item={item}

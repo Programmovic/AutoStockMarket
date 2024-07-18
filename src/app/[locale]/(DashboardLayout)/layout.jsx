@@ -20,10 +20,10 @@ const PageWrapper = styled("div")(() => ({
   backgroundColor: "transparent",
 }));
 
-export default function RootLayout({ children, params }) {
+export default function RootLayout({ children, params: { locale } }) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  console.log("params: " + params);
+  console.log("params: " + locale);
   return (
     <MainWrapper className="mainwrapper">
       {/* ------------------------------------------- */}
@@ -33,6 +33,7 @@ export default function RootLayout({ children, params }) {
         isSidebarOpen={isSidebarOpen}
         isMobileSidebarOpen={isMobileSidebarOpen}
         onSidebarClose={() => setMobileSidebarOpen(false)}
+        locale={locale}
       />
       {/* ------------------------------------------- */}
       {/* Main Wrapper */}

@@ -1,4 +1,5 @@
-const nextConfig = {
+const withNextIntl = require('next-intl/plugin')();
+const nextConfig = withNextIntl({
   webpack(config) {
     config.experiments = { ...config.experiments, topLevelAwait: true };
     return config;
@@ -6,6 +7,6 @@ const nextConfig = {
   images: {
     domains: ['*'], // Allow images from any hostname
   },
-};
+});
 
 module.exports = nextConfig;

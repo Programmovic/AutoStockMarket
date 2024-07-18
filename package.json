@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "i18nexus pull && next dev",
+    "build": "i18nexus pull && next build",
+    "start": "i18nexus pull && next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -35,9 +35,9 @@
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "mongoose": "^8.3.0",
-    "next": "^13.4.18",
+    "next": "^14.2.5",
     "next-i18next": "^15.2.0",
-    "next-intl": "^3.10.0",
+    "next-intl": "^3.17.1",
     "next-translate": "^2.6.2",
     "next-typesafe-url": "^4.0.7",
     "react": "18.2.0",
@@ -56,6 +56,7 @@
     "zod": "^3.23.4"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.194"
+    "@types/lodash": "^4.14.194",
+    "i18nexus-cli": "^3.4.0"
   }
 }
