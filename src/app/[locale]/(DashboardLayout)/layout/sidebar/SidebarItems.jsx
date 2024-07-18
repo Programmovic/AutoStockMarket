@@ -34,6 +34,7 @@ const SidebarItems = ({ toggleMobileSidebar, locale }) => {
         {localizeMenuItems(locale || "en").map((item) => {
 
           if (item.subheader) {
+            item.subheader = t(item.key);
             return <NavGroup item={item} key={item.subheader} />;
           } else {
             item.title = t(item.key);
