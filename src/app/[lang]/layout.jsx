@@ -73,7 +73,6 @@ const RootLayout = ({ children }) => {
         <ThemeProvider theme={baselightTheme}>
           <CssBaseline />
           <GlobalStyle />
-          <div id="google_translate_element"></div>
           <LanguageSelector />
           {children}
         </ThemeProvider>

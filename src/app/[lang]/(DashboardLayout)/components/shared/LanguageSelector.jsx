@@ -13,7 +13,7 @@ const LanguageSelector = () => {
   };
 
   return (
-    <div style={{ textAlign: 'right', padding: '10px' }}>
+    <div style={{ textAlign: 'right', padding: '10px' }} id='google_translate_element'>
       <select value={lang || 'en'} onChange={changeLanguage}>
         <option value="en">English</option>
         <option value="ar">العربية</option>
