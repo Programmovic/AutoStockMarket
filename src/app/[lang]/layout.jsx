@@ -35,7 +35,7 @@ const RootLayout = ({ children }) => {
   useEffect(() => {
     const googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement(
-        { pageLanguage: 'en', includedLanguages: 'ar,en,fr,de,es,it,zh-CN' },
+        { pageLanguage: lang || 'en', includedLanguages: 'ar,en,fr,de,es,it,zh-CN' },
         'google_translate_element'
       );
     };
