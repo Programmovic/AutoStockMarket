@@ -25,36 +25,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const ClientProvider = ({ children, locale, messages }) => {
-  useEffect(() => {
-    const googleTranslateElementInit = () => {
-      new window.google.translate.TranslateElement(
-        { pageLanguage: locale || 'en', includedLanguages: 'ar,en,fr,de,es,it,zh-CN' },
-        'google_translate_element'
-      );
-    };
-
-    const addGoogleTranslateScript = () => {
-      const existingScript = document.getElementById('google-translate-script');
-      if (existingScript) return;
-
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.async = true;
-      script.src =
-        'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-      script.id = 'google-translate-script';
-      document.body.appendChild(script);
-    };
-
-    addGoogleTranslateScript();
-  }, [locale]);
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <ThemeProvider theme={baselightTheme}>
         <CssBaseline />
         <GlobalStyle />
-        <div id="google_translate_element"></div>
         <LanguageSelector />
         {children}
       </ThemeProvider>
