@@ -36,7 +36,7 @@ const SidebarItems = ({ toggleMobileSidebar, locale }) => {
           if (item.subheader) {
             return <NavGroup item={item} key={item.subheader} />;
           } else {
-            item.title = t(item.title.toLowerCase());
+            item.title = t(item.key);
             return (
               <NavItem
                 item={item}
