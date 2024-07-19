@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useMediaQuery, Box, Drawer } from "@mui/material";
 import Logo from "../shared/logo/Logo";
 import SidebarItems from "./SidebarItems";
@@ -43,6 +43,7 @@ const Sidebar = ({
             sx: {
               width: sidebarWidth,
               boxSizing: "border-box",
+              ...(locale === "ar" ? { right: "0px" } : { left: "0px" }),
             },
           }}
         >
@@ -70,8 +71,16 @@ const Sidebar = ({
             </Box>
 
             {/* Sidebar Content */}
-            <Box sx={{ flex: 1, overflowY: "auto" }}>
-              <SidebarItems toggleMobileSidebar={toggleMobileSidebar} locale={locale}/>
+            <Box
+              sx={{
+                flex: 1,
+                overflowY: "auto"
+              }}
+            >
+              <SidebarItems
+                toggleMobileSidebar={toggleMobileSidebar}
+                locale={locale}
+              />
             </Box>
           </Box>
         </Drawer>
