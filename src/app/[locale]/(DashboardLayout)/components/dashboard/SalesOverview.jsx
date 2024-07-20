@@ -5,7 +5,7 @@ import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCa
 import Chart from "react-apexcharts";
 import moment from "moment";
 
-const SalesOverview = ({ monthlyTransactions }) => {
+const SalesOverview = ({ monthlyTransactions, title }) => {
   const [month, setMonth] = useState("");
   const [chartData, setChartData] = useState({
     earnings: monthlyTransactions?.length > 0 ? [monthlyTransactions[0].earnings] : [],
@@ -122,7 +122,7 @@ const SalesOverview = ({ monthlyTransactions }) => {
 
   return (
     <DashboardCard
-      title="Sales Overview"
+      title={title}
       action={
         <Select labelId="month-dd" id="month-dd" value={month} size="small" onChange={handleChange}>
           {monthlyData.map((data, index) => (

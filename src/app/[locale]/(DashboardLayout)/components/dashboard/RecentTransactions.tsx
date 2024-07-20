@@ -11,7 +11,7 @@ import {
 } from "@mui/lab";
 import { Link, Typography } from "@mui/material";
 
-const RecentTransactions = ({ transactions }: any) => {
+const RecentTransactions = ({ transactions, title }: any) => {
   // Function to generate a random color from the provided options
   const generateRandomColor = () => {
     const colors = [
@@ -37,7 +37,7 @@ const RecentTransactions = ({ transactions }: any) => {
   };
 
   return (
-    <DashboardCard title="Recent Transactions">
+    <DashboardCard title={title}>
       <>
         <Timeline
           className="theme-timeline"

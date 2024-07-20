@@ -17,17 +17,19 @@ import {
   TextField,
   Box,
   IconButton,
-  TablePagination, // Import TablePagination component
+  TablePagination,
 } from "@mui/material";
 import { IconFileInvoice } from "@tabler/icons-react";
 import { Add } from "@mui/icons-material";
 import Loading from "../../loading";
+import { useTranslations } from 'next-intl'; // Import useTranslations hook
 
 const CarsPage = () => {
   const router = useRouter();
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
+  const t = useTranslations('default.cars'); // Initialize useTranslations hook with namespace 'cars'
 
-  const createCar = searchParams.get('CreateCar')
+  const createCar = searchParams.get('CreateCar');
   const [cars, setCars] = useState([]);
   const [modalOpen, setModalOpen] = useState(createCar || false);
   const [filters, setFilters] = useState({
@@ -37,7 +39,7 @@ const CarsPage = () => {
   });
   const [totalCars, setTotalCars] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Define rowsPerPage state
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -47,14 +49,14 @@ const CarsPage = () => {
       const response = await axios.get("/api/car", {
         params: {
           ...filters,
-          page: currentPage + 1, // Adjust page number to 1-based index
+          page: currentPage + 1,
           perPage: rowsPerPage,
         },
       });
       const filteredCars = response.data.cars.filter(
         (car) => car.currentLocation !== "Sold"
       );
-      setTotalCars(response.data.totalCount)
+      setTotalCars(response.data.totalCount);
       setCars(filteredCars);
       setError("");
     } catch (error) {
@@ -105,10 +107,8 @@ const CarsPage = () => {
   };
 
   return (
-    <PageContainer title="Cars" description="Cars Inventory">
-      <DashboardCard title="Cars">
-
-
+    <PageContainer title={t('title')} description={t('description')}>
+      <DashboardCard title={t('title')}>
         <>
           <Box
             mb={2}
@@ -119,7 +119,7 @@ const CarsPage = () => {
             <Box mr={1}>
               <IconButton
                 onClick={() => setModalOpen(true)}
-                aria-label="add new car"
+                aria-label={t('addNewCar')}
                 color="primary"
               >
                 <Add />
@@ -129,7 +129,7 @@ const CarsPage = () => {
             <Box flexGrow={1}>
               <TextField
                 name="name"
-                label="Name"
+                label={t('name')}
                 variant="outlined"
                 size="small"
                 value={filters.name}
@@ -138,7 +138,7 @@ const CarsPage = () => {
               />
               <TextField
                 name="color"
-                label="Color"
+                label={t('color')}
                 variant="outlined"
                 size="small"
                 value={filters.color}
@@ -147,7 +147,7 @@ const CarsPage = () => {
               />
               <TextField
                 name="model"
-                label="Model"
+                label={t('model')}
                 variant="outlined"
                 size="small"
                 value={filters.model}
@@ -156,7 +156,7 @@ const CarsPage = () => {
               />
               <TextField
                 name="chassisNumber"
-                label="Chassis Number"
+                label={t('chassisNumber')}
                 variant="outlined"
                 size="small"
                 value={filters.chassisNumber}
@@ -165,7 +165,7 @@ const CarsPage = () => {
               />
               <TextField
                 name="entryDate"
-                label="Entry Date"
+                label={t('entryDate')}
                 variant="outlined"
                 size="small"
                 type="date"
@@ -185,16 +185,16 @@ const CarsPage = () => {
               <Table aria-label="cars table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Color</TableCell>
-                    <TableCell>Model</TableCell>
-                    <TableCell>Chassis Number</TableCell>
-                    <TableCell>Owner</TableCell>
-                    <TableCell>Purchase Details</TableCell>
-                    <TableCell>Entry Date</TableCell>
-                    <TableCell>Maintenance</TableCell>
-                    <TableCell>Current Location</TableCell>
-                    <TableCell>Status</TableCell>
+                    <TableCell>{t('name')}</TableCell>
+                    <TableCell>{t('color')}</TableCell>
+                    <TableCell>{t('model')}</TableCell>
+                    <TableCell>{t('chassisNumber')}</TableCell>
+                    <TableCell>{t('owner')}</TableCell>
+                    <TableCell>{t('purchaseDetails')}</TableCell>
+                    <TableCell>{t('entryDate')}</TableCell>
+                    <TableCell>{t('maintenance')}</TableCell>
+                    <TableCell>{t('currentLocation')}</TableCell>
+                    <TableCell>{t('status')}</TableCell>
                     <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
@@ -223,7 +223,7 @@ const CarsPage = () => {
                       <TableCell sx={{ textAlign: "center" }}>
                         <IconButton
                           onClick={() => router.push(`/en/SalesManagment/Invoices/Car/${car._id}`)}
-                          aria-label="See Invoices"
+                          aria-label={t('seeInvoices')}
                           color="primary"
                         >
                           <IconFileInvoice />
@@ -243,6 +243,8 @@ const CarsPage = () => {
             page={currentPage}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage={t('rowsPerPage')}
+            labelDisplayedRows={({ from, to, count }) => `${t('page')} ${from}-${to} ${t('of')} ${count}`}
             style={{ marginTop: 10 }}
           />
         </>

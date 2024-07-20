@@ -45,9 +45,9 @@ const employees = [
     },
 ];
 
-const TopEmployees = () => {
+const TopEmployees = ({title}: any) => {
     return (
-        <DashboardCard title="Top Employees">
+        <DashboardCard title={title}>
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
                 <Table
                     aria-label="simple table"

@@ -2,17 +2,12 @@ import { notFound } from 'next/navigation';
 import ClientProvider from './ClientProvider';
 
 const loadMessages = async (locale) => {
-  const url = `https://api.i18nexus.com/project_resources/translations/${locale}.json?api_key=${process.env.I18NEXUS_API_KEY}`;
-
-  const res = await fetch(url, {
-    next: { revalidate: false }
-  });
-
-  if (!res.ok) {
+  try {
+    const messages = await import(`../../../messages/${locale}.json`);
+    return messages.default;
+  } catch (error) {
     throw new Error('Failed to load messages');
   }
-
-  return res.json();
 };
 
 const RootLayout = async ({ children, params: { locale } }) => {

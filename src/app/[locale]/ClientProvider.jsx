@@ -6,7 +6,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { baselightTheme } from '../../utils/theme/DefaultColors';
 import styled, { createGlobalStyle } from 'styled-components';
-import LanguageSelector from './(DashboardLayout)/components/shared/LanguageSelector';
 
 const GlobalStyle = createGlobalStyle`
   &::-webkit-scrollbar {
@@ -31,7 +30,6 @@ const ClientProvider = ({ children, locale, messages }) => {
       <ThemeProvider theme={baselightTheme}>
         <CssBaseline />
         <GlobalStyle />
-        <LanguageSelector />
         {children}
       </ThemeProvider>
     </NextIntlClientProvider>

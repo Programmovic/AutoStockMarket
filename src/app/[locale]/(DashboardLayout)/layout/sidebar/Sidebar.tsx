@@ -36,7 +36,7 @@ const Sidebar = ({
         {/* Sidebar for desktop */}
         {/* ------------------------------------------- */}
         <Drawer
-          anchor="left"
+          anchor="right"
           open={isSidebarOpen}
           variant="permanent"
           PaperProps={{
