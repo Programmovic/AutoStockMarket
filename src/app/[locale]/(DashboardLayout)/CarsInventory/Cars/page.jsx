@@ -198,9 +198,7 @@ const CarsPage = () => {
                     size="small"
                     value={filters.partner}
                     onChange={handleFilterChange}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                    placeholder="اكتب اسم الشريك"
                     fullWidth
                   />
                 </Grid>
