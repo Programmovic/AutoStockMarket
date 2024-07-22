@@ -96,7 +96,8 @@
       "filter": "Filter",
       "rowsPerPage": "Rows per page",
       "page": "Page",
-      "of": "Of"
+      "of": "Of",
+      "partner": "Partner"
     }
   }
 }

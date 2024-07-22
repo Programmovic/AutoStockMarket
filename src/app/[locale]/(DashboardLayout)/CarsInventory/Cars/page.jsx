@@ -18,7 +18,9 @@ import {
   Box,
   IconButton,
   TablePagination,
+  Grid
 } from "@mui/material";
+
 import { IconFileInvoice } from "@tabler/icons-react";
 import { Add } from "@mui/icons-material";
 import Loading from "../../loading";
@@ -116,7 +118,7 @@ const CarsPage = () => {
             alignItems="center"
             justifyContent={"space-between"}
           >
-            <Box mr={1}>
+            <Box px={3}>
               <IconButton
                 onClick={() => setModalOpen(true)}
                 aria-label={t('addNewCar')}
@@ -126,56 +128,85 @@ const CarsPage = () => {
               </IconButton>
             </Box>
 
+
             <Box flexGrow={1}>
-              <TextField
-                name="name"
-                label={t('name')}
-                variant="outlined"
-                size="small"
-                value={filters.name}
-                onChange={handleFilterChange}
-                style={{ marginRight: 10 }}
-              />
-              <TextField
-                name="color"
-                label={t('color')}
-                variant="outlined"
-                size="small"
-                value={filters.color}
-                onChange={handleFilterChange}
-                style={{ marginRight: 10 }}
-              />
-              <TextField
-                name="model"
-                label={t('model')}
-                variant="outlined"
-                size="small"
-                value={filters.model}
-                onChange={handleFilterChange}
-                style={{ marginRight: 10 }}
-              />
-              <TextField
-                name="chassisNumber"
-                label={t('chassisNumber')}
-                variant="outlined"
-                size="small"
-                value={filters.chassisNumber}
-                onChange={handleFilterChange}
-                style={{ marginRight: 10 }}
-              />
-              <TextField
-                name="entryDate"
-                label={t('entryDate')}
-                variant="outlined"
-                size="small"
-                type="date"
-                value={filters.entryDate}
-                onChange={handleFilterChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <TextField
+                    name="name"
+                    label={t('name')}
+                    variant="outlined"
+                    size="small"
+                    value={filters.name}
+                    onChange={handleFilterChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <TextField
+                    name="color"
+                    label={t('color')}
+                    variant="outlined"
+                    size="small"
+                    value={filters.color}
+                    onChange={handleFilterChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <TextField
+                    name="model"
+                    label={t('model')}
+                    variant="outlined"
+                    size="small"
+                    value={filters.model}
+                    onChange={handleFilterChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <TextField
+                    name="chassisNumber"
+                    label={t('chassisNumber')}
+                    variant="outlined"
+                    size="small"
+                    value={filters.chassisNumber}
+                    onChange={handleFilterChange}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <TextField
+                    name="entryDate"
+                    label={t('entryDate')}
+                    variant="outlined"
+                    size="small"
+                    type="date"
+                    value={filters.entryDate}
+                    onChange={handleFilterChange}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <TextField
+                    name="partner"
+                    label={t('partner')}
+                    variant="outlined"
+                    size="small"
+                    value={filters.partner}
+                    onChange={handleFilterChange}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
             </Box>
+
           </Box>
           {loading ? (<Loading />) :
             (<TableContainer

@@ -223,6 +223,7 @@ export async function GET(req, res) {
     const model = searchParams.get("model");
     const chassisNumber = searchParams.get("chassisNumber");
     const entryDate = searchParams.get("entryDate");
+    const partner = searchParams.get("partner"); // New query parameter
 
     // Convert to integers
     page = parseInt(page);
@@ -238,6 +239,21 @@ export async function GET(req, res) {
     if (entryDate) {
       // Assuming entryDate is in a valid date format
       filter.entryDate = { $gte: new Date(entryDate) };
+    }
+    if (partner) {
+      const partnerData = await Partner.findOne({
+        $or: [
+          { name: { $regex: new RegExp(partner, "i") } },
+          { "contactInfo.phone": { $regex: new RegExp(partner, "i") } },
+          { "contactInfo.email": { $regex: new RegExp(partner, "i") } },
+        ],
+      });
+
+      if (partnerData) {
+        filter._id = { $in: partnerData.cars }; // Filter by partner's cars
+      } else {
+        return NextResponse.json({ cars: [], totalCount: 0 }); // If no partner found, return empty result
+      }
     }
 
     // Calculate skip value for pagination
